@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCED Invigilation Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .status-dot.active { background-color: #28a745; }
+        .status-dot.inactive { background-color: #dc3545; }
+        .status-dot.pending { background-color: #ffc107; }
+        .scan-issue { color: #dc3545; font-weight: 500; }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-xl font-bold text-gray-800">BCED Invigilation</h1>
+                <p class="text-sm text-gray-500">Modified Invigilation View</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                 <h2 class="hidden sm:block text-lg font-semibold text-gray-700">Grade 10 Numeracy Assessment</h2>
+                 <p class="hidden lg:block text-sm text-gray-500">Riverside Secondary School • Thursday, July 3, 2025</p>
+                <div class="flex items-center space-x-4 border-l pl-4">
+                    <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">A</div>
+                    <p class="hidden sm:block text-sm text-gray-600">Proctor Admin<br><span class="text-xs text-green-500">Active Session</span></p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Session Overview -->
+        <div class="mb-6">
+            <h2 class="text-lg font-semibold text-gray-800">Session Overview</h2>
+            <p class="text-sm text-gray-500 mb-4">Monitor and manage student exam sessions in real-time.</p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Total Students</p>
+                        <p id="total-students" class="text-2xl font-bold text-gray-800">0</p>
+                    </div>
+                    <i class="fas fa-users text-2xl text-gray-300"></i>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">In Progress</p>
+                        <p id="in-progress" class="text-2xl font-bold text-gray-800">0</p>
+                    </div>
+                    <i class="fas fa-spinner fa-spin text-2xl text-blue-400"></i>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Ready to Start</p>
+                        <p id="ready-to-start" class="text-2xl font-bold text-gray-800">0</p>
+                    </div>
+                    <i class="fas fa-hourglass-start text-2xl text-yellow-400"></i>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Complete</p>
+                        <p id="complete" class="text-2xl font-bold text-gray-800">0</p>
+                    </div>
+                    <i class="fas fa-check-circle text-2xl text-green-400"></i>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Issues</p>
+                        <p id="issues" class="text-2xl font-bold text-red-500">0</p>
+                    </div>
+                    <i class="fas fa-exclamation-triangle text-2xl text-red-400"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Sessions Table -->
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 flex justify-between items-center">
+                <h3 id="student-sessions-title" class="text-md font-semibold text-gray-800">Student Sessions (20 of 20)</h3>
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="search-input" placeholder="Search by Student Name or PEN" class="pl-10 pr-4 py-2 border rounded-lg w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">PEN</th>
+                            <th scope="col" class="px-6 py-3">First Name / Last Name</th>
+                            <th scope="col" class="px-6 py-3">Session</th>
+                            <th scope="col" class="px-6 py-3">Status</th>
+                            <th scope="col" class="px-6 py-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-table-body">
+                        <!-- Student rows will be injected here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unsubmit Confirmation Modal -->
+    <div id="unsubmit-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+            <div class="flex items-start">
+                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+                </div>
+                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Unsubmit Assessment</h3>
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500">
+                            Are you sure you want to unsubmit the assessment for <strong id="student-name-modal"></strong>? This will allow them to re-enter and complete their test. This action cannot be undone.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                <button id="confirm-unsubmit" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                    Confirm Unsubmit
+                </button>
+                <button id="cancel-unsubmit" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- View/Edit Student Info Modal -->
+    <div id="student-info-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 class="text-lg font-medium text-gray-900">View/Edit Student Info</h3>
+                <button id="close-student-info-modal" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 text-sm">
+                    <div class="md:col-span-1 font-medium text-gray-500">OEN</div>
+                    <div id="info-pen" class="md:col-span-2 text-gray-800"></div>
+
+                    <div class="md:col-span-1 font-medium text-gray-500">First Name</div>
+                    <div id="info-first-name" class="md:col-span-2 text-gray-800"></div>
+
+                    <div class="md:col-span-1 font-medium text-gray-500">Last Name</div>
+                    <div id="info-last-name" class="md:col-span-2 text-gray-800"></div>
+
+                    <div class="md:col-span-1 font-medium text-gray-500">Gender</div>
+                    <div class="md:col-span-2">
+                        <select id="info-gender" class="border rounded-md px-2 py-1 w-full bg-gray-50">
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                            <option>Prefer not to say</option>
+                        </select>
+                    </div>
+
+                    <div class="md:col-span-1 font-medium text-gray-500">Accommodations</div>
+                    <div id="info-accommodations" class="md:col-span-2 text-gray-800"></div>
+
+                    <div class="md:col-span-1 font-medium text-gray-500">Notes from the Teacher</div>
+                    <div id="info-notes" class="md:col-span-2 text-gray-800"></div>
+
+                    <div class="md:col-span-1 font-medium text-gray-500">Assistive Technology</div>
+                    <div id="info-assistive-tech" class="md:col-span-2 text-gray-800"></div>
+                    
+                    <div class="md:col-span-1 font-medium text-gray-500">Non-participation Status</div>
+                    <div id="info-non-participation" class="md:col-span-2 text-gray-800"></div>
+
+                    <div class="md:col-span-1 font-medium text-gray-500">BCED Actions</div>
+                    <div class="md:col-span-2 space-y-2">
+                        <div>
+                            <button id="modal-unsubmit-btn" class="text-white px-3 py-1 rounded-md text-xs font-semibold">
+                                Unsubmit Assessment
+                            </button>
+                            <div id="modal-scan-issue" class="text-red-500 text-xs mt-1"></div>
+                        </div>
+                        <div>
+                           <button id="modal-lock-btn" class="text-white px-3 py-1 rounded-md text-xs font-semibold"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-gray-50 text-right">
+                <button id="ok-student-info-modal" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:w-auto sm:text-sm">OK</button>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+    // --- DATA ---
+    // This is the mock data for the students, now with more detail.
+    const initialStudents = [
+        { id: 1, pen: '123456789', firstName: 'Emma', lastName: 'Thompson', gender: 'Female', accommodations: 'Extra time', notes: 'Seems anxious', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '2 of 3', hasIssue: false, issueType: null },
+        { id: 2, pen: '987654321', firstName: 'Michael', lastName: 'Chen', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', section: null, hasIssue: false, issueType: null },
+        { id: 3, pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', gender: 'Female', accommodations: 'Separate setting', notes: '', assistiveTech: 'Screen reader', nonParticipation: 'N/A', sessionActive: true, status: 'Complete', section: null, hasIssue: true, issueType: 'Scan Issue' },
+        { id: 4, pen: '789123456', firstName: 'David', lastName: 'Rodriguez', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'In Progress', section: '1 of 3', hasIssue: true, issueType: 'Locked' },
+        { id: 5, pen: '321654987', firstName: 'Jessica', lastName: 'Wu', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '3 of 3', hasIssue: false, issueType: null },
+        { id: 6, pen: '234567890', firstName: 'Amanda', lastName: 'Singh', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Complete', section: null, hasIssue: false, issueType: null },
+        { id: 7, pen: '345678901', firstName: 'James', lastName: 'Wilson', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', section: null, hasIssue: false, issueType: null },
+        { id: 8, pen: '567890123', firstName: 'Priya', lastName: 'Patel', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '1 of 3', hasIssue: false, issueType: null },
+        { id: 9, pen: '678901234', firstName: 'Marcus', lastName: 'Thompson', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Complete', section: null, hasIssue: true, issueType: 'Scan Issue' },
+        { id: 10, pen: '890123456', firstName: 'Lily', lastName: 'Zhang', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '2 of 3', hasIssue: false, issueType: null },
+        { id: 11, pen: '901234567', firstName: 'Noah', lastName: 'Williams', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', section: null, hasIssue: false, issueType: null },
+        { id: 12, pen: '012345678', firstName: 'Sofia', lastName: 'Martinez', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'In Progress', section: '1 of 3', hasIssue: true, issueType: 'Locked' },
+        { id: 13, pen: '135791357', firstName: 'Ethan', lastName: 'Brown', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '3 of 3', hasIssue: false, issueType: null },
+        { id: 14, pen: '246802468', firstName: 'Ava', lastName: 'Taylor', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Complete', section: null, hasIssue: false, issueType: null },
+        { id: 15, pen: '369741852', firstName: 'Liam', lastName: 'Anderson', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', section: null, hasIssue: false, issueType: null },
+        { id: 16, pen: '741963852', firstName: 'Mia', lastName: 'Garcia', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '1 of 3', hasIssue: true, issueType: 'Scan Issue' },
+        { id: 17, pen: '852963741', firstName: 'Oliver', lastName: 'Davis', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Complete', section: null, hasIssue: false, issueType: null },
+        { id: 18, pen: '963741852', firstName: 'Isabella', lastName: 'Moore', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '2 of 3', hasIssue: false, issueType: null },
+        { id: 19, pen: '147258369', firstName: 'Lucas', lastName: 'Smith', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', section: null, hasIssue: false, issueType: null },
+        { id: 20, pen: '258369147', firstName: 'Charlotte', lastName: 'Lee', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'Ready to Start', section: null, hasIssue: true, issueType: 'Locked' },
+    ];
+    
+    let students = [...initialStudents]; // Use a mutable copy for filtering
+
+    // --- DOM ELEMENTS ---
+    const tableBody = document.getElementById('student-table-body');
+    const searchInput = document.getElementById('search-input');
+    
+    const unsubmitModal = document.getElementById('unsubmit-modal');
+    const studentNameUnsubmitModal = document.getElementById('student-name-modal');
+    const confirmUnsubmitBtn = document.getElementById('confirm-unsubmit');
+    const cancelUnsubmitBtn = document.getElementById('cancel-unsubmit');
+
+    const studentInfoModal = document.getElementById('student-info-modal');
+    const closeStudentInfoBtn = document.getElementById('close-student-info-modal');
+    const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
+    const modalUnsubmitBtn = document.getElementById('modal-unsubmit-btn');
+    const modalLockBtn = document.getElementById('modal-lock-btn');
+
+    // --- FUNCTIONS ---
+
+    /**
+     * Renders the student data into the table.
+     * @param {Array} studentData - The array of student objects to render.
+     */
+    function renderTable(studentData) {
+        tableBody.innerHTML = ''; // Clear existing rows
+
+        if (studentData.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-gray-500">No students found.</td></tr>`;
+            return;
+        }
+
+        studentData.forEach(student => {
+            const row = document.createElement('tr');
+            row.className = 'bg-white border-b hover:bg-gray-50';
+            if (student.issueType === 'Locked') {
+                row.className = 'bg-red-50 border-b hover:bg-red-100';
+            }
+
+            const sessionDotClass = student.sessionActive ? 'active' : 'inactive';
+            
+            let statusHtml = student.status;
+            if (student.status === 'In Progress' && student.section) {
+                statusHtml += ` - Section ${student.section}`;
+            }
+            if (student.hasIssue && student.issueType === 'Scan Issue') {
+                statusHtml += ` - <span class="scan-issue">Scan Issue</span>`;
+            }
+
+            const unsubmitDisabled = student.status !== 'Complete';
+            const isLocked = student.issueType === 'Locked';
+
+            row.innerHTML = `
+                <td class="px-6 py-4 font-medium text-gray-900">${student.pen}</td>
+                <td class="px-6 py-4">
+                    <button class="student-name-btn text-blue-600 font-semibold hover:underline" data-student-id="${student.id}">
+                        ${student.firstName} ${student.lastName}
+                    </button>
+                </td>
+                <td class="px-6 py-4"><span class="status-dot ${sessionDotClass}"></span></td>
+                <td class="px-6 py-4">${statusHtml}</td>
+                <td class="px-6 py-4 flex items-center space-x-2">
+                    <button 
+                        class="unsubmit-btn text-white px-3 py-1 rounded-md text-xs font-semibold ${unsubmitDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}"
+                        data-student-id="${student.id}"
+                        data-student-name="${student.firstName} ${student.lastName}"
+                        ${unsubmitDisabled ? 'disabled' : ''}
+                    >
+                        <i class="fas fa-undo mr-1"></i> Unsubmit
+                    </button>
+                    <button 
+                        class="lock-btn text-white px-3 py-1 rounded-md text-xs font-semibold ${isLocked ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-red-500 hover:bg-red-600'}"
+                        data-student-id="${student.id}"
+                    >
+                        ${isLocked ? '<i class="fas fa-unlock mr-1"></i> Unlock' : '<i class="fas fa-lock mr-1"></i> Lock'}
+                    </button>
+                    <button class="more-actions-btn text-gray-400 ml-1 hover:text-gray-600" title="More Actions" data-student-id="${student.id}">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    /**
+     * Updates the overview cards with the latest counts.
+     * @param {Array} studentData - The array of student objects to calculate from.
+     */
+    function updateOverview(studentData) {
+        document.getElementById('total-students').textContent = studentData.length;
+        document.getElementById('in-progress').textContent = studentData.filter(s => s.status === 'In Progress').length;
+        document.getElementById('ready-to-start').textContent = studentData.filter(s => s.status === 'Ready to Start').length;
+        document.getElementById('complete').textContent = studentData.filter(s => s.status === 'Complete').length;
+        document.getElementById('issues').textContent = studentData.filter(s => s.hasIssue).length;
+        document.getElementById('student-sessions-title').textContent = `Student Sessions (${studentData.length} of ${initialStudents.length})`;
+    }
+
+    /**
+     * Filters the student list based on the search input.
+     */
+    function handleSearch() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const filteredStudents = initialStudents.filter(student => 
+            student.firstName.toLowerCase().includes(searchTerm) || 
+            student.lastName.toLowerCase().includes(searchTerm) || 
+            student.pen.toLowerCase().includes(searchTerm)
+        );
+        students = [...filteredStudents];
+        renderTable(students);
+        updateOverview(students);
+    }
+    
+    /**
+     * Opens the unsubmit confirmation modal.
+     * @param {number} studentId - The ID of the student.
+     * @param {string} studentName - The name of the student.
+     */
+    function openUnsubmitModal(studentId, studentName) {
+        studentNameUnsubmitModal.textContent = studentName;
+        confirmUnsubmitBtn.dataset.studentId = studentId;
+        unsubmitModal.classList.remove('hidden');
+    }
+
+    /**
+     * Closes the unsubmit confirmation modal.
+     */
+    function closeUnsubmitModal() {
+        unsubmitModal.classList.add('hidden');
+    }
+
+    /**
+     * Handles the logic for unsubmitting a student's assessment.
+     */
+    function handleUnsubmit() {
+        const studentId = parseInt(confirmUnsubmitBtn.dataset.studentId);
+        const studentIndex = initialStudents.findIndex(s => s.id === studentId);
+        if (studentIndex > -1) {
+            initialStudents[studentIndex].status = 'Ready to Start';
+            // Only remove the issue if it wasn't a scan issue
+            if(initialStudents[studentIndex].issueType !== 'Scan Issue') {
+                initialStudents[studentIndex].hasIssue = false;
+                initialStudents[studentIndex].issueType = null;
+            }
+        }
+        handleSearch(); // Re-filter and re-render
+        closeUnsubmitModal();
+        closeStudentInfoModal(); // Also close the info modal if open
+    }
+    
+    /**
+     * Toggles the lock state of a student's session.
+     * @param {number} studentId - The ID of the student.
+     */
+    function handleLockToggle(studentId) {
+        const studentIndex = initialStudents.findIndex(s => s.id === studentId);
+        if (studentIndex > -1) {
+            const student = initialStudents[studentIndex];
+            if (student.issueType === 'Locked') {
+                // Unlock the student
+                student.issueType = null;
+                student.hasIssue = false; // Assuming unlocking resolves the issue
+                student.sessionActive = true;
+            } else {
+                // Lock the student
+                student.issueType = 'Locked';
+                student.hasIssue = true;
+                student.sessionActive = false;
+            }
+        }
+        handleSearch(); // Re-render the table
+        closeStudentInfoModal(); // Close info modal if it was used
+    }
+
+    /**
+     * Opens the student info modal and populates it with data.
+     * @param {number} studentId - The ID of the student.
+     */
+    function openStudentInfoModal(studentId) {
+        const student = initialStudents.find(s => s.id === studentId);
+        if (!student) return;
+
+        // Populate fields
+        document.getElementById('info-pen').textContent = student.pen;
+        document.getElementById('info-first-name').textContent = student.firstName;
+        document.getElementById('info-last-name').textContent = student.lastName;
+        document.getElementById('info-gender').value = student.gender;
+        document.getElementById('info-accommodations').textContent = student.accommodations || 'N/A';
+        document.getElementById('info-notes').textContent = student.notes || 'N/A';
+        document.getElementById('info-assistive-tech').textContent = student.assistiveTech || 'N/A';
+        document.getElementById('info-non-participation').textContent = student.nonParticipation || 'N/A';
+
+        // Handle the unsubmit button inside the modal
+        const unsubmitDisabled = student.status !== 'Complete';
+        modalUnsubmitBtn.disabled = unsubmitDisabled;
+        modalUnsubmitBtn.className = `text-white px-3 py-1 rounded-md text-xs font-semibold ${unsubmitDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`;
+        modalUnsubmitBtn.onclick = () => openUnsubmitModal(student.id, `${student.firstName} ${student.lastName}`);
+        
+        // Handle scan issue text
+        const scanIssueEl = document.getElementById('modal-scan-issue');
+        if (student.issueType === 'Scan Issue') {
+            scanIssueEl.textContent = 'Scan Issue: Incomplete';
+            scanIssueEl.classList.remove('hidden');
+        } else {
+            scanIssueEl.classList.add('hidden');
+        }
+
+        // Handle the lock/unlock button inside the modal
+        const isLocked = student.issueType === 'Locked';
+        modalLockBtn.innerHTML = isLocked ? '<i class="fas fa-unlock mr-1"></i> Unlock Session' : '<i class="fas fa-lock mr-1"></i> Lock Session';
+        modalLockBtn.className = `text-white px-3 py-1 rounded-md text-xs font-semibold ${isLocked ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-red-500 hover:bg-red-600'}`;
+        modalLockBtn.onclick = () => handleLockToggle(student.id);
+
+        studentInfoModal.classList.remove('hidden');
+    }
+
+    /**
+     * Closes the student info modal.
+     */
+    function closeStudentInfoModal() {
+        studentInfoModal.classList.add('hidden');
+    }
+
+    // --- EVENT LISTENERS ---
+    searchInput.addEventListener('keyup', handleSearch);
+    
+    tableBody.addEventListener('click', function(e) {
+        const unsubmitButton = e.target.closest('.unsubmit-btn');
+        const lockButton = e.target.closest('.lock-btn');
+        const studentNameButton = e.target.closest('.student-name-btn');
+        const moreActionsButton = e.target.closest('.more-actions-btn');
+
+        if (unsubmitButton && !unsubmitButton.disabled) {
+            const studentId = parseInt(unsubmitButton.dataset.studentId);
+            const studentName = unsubmitButton.dataset.studentName;
+            openUnsubmitModal(studentId, studentName);
+        } else if (lockButton) {
+            const studentId = parseInt(lockButton.dataset.studentId);
+            handleLockToggle(studentId);
+        } else if (studentNameButton) {
+            const studentId = parseInt(studentNameButton.dataset.studentId);
+            openStudentInfoModal(studentId);
+        } else if (moreActionsButton) {
+            const studentId = parseInt(moreActionsButton.dataset.studentId);
+            openStudentInfoModal(studentId);
+        }
+    });
+
+    confirmUnsubmitBtn.addEventListener('click', handleUnsubmit);
+    cancelUnsubmitBtn.addEventListener('click', closeUnsubmitModal);
+    unsubmitModal.addEventListener('click', (e) => e.target === unsubmitModal && closeUnsubmitModal());
+    
+    closeStudentInfoBtn.addEventListener('click', closeStudentInfoModal);
+    okStudentInfoBtn.addEventListener('click', closeStudentInfoModal);
+    studentInfoModal.addEventListener('click', (e) => e.target === studentInfoModal && closeStudentInfoModal());
+
+
+    // --- INITIALIZATION ---
+    // Initial render of the dashboard on page load.
+    renderTable(students);
+    updateOverview(students);
+
+</script>
+
+</body>
+</html>
