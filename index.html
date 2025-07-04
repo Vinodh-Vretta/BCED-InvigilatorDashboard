@@ -74,7 +74,7 @@
                 <div class="flex items-center space-x-6">
                     <div>
                         <h1 class="text-xl font-bold text-gray-800">Grade 10 Numeracy Assessment</h1>
-                        <p class="text-sm text-gray-500">Riverside Secondary School • Thursday, July 3, 2025</p>
+                        <p id="school-date-info" class="text-sm text-gray-500">Loading...</p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -279,6 +279,7 @@
     const loginPage = document.getElementById('login-page');
     const dashboardPage = document.getElementById('dashboard-page');
     const loginForm = document.getElementById('login-form');
+    const schoolDateInfo = document.getElementById('school-date-info');
     
     const tableBody = document.getElementById('student-table-body');
     const searchInput = document.getElementById('search-input');
@@ -293,6 +294,30 @@
     const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
     const modalUnsubmitBtn = document.getElementById('modal-unsubmit-btn');
     const modalLockBtn = document.getElementById('modal-lock-btn');
+
+    // --- UTILITY FUNCTIONS ---
+    
+    /**
+     * Gets the current date formatted as a readable string
+     */
+    function getCurrentDate() {
+        const now = new Date();
+        const options = { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        };
+        return now.toLocaleDateString('en-US', options);
+    }
+
+    /**
+     * Updates the school and date information in the dashboard header
+     */
+    function updateSchoolDateInfo(schoolName) {
+        const currentDate = getCurrentDate();
+        schoolDateInfo.textContent = `${schoolName} • ${currentDate}`;
+    }
 
     // --- FUNCTIONS ---
 
@@ -501,8 +526,20 @@
     // --- EVENT LISTENERS ---
     loginForm.addEventListener('submit', function(e) {
         e.preventDefault(); // Prevent actual form submission
+        
+        // Get the selected school name
+        const selectedSchool = document.getElementById('school-name').value;
+        
+        // Update the dashboard with the selected school and current date
+        updateSchoolDateInfo(selectedSchool);
+        
+        // Show dashboard and hide login
         loginPage.classList.add('hidden');
         dashboardPage.classList.remove('hidden');
+        
+        // Initialize the dashboard data
+        renderTable(students);
+        updateOverview(students);
     });
     
     searchInput.addEventListener('keyup', handleSearch);
@@ -536,12 +573,6 @@
     closeStudentInfoBtn.addEventListener('click', closeStudentInfoModal);
     okStudentInfoBtn.addEventListener('click', closeStudentInfoModal);
     studentInfoModal.addEventListener('click', (e) => e.target === studentInfoModal && closeStudentInfoModal());
-
-
-    // --- INITIALIZATION ---
-    // Initial render of the dashboard on page load.
-    renderTable(students);
-    updateOverview(students);
 
 </script>
 
