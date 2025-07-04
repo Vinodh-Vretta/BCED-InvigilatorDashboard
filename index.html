@@ -134,8 +134,7 @@
 
             <!-- Student Table -->
             <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-                <div class="p-4 flex justify-between items-center">
-                    <span id="student-sessions-title" class="text-sm text-gray-500">(20 of 20)</span>
+                <div class="p-4 flex justify-end items-center">
                     <div class="relative">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                         <input type="text" id="search-input" placeholder="Search by Student Name or PEN" class="pl-10 pr-4 py-2 border rounded-lg w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -372,7 +371,6 @@
         document.getElementById('ready-to-start').textContent = studentData.filter(s => s.status === 'Ready to Start').length;
         document.getElementById('complete').textContent = studentData.filter(s => s.status === 'Complete').length;
         document.getElementById('issues').textContent = studentData.filter(s => s.hasIssue).length;
-        document.getElementById('student-sessions-title').textContent = `(${studentData.length} of ${initialStudents.length})`;
     }
 
     /**
