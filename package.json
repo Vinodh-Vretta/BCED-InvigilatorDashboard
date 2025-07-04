@@ -1,0 +1,14 @@
+{
+  "name": "bced-invigilation-dashboard",
+  "version": "1.0.0",
+  "description": "BCED Invigilation Dashboard",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx vite --host",
+    "build": "npx vite build",
+    "preview": "npx vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
