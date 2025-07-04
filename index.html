@@ -69,30 +69,24 @@
     <!-- Dashboard Page (Initially Hidden) -->
     <div id="dashboard-page" class="hidden">
         <div class="max-w-7xl mx-auto">
-            <!-- Header -->
-            <header class="flex justify-between items-center mb-6">
+            <!-- Streamlined Header -->
+            <header class="flex justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-sm">
                 <div>
-                    <h1 class="text-xl font-bold text-gray-800">BCED Invigilation</h1>
-                    <p class="text-sm text-gray-500">Modified Invigilation View</p>
+                    <h1 class="text-xl font-bold text-gray-800">Grade 10 Numeracy Assessment</h1>
+                    <p id="school-date-info" class="text-sm text-gray-500">Loading...</p>
                 </div>
-                <div class="flex items-center space-x-4">
-                     <h2 class="hidden sm:block text-lg font-semibold text-gray-700">Grade 10 Numeracy Assessment</h2>
-                     <p class="hidden lg:block text-sm text-gray-500">Riverside Secondary School • Thursday, July 3, 2025</p>
-                    <div class="flex items-center space-x-4 border-l pl-4">
-                        <button class="text-gray-500 hover:text-gray-700">
-                            <i class="fas fa-bell"></i>
-                        </button>
-                        <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">A</div>
-                        <p class="hidden sm:block text-sm text-gray-600">Proctor Admin<br><span class="text-xs text-green-500">Active Session</span></p>
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-sm">A</div>
+                    <div class="hidden sm:block">
+                        <p class="text-sm font-medium text-gray-700">Proctor Admin</p>
+                        <p class="text-xs text-green-500">Active Session</p>
                     </div>
                 </div>
             </header>
 
-            <!-- Session Overview -->
+            <!-- Overview Cards -->
             <div class="mb-6">
-                <h2 class="text-lg font-semibold text-gray-800">Session Overview</h2>
-                <p class="text-sm text-gray-500 mb-4">Monitor and manage student exam sessions in real-time.</p>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
                         <div>
                             <p class="text-sm text-gray-500">Total Students</p>
@@ -116,28 +110,20 @@
                     </div>
                     <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-gray-500">Complete</p>
-                            <p id="complete" class="text-2xl font-bold text-gray-800">0</p>
+                            <p class="text-sm text-gray-500">Submitted</p>
+                            <p id="submitted" class="text-2xl font-bold text-gray-800">0</p>
                         </div>
                         <i class="fas fa-check-circle text-2xl text-green-400"></i>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-500">Issues</p>
-                            <p id="issues" class="text-2xl font-bold text-red-500">0</p>
-                        </div>
-                        <i class="fas fa-exclamation-triangle text-2xl text-red-400"></i>
                     </div>
                 </div>
             </div>
 
-            <!-- Student Sessions Table -->
+            <!-- Student Table -->
             <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-                <div class="p-4 flex justify-between items-center">
-                    <h3 id="student-sessions-title" class="text-md font-semibold text-gray-800">Student Sessions (20 of 20)</h3>
-                    <div class="relative">
+                <div class="p-4 flex justify-start items-center">
+                    <div class="relative w-full max-w-sm">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                        <input type="text" id="search-input" placeholder="Search by Student Name or PEN" class="pl-10 pr-4 py-2 border rounded-lg w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="search-input" placeholder="Search by Student Name or PEN" class="pl-10 pr-4 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
                 <div class="overflow-x-auto">
@@ -235,9 +221,6 @@
                             </button>
                             <div id="modal-scan-issue" class="text-red-500 text-xs mt-1"></div>
                         </div>
-                        <div>
-                           <button id="modal-lock-btn" class="text-white px-3 py-1 rounded-md text-xs font-semibold"></button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -251,26 +234,26 @@
 <script>
     // --- DATA ---
     const initialStudents = [
-        { id: 1, pen: '123456789', firstName: 'Emma', lastName: 'Thompson', gender: 'Female', accommodations: 'Extra time', notes: 'Seems anxious', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '2 of 3', hasIssue: false, issueType: null },
-        { id: 2, pen: '987654321', firstName: 'Michael', lastName: 'Chen', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', section: null, hasIssue: false, issueType: null },
-        { id: 3, pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', gender: 'Female', accommodations: 'Separate setting', notes: '', assistiveTech: 'Screen reader', nonParticipation: 'N/A', sessionActive: true, status: 'Complete', section: null, hasIssue: true, issueType: 'Scan Issue' },
-        { id: 4, pen: '789123456', firstName: 'David', lastName: 'Rodriguez', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'In Progress', section: '1 of 3', hasIssue: true, issueType: 'Locked' },
-        { id: 5, pen: '321654987', firstName: 'Jessica', lastName: 'Wu', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '3 of 3', hasIssue: false, issueType: null },
-        { id: 6, pen: '234567890', firstName: 'Amanda', lastName: 'Singh', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Complete', section: null, hasIssue: false, issueType: null },
-        { id: 7, pen: '345678901', firstName: 'James', lastName: 'Wilson', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', section: null, hasIssue: false, issueType: null },
-        { id: 8, pen: '567890123', firstName: 'Priya', lastName: 'Patel', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '1 of 3', hasIssue: false, issueType: null },
-        { id: 9, pen: '678901234', firstName: 'Marcus', lastName: 'Thompson', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Complete', section: null, hasIssue: true, issueType: 'Scan Issue' },
-        { id: 10, pen: '890123456', firstName: 'Lily', lastName: 'Zhang', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '2 of 3', hasIssue: false, issueType: null },
-        { id: 11, pen: '901234567', firstName: 'Noah', lastName: 'Williams', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', section: null, hasIssue: false, issueType: null },
-        { id: 12, pen: '012345678', firstName: 'Sofia', lastName: 'Martinez', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'In Progress', section: '1 of 3', hasIssue: true, issueType: 'Locked' },
-        { id: 13, pen: '135791357', firstName: 'Ethan', lastName: 'Brown', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '3 of 3', hasIssue: false, issueType: null },
-        { id: 14, pen: '246802468', firstName: 'Ava', lastName: 'Taylor', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Complete', section: null, hasIssue: false, issueType: null },
-        { id: 15, pen: '369741852', firstName: 'Liam', lastName: 'Anderson', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', section: null, hasIssue: false, issueType: null },
-        { id: 16, pen: '741963852', firstName: 'Mia', lastName: 'Garcia', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '1 of 3', hasIssue: true, issueType: 'Scan Issue' },
-        { id: 17, pen: '852963741', firstName: 'Oliver', lastName: 'Davis', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Complete', section: null, hasIssue: false, issueType: null },
-        { id: 18, pen: '963741852', firstName: 'Isabella', lastName: 'Moore', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '2 of 3', hasIssue: false, issueType: null },
-        { id: 19, pen: '147258369', firstName: 'Lucas', lastName: 'Smith', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', section: null, hasIssue: false, issueType: null },
-        { id: 20, pen: '258369147', firstName: 'Charlotte', lastName: 'Lee', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'Ready to Start', section: null, hasIssue: true, issueType: 'Locked' },
+        { id: 1, pen: '123456789', firstName: 'Emma', lastName: 'Thompson', gender: 'Female', accommodations: 'Extra time', notes: 'Seems anxious', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', hasIssue: false, issueType: null },
+        { id: 2, pen: '987654321', firstName: 'Michael', lastName: 'Chen', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', hasIssue: false, issueType: null },
+        { id: 3, pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', gender: 'Female', accommodations: 'Separate setting', notes: '', assistiveTech: 'Screen reader', nonParticipation: 'N/A', sessionActive: true, status: 'Submitted', hasIssue: true, issueType: 'Scan Issue' },
+        { id: 4, pen: '789123456', firstName: 'David', lastName: 'Rodriguez', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'In Progress', hasIssue: false, issueType: null },
+        { id: 5, pen: '321654987', firstName: 'Jessica', lastName: 'Wu', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', hasIssue: false, issueType: null },
+        { id: 6, pen: '234567890', firstName: 'Amanda', lastName: 'Singh', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Submitted', hasIssue: false, issueType: null },
+        { id: 7, pen: '345678901', firstName: 'James', lastName: 'Wilson', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', hasIssue: false, issueType: null },
+        { id: 8, pen: '567890123', firstName: 'Priya', lastName: 'Patel', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', hasIssue: false, issueType: null },
+        { id: 9, pen: '678901234', firstName: 'Marcus', lastName: 'Thompson', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Submitted', hasIssue: true, issueType: 'Scan Issue' },
+        { id: 10, pen: '890123456', firstName: 'Lily', lastName: 'Zhang', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', hasIssue: false, issueType: null },
+        { id: 11, pen: '901234567', firstName: 'Noah', lastName: 'Williams', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', hasIssue: false, issueType: null },
+        { id: 12, pen: '012345678', firstName: 'Sofia', lastName: 'Martinez', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'In Progress', hasIssue: false, issueType: null },
+        { id: 13, pen: '135791357', firstName: 'Ethan', lastName: 'Brown', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', hasIssue: false, issueType: null },
+        { id: 14, pen: '246802468', firstName: 'Ava', lastName: 'Taylor', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Submitted', hasIssue: false, issueType: null },
+        { id: 15, pen: '369741852', firstName: 'Liam', lastName: 'Anderson', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', hasIssue: false, issueType: null },
+        { id: 16, pen: '741963852', firstName: 'Mia', lastName: 'Garcia', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', hasIssue: true, issueType: 'Scan Issue' },
+        { id: 17, pen: '852963741', firstName: 'Oliver', lastName: 'Davis', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Submitted', hasIssue: false, issueType: null },
+        { id: 18, pen: '963741852', firstName: 'Isabella', lastName: 'Moore', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', hasIssue: false, issueType: null },
+        { id: 19, pen: '147258369', firstName: 'Lucas', lastName: 'Smith', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', hasIssue: false, issueType: null },
+        { id: 20, pen: '258369147', firstName: 'Charlotte', lastName: 'Lee', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'Ready to Start', hasIssue: false, issueType: null },
     ];
     
     let students = [...initialStudents]; // Use a mutable copy for filtering
@@ -279,6 +262,7 @@
     const loginPage = document.getElementById('login-page');
     const dashboardPage = document.getElementById('dashboard-page');
     const loginForm = document.getElementById('login-form');
+    const schoolDateInfo = document.getElementById('school-date-info');
     
     const tableBody = document.getElementById('student-table-body');
     const searchInput = document.getElementById('search-input');
@@ -292,7 +276,30 @@
     const closeStudentInfoBtn = document.getElementById('close-student-info-modal');
     const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
     const modalUnsubmitBtn = document.getElementById('modal-unsubmit-btn');
-    const modalLockBtn = document.getElementById('modal-lock-btn');
+
+    // --- UTILITY FUNCTIONS ---
+    
+    /**
+     * Gets the current date formatted as a readable string
+     */
+    function getCurrentDate() {
+        const now = new Date();
+        const options = { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        };
+        return now.toLocaleDateString('en-US', options);
+    }
+
+    /**
+     * Updates the school and date information in the dashboard header
+     */
+    function updateSchoolDateInfo(schoolName) {
+        const currentDate = getCurrentDate();
+        schoolDateInfo.textContent = `${schoolName} • ${currentDate}`;
+    }
 
     // --- FUNCTIONS ---
 
@@ -311,22 +318,15 @@
         studentData.forEach(student => {
             const row = document.createElement('tr');
             row.className = 'bg-white border-b hover:bg-gray-50';
-            if (student.issueType === 'Locked') {
-                row.className = 'bg-red-50 border-b hover:bg-red-100';
-            }
 
             const sessionDotClass = student.sessionActive ? 'active' : 'inactive';
             
             let statusHtml = student.status;
-            if (student.status === 'In Progress' && student.section) {
-                statusHtml += ` - Section ${student.section}`;
-            }
             if (student.hasIssue && student.issueType === 'Scan Issue') {
                 statusHtml += ` - <span class="scan-issue">Scan Issue</span>`;
             }
 
-            const unsubmitDisabled = student.status !== 'Complete';
-            const isLocked = student.issueType === 'Locked';
+            const unsubmitDisabled = student.status !== 'Submitted';
 
             row.innerHTML = `
                 <td class="px-6 py-4 font-medium text-gray-900">${student.pen}</td>
@@ -346,15 +346,6 @@
                     >
                         <i class="fas fa-undo mr-1"></i> Unsubmit
                     </button>
-                    <button 
-                        class="lock-btn text-white px-3 py-1 rounded-md text-xs font-semibold ${isLocked ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-red-500 hover:bg-red-600'}"
-                        data-student-id="${student.id}"
-                    >
-                        ${isLocked ? '<i class="fas fa-unlock mr-1"></i> Unlock' : '<i class="fas fa-lock mr-1"></i> Lock'}
-                    </button>
-                    <button class="more-actions-btn text-gray-400 ml-1 hover:text-gray-600" title="More Actions" data-student-id="${student.id}">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
                 </td>
             `;
             tableBody.appendChild(row);
@@ -369,9 +360,7 @@
         document.getElementById('total-students').textContent = studentData.length;
         document.getElementById('in-progress').textContent = studentData.filter(s => s.status === 'In Progress').length;
         document.getElementById('ready-to-start').textContent = studentData.filter(s => s.status === 'Ready to Start').length;
-        document.getElementById('complete').textContent = studentData.filter(s => s.status === 'Complete').length;
-        document.getElementById('issues').textContent = studentData.filter(s => s.hasIssue).length;
-        document.getElementById('student-sessions-title').textContent = `Student Sessions (${studentData.length} of ${initialStudents.length})`;
+        document.getElementById('submitted').textContent = studentData.filter(s => s.status === 'Submitted').length;
     }
 
     /**
@@ -415,8 +404,7 @@
         const studentIndex = initialStudents.findIndex(s => s.id === studentId);
         if (studentIndex > -1) {
             initialStudents[studentIndex].status = 'Ready to Start';
-            // Only remove the issue if it wasn't a scan issue
-            if(initialStudents[studentIndex].issueType !== 'Scan Issue') {
+            if(initialStudents[studentIndex].issueType === 'Scan Issue') {
                 initialStudents[studentIndex].hasIssue = false;
                 initialStudents[studentIndex].issueType = null;
             }
@@ -426,30 +414,6 @@
         closeStudentInfoModal(); // Also close the info modal if open
     }
     
-    /**
-     * Toggles the lock state of a student's session.
-     * @param {number} studentId - The ID of the student.
-     */
-    function handleLockToggle(studentId) {
-        const studentIndex = initialStudents.findIndex(s => s.id === studentId);
-        if (studentIndex > -1) {
-            const student = initialStudents[studentIndex];
-            if (student.issueType === 'Locked') {
-                // Unlock the student
-                student.issueType = null;
-                student.hasIssue = false; // Assuming unlocking resolves the issue
-                student.sessionActive = true;
-            } else {
-                // Lock the student
-                student.issueType = 'Locked';
-                student.hasIssue = true;
-                student.sessionActive = false;
-            }
-        }
-        handleSearch(); // Re-render the table
-        closeStudentInfoModal(); // Close info modal if it was used
-    }
-
     /**
      * Opens the student info modal and populates it with data.
      * @param {number} studentId - The ID of the student.
@@ -469,7 +433,7 @@
         document.getElementById('info-non-participation').textContent = student.nonParticipation || 'N/A';
 
         // Handle the unsubmit button inside the modal
-        const unsubmitDisabled = student.status !== 'Complete';
+        const unsubmitDisabled = student.status !== 'Submitted';
         modalUnsubmitBtn.disabled = unsubmitDisabled;
         modalUnsubmitBtn.className = `text-white px-3 py-1 rounded-md text-xs font-semibold ${unsubmitDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`;
         modalUnsubmitBtn.onclick = () => openUnsubmitModal(student.id, `${student.firstName} ${student.lastName}`);
@@ -482,12 +446,6 @@
         } else {
             scanIssueEl.classList.add('hidden');
         }
-
-        // Handle the lock/unlock button inside the modal
-        const isLocked = student.issueType === 'Locked';
-        modalLockBtn.innerHTML = isLocked ? '<i class="fas fa-unlock mr-1"></i> Unlock Session' : '<i class="fas fa-lock mr-1"></i> Lock Session';
-        modalLockBtn.className = `text-white px-3 py-1 rounded-md text-xs font-semibold ${isLocked ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-red-500 hover:bg-red-600'}`;
-        modalLockBtn.onclick = () => handleLockToggle(student.id);
 
         studentInfoModal.classList.remove('hidden');
     }
@@ -502,30 +460,34 @@
     // --- EVENT LISTENERS ---
     loginForm.addEventListener('submit', function(e) {
         e.preventDefault(); // Prevent actual form submission
+        
+        // Get the selected school name
+        const selectedSchool = document.getElementById('school-name').value;
+        
+        // Update the dashboard with the selected school and current date
+        updateSchoolDateInfo(selectedSchool);
+        
+        // Show dashboard and hide login
         loginPage.classList.add('hidden');
         dashboardPage.classList.remove('hidden');
+        
+        // Initialize the dashboard data
+        renderTable(students);
+        updateOverview(students);
     });
     
     searchInput.addEventListener('keyup', handleSearch);
     
     tableBody.addEventListener('click', function(e) {
         const unsubmitButton = e.target.closest('.unsubmit-btn');
-        const lockButton = e.target.closest('.lock-btn');
         const studentNameButton = e.target.closest('.student-name-btn');
-        const moreActionsButton = e.target.closest('.more-actions-btn');
 
         if (unsubmitButton && !unsubmitButton.disabled) {
             const studentId = parseInt(unsubmitButton.dataset.studentId);
             const studentName = unsubmitButton.dataset.studentName;
             openUnsubmitModal(studentId, studentName);
-        } else if (lockButton) {
-            const studentId = parseInt(lockButton.dataset.studentId);
-            handleLockToggle(studentId);
         } else if (studentNameButton) {
             const studentId = parseInt(studentNameButton.dataset.studentId);
-            openStudentInfoModal(studentId);
-        } else if (moreActionsButton) {
-            const studentId = parseInt(moreActionsButton.dataset.studentId);
             openStudentInfoModal(studentId);
         }
     });
@@ -537,12 +499,6 @@
     closeStudentInfoBtn.addEventListener('click', closeStudentInfoModal);
     okStudentInfoBtn.addEventListener('click', closeStudentInfoModal);
     studentInfoModal.addEventListener('click', (e) => e.target === studentInfoModal && closeStudentInfoModal());
-
-
-    // --- INITIALIZATION ---
-    // Initial render of the dashboard on page load.
-    renderTable(students);
-    updateOverview(students);
 
 </script>
 
