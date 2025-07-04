@@ -28,93 +28,134 @@
 </head>
 <body class="p-4 sm:p-6 md:p-8">
 
-    <div class="max-w-7xl mx-auto">
-        <!-- Header -->
-        <header class="flex justify-between items-center mb-6">
-            <div>
-                <h1 class="text-xl font-bold text-gray-800">BCED Invigilation</h1>
-                <p class="text-sm text-gray-500">Modified Invigilation View</p>
-            </div>
-            <div class="flex items-center space-x-4">
-                 <h2 class="hidden sm:block text-lg font-semibold text-gray-700">Grade 10 Numeracy Assessment</h2>
-                 <p class="hidden lg:block text-sm text-gray-500">Riverside Secondary School • Thursday, July 3, 2025</p>
-                <div class="flex items-center space-x-4 border-l pl-4">
-                    <button class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-bell"></i>
-                    </button>
-                    <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">A</div>
-                    <p class="hidden sm:block text-sm text-gray-600">Proctor Admin<br><span class="text-xs text-green-500">Active Session</span></p>
-                </div>
-            </div>
-        </header>
-
-        <!-- Session Overview -->
-        <div class="mb-6">
-            <h2 class="text-lg font-semibold text-gray-800">Session Overview</h2>
-            <p class="text-sm text-gray-500 mb-4">Monitor and manage student exam sessions in real-time.</p>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500">Total Students</p>
-                        <p id="total-students" class="text-2xl font-bold text-gray-800">0</p>
+    <!-- Login Page -->
+    <div id="login-page">
+        <div class="min-h-[80vh] flex items-center justify-center">
+            <div class="max-w-md w-full bg-white p-8 rounded-xl shadow-md">
+                <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">BCED Assessment Invigilation</h2>
+                <form id="login-form">
+                    <div class="space-y-6">
+                        <div>
+                            <label for="school-district" class="block text-sm font-medium text-gray-700">School District</label>
+                            <select id="school-district" name="school-district" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <option>Saanich</option>
+                                <option>Vancouver</option>
+                                <option>Surrey</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="school-name" class="block text-sm font-medium text-gray-700">School Name</label>
+                            <select id="school-name" name="school-name" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <option>Mount Douglas Secondary</option>
+                                <option>Oak Bay High School</option>
+                                <option>Lambrick Park Secondary</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="session-code" class="block text-sm font-medium text-gray-700">Assessment Session Code/Password</label>
+                            <input type="password" id="session-code" name="session-code" value="12345" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Enter Session
+                            </button>
+                        </div>
                     </div>
-                    <i class="fas fa-users text-2xl text-gray-300"></i>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500">In Progress</p>
-                        <p id="in-progress" class="text-2xl font-bold text-gray-800">0</p>
-                    </div>
-                    <i class="fas fa-spinner fa-spin text-2xl text-blue-400"></i>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500">Ready to Start</p>
-                        <p id="ready-to-start" class="text-2xl font-bold text-gray-800">0</p>
-                    </div>
-                    <i class="fas fa-hourglass-start text-2xl text-yellow-400"></i>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500">Complete</p>
-                        <p id="complete" class="text-2xl font-bold text-gray-800">0</p>
-                    </div>
-                    <i class="fas fa-check-circle text-2xl text-green-400"></i>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500">Issues</p>
-                        <p id="issues" class="text-2xl font-bold text-red-500">0</p>
-                    </div>
-                    <i class="fas fa-exclamation-triangle text-2xl text-red-400"></i>
-                </div>
+                </form>
             </div>
         </div>
+    </div>
 
-        <!-- Student Sessions Table -->
-        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div class="p-4 flex justify-between items-center">
-                <h3 id="student-sessions-title" class="text-md font-semibold text-gray-800">Student Sessions (20 of 20)</h3>
-                <div class="relative">
-                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="search-input" placeholder="Search by Student Name or PEN" class="pl-10 pr-4 py-2 border rounded-lg w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <!-- Dashboard Page (Initially Hidden) -->
+    <div id="dashboard-page" class="hidden">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <header class="flex justify-between items-center mb-6">
+                <div>
+                    <h1 class="text-xl font-bold text-gray-800">BCED Invigilation</h1>
+                    <p class="text-sm text-gray-500">Modified Invigilation View</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                     <h2 class="hidden sm:block text-lg font-semibold text-gray-700">Grade 10 Numeracy Assessment</h2>
+                     <p class="hidden lg:block text-sm text-gray-500">Riverside Secondary School • Thursday, July 3, 2025</p>
+                    <div class="flex items-center space-x-4 border-l pl-4">
+                        <button class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                        <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">A</div>
+                        <p class="hidden sm:block text-sm text-gray-600">Proctor Admin<br><span class="text-xs text-green-500">Active Session</span></p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Session Overview -->
+            <div class="mb-6">
+                <h2 class="text-lg font-semibold text-gray-800">Session Overview</h2>
+                <p class="text-sm text-gray-500 mb-4">Monitor and manage student exam sessions in real-time.</p>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                    <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Total Students</p>
+                            <p id="total-students" class="text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                        <i class="fas fa-users text-2xl text-gray-300"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">In Progress</p>
+                            <p id="in-progress" class="text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                        <i class="fas fa-spinner fa-spin text-2xl text-blue-400"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Ready to Start</p>
+                            <p id="ready-to-start" class="text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                        <i class="fas fa-hourglass-start text-2xl text-yellow-400"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Complete</p>
+                            <p id="complete" class="text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                        <i class="fas fa-check-circle text-2xl text-green-400"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Issues</p>
+                            <p id="issues" class="text-2xl font-bold text-red-500">0</p>
+                        </div>
+                        <i class="fas fa-exclamation-triangle text-2xl text-red-400"></i>
+                    </div>
                 </div>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-gray-500">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">PEN</th>
-                            <th scope="col" class="px-6 py-3">First Name / Last Name</th>
-                            <th scope="col" class="px-6 py-3">Session</th>
-                            <th scope="col" class="px-6 py-3">Status</th>
-                            <th scope="col" class="px-6 py-3">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="student-table-body">
-                        <!-- Student rows will be injected here by JavaScript -->
-                    </tbody>
-                </table>
+
+            <!-- Student Sessions Table -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="p-4 flex justify-between items-center">
+                    <h3 id="student-sessions-title" class="text-md font-semibold text-gray-800">Student Sessions (20 of 20)</h3>
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="search-input" placeholder="Search by Student Name or PEN" class="pl-10 pr-4 py-2 border rounded-lg w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">PEN</th>
+                                <th scope="col" class="px-6 py-3">First Name / Last Name</th>
+                                <th scope="col" class="px-6 py-3">Session</th>
+                                <th scope="col" class="px-6 py-3">Status</th>
+                                <th scope="col" class="px-6 py-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-table-body">
+                            <!-- Student rows will be injected here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -209,7 +250,6 @@
 
 <script>
     // --- DATA ---
-    // This is the mock data for the students, now with more detail.
     const initialStudents = [
         { id: 1, pen: '123456789', firstName: 'Emma', lastName: 'Thompson', gender: 'Female', accommodations: 'Extra time', notes: 'Seems anxious', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', section: '2 of 3', hasIssue: false, issueType: null },
         { id: 2, pen: '987654321', firstName: 'Michael', lastName: 'Chen', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', section: null, hasIssue: false, issueType: null },
@@ -236,6 +276,10 @@
     let students = [...initialStudents]; // Use a mutable copy for filtering
 
     // --- DOM ELEMENTS ---
+    const loginPage = document.getElementById('login-page');
+    const dashboardPage = document.getElementById('dashboard-page');
+    const loginForm = document.getElementById('login-form');
+    
     const tableBody = document.getElementById('student-table-body');
     const searchInput = document.getElementById('search-input');
     
@@ -456,6 +500,12 @@
     }
 
     // --- EVENT LISTENERS ---
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent actual form submission
+        loginPage.classList.add('hidden');
+        dashboardPage.classList.remove('hidden');
+    });
+    
     searchInput.addEventListener('keyup', handleSearch);
     
     tableBody.addEventListener('click', function(e) {
