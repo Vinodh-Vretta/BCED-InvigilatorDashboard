@@ -91,9 +91,8 @@
                 </div>
             </header>
 
-            <!-- Session Overview -->
+            <!-- Overview Cards -->
             <div class="mb-6">
-                <h2 class="text-lg font-semibold text-gray-800 mb-4">Session Overview</h2>
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
                     <div class="bg-white p-4 rounded-lg shadow-sm flex items-center justify-between">
                         <div>
@@ -133,10 +132,10 @@
                 </div>
             </div>
 
-            <!-- Student Sessions Table -->
+            <!-- Student Table -->
             <div class="bg-white rounded-lg shadow-sm overflow-hidden">
                 <div class="p-4 flex justify-between items-center">
-                    <h3 id="student-sessions-title" class="text-md font-semibold text-gray-800">Student Sessions (20 of 20)</h3>
+                    <span id="student-sessions-title" class="text-sm text-gray-500">(20 of 20)</span>
                     <div class="relative">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                         <input type="text" id="search-input" placeholder="Search by Student Name or PEN" class="pl-10 pr-4 py-2 border rounded-lg w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -373,7 +372,7 @@
         document.getElementById('ready-to-start').textContent = studentData.filter(s => s.status === 'Ready to Start').length;
         document.getElementById('complete').textContent = studentData.filter(s => s.status === 'Complete').length;
         document.getElementById('issues').textContent = studentData.filter(s => s.hasIssue).length;
-        document.getElementById('student-sessions-title').textContent = `Student Sessions (${studentData.length} of ${initialStudents.length})`;
+        document.getElementById('student-sessions-title').textContent = `(${studentData.length} of ${initialStudents.length})`;
     }
 
     /**
