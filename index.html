@@ -78,8 +78,13 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-bell"></i>
+                    <button id="support-btn" class="text-gray-500 hover:text-gray-700 flex items-center space-x-1" title="Technical Support">
+                        <i class="fas fa-wrench"></i>
+                        <span class="hidden sm:inline text-sm">Support</span>
+                    </button>
+                    <button id="message-center-btn" class="text-gray-500 hover:text-gray-700 flex items-center space-x-1" title="Message Center">
+                        <i class="fas fa-envelope"></i>
+                        <span class="hidden sm:inline text-sm">Messages</span>
                     </button>
                     <div class="flex items-center space-x-2">
                         <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-sm">A</div>
@@ -155,6 +160,71 @@
                             <!-- Student rows will be injected here by JavaScript -->
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Modal -->
+    <div id="support-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-gray-900">Technical Support</h3>
+                <button id="close-support-modal" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h4 class="font-medium text-gray-900 mb-2">Information centre hours:</h4>
+                    <p class="text-sm text-gray-700 mb-1"><strong>Monday to Friday:</strong></p>
+                    <p class="text-sm text-gray-700 mb-3">8:00 a.m. to 5:00 p.m. (EST)</p>
+                    
+                    <div class="grid grid-cols-1 gap-2">
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-gray-700">Email</span>
+                            <a href="mailto:bced-support@vretta.com" class="text-sm text-blue-600 hover:underline">bced-support@vretta.com</a>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-gray-700">Phone Number</span>
+                            <a href="tel:1-888-327-7377" class="text-sm text-blue-600 hover:underline">1 888-327-7377</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 text-right">
+                <button id="dismiss-support" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-medium">
+                    Dismiss Notification
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Center Modal -->
+    <div id="message-center-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 h-3/4">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 class="text-lg font-medium text-gray-900">Message Centre</h3>
+                <button id="close-message-center-modal" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+            <div class="p-6 h-full overflow-y-auto">
+                <div class="mb-4">
+                    <div class="flex space-x-1 border-b">
+                        <button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-t-lg">All Messages</button>
+                        <button class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">Unread Messages</button>
+                        <button class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">Archived Messages</button>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="grid grid-cols-3 gap-4 text-sm font-medium text-gray-700 border-b pb-2 mb-4">
+                        <div>Subject</div>
+                        <div>Sent On</div>
+                        <div class="flex items-center">
+                            Archive
+                            <i class="fas fa-sort ml-1"></i>
+                        </div>
+                    </div>
+                    <div class="text-center py-20 text-gray-500">
+                        <p>No Rows To Show</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -294,6 +364,16 @@
     const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
     const modalUnsubmitBtn = document.getElementById('modal-unsubmit-btn');
     const modalLockBtn = document.getElementById('modal-lock-btn');
+
+    // Support and Message Center elements
+    const supportBtn = document.getElementById('support-btn');
+    const supportModal = document.getElementById('support-modal');
+    const closeSupportBtn = document.getElementById('close-support-modal');
+    const dismissSupportBtn = document.getElementById('dismiss-support');
+    
+    const messageCenterBtn = document.getElementById('message-center-btn');
+    const messageCenterModal = document.getElementById('message-center-modal');
+    const closeMessageCenterBtn = document.getElementById('close-message-center-modal');
 
     // --- UTILITY FUNCTIONS ---
     
@@ -523,6 +603,34 @@
         studentInfoModal.classList.add('hidden');
     }
 
+    /**
+     * Opens the support modal.
+     */
+    function openSupportModal() {
+        supportModal.classList.remove('hidden');
+    }
+
+    /**
+     * Closes the support modal.
+     */
+    function closeSupportModal() {
+        supportModal.classList.add('hidden');
+    }
+
+    /**
+     * Opens the message center modal.
+     */
+    function openMessageCenterModal() {
+        messageCenterModal.classList.remove('hidden');
+    }
+
+    /**
+     * Closes the message center modal.
+     */
+    function closeMessageCenterModal() {
+        messageCenterModal.classList.add('hidden');
+    }
+
     // --- EVENT LISTENERS ---
     loginForm.addEventListener('submit', function(e) {
         e.preventDefault(); // Prevent actual form submission
@@ -573,6 +681,16 @@
     closeStudentInfoBtn.addEventListener('click', closeStudentInfoModal);
     okStudentInfoBtn.addEventListener('click', closeStudentInfoModal);
     studentInfoModal.addEventListener('click', (e) => e.target === studentInfoModal && closeStudentInfoModal());
+
+    // Support and Message Center event listeners
+    supportBtn.addEventListener('click', openSupportModal);
+    closeSupportBtn.addEventListener('click', closeSupportModal);
+    dismissSupportBtn.addEventListener('click', closeSupportModal);
+    supportModal.addEventListener('click', (e) => e.target === supportModal && closeSupportModal());
+
+    messageCenterBtn.addEventListener('click', openMessageCenterModal);
+    closeMessageCenterBtn.addEventListener('click', closeMessageCenterModal);
+    messageCenterModal.addEventListener('click', (e) => e.target === messageCenterModal && closeMessageCenterModal());
 
 </script>
 
