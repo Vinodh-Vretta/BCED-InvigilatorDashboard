@@ -55,6 +55,9 @@
         .status-dot.online { background-color: #4caf50; }
         .status-dot.offline { background-color: #d32f2f; }
         .scan-issue { color: #d32f2f; font-weight: 500; }
+        .table-cell-border {
+            border-right: 1px solid #e0e0e0;
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -133,10 +136,11 @@
                     <table class="w-full text-sm text-left table-fixed">
                         <thead class="border-b-2 border-gray-300">
                             <tr>
-                                <th scope="col" class="py-2 px-3 font-medium text-gray-600 w-1/5">PEN</th>
-                                <th scope="col" class="py-2 px-3 font-medium text-gray-600 w-2/5">First Name / Last Name</th>
-                                <th scope="col" class="py-2 px-3 font-medium text-gray-600 w-1/5">Status</th>
-                                <th scope="col" class="py-2 px-3 font-medium text-gray-600 text-right w-1/5">Actions</th>
+                                <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[20%]">PEN</th>
+                                <th scope="col" class="py-2 px-3 font-medium text-blue-700 w-[40%]">
+                                    <button id="sort-by-name-btn" class="w-full text-left">First Name / Last Name <span id="sort-indicator">◆</span></button>
+                                </th>
+                                <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[40%]">Status</th>
                             </tr>
                         </thead>
                         <tbody id="student-table-body">
@@ -281,16 +285,17 @@
 <script>
     // --- DATA ---
     const initialStudents = [
-        { id: 1, pen: '123456789', firstName: 'Emma', lastName: 'Thompson', gender: 'Female', accommodations: 'Extra time', notes: 'Seems anxious', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', hasIssue: false, issueType: null },
-        { id: 2, pen: '987654321', firstName: 'Michael', lastName: 'Chen', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'Not Started', hasIssue: false, issueType: null },
-        { id: 3, pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', gender: 'Male', accommodations: 'Separate setting', notes: '', assistiveTech: 'Screen reader', nonParticipation: 'N/A', sessionActive: true, status: 'Submitted', hasIssue: true, issueType: 'Scan Issue' },
-        { id: 4, pen: '789123456', firstName: 'David', lastName: 'Rodriguez', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'In Progress', hasIssue: false, issueType: null },
-        { id: 5, pen: '321654987', firstName: 'Jessica', lastName: 'Wu', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', hasIssue: false, issueType: null },
-        { id: 6, pen: '234567890', firstName: 'Amanda', lastName: 'Singh', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Submitted', hasIssue: false, issueType: null },
-        { id: 7, pen: '345678901', firstName: 'James', lastName: 'Wilson', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', hasIssue: false, issueType: null },
+        { id: 1, pen: '123456789', firstName: 'Emma', lastName: 'Thompson', gender: 'Female', accommodations: 'Extra time', notes: 'Seems anxious', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', stage: 1, question: 3, time: 429566, hasIssue: false, issueType: null },
+        { id: 2, pen: '987654321', firstName: 'Michael', lastName: 'Chen', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'Submitted', stage: null, question: null, time: 8946, hasIssue: false, issueType: null },
+        { id: 3, pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', gender: 'Male', accommodations: 'Separate setting', notes: '', assistiveTech: 'Screen reader', nonParticipation: 'N/A', sessionActive: true, status: 'Submitted', stage: null, question: null, time: 394, hasIssue: true, issueType: 'Scan Issue' },
+        { id: 4, pen: '789123456', firstName: 'David', lastName: 'Rodriguez', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'Not Started', stage: null, question: null, time: 0, hasIssue: false, issueType: null },
+        { id: 5, pen: '321654987', firstName: 'Jessica', lastName: 'Wu', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Submitted', stage: null, question: null, time: 0, hasIssue: false, issueType: null },
+        { id: 6, pen: '234567890', firstName: 'Amanda', lastName: 'Singh', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Not Started', stage: null, question: null, time: 0, hasIssue: false, issueType: null },
+        { id: 7, pen: '345678901', firstName: 'James', lastName: 'Wilson', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', stage: null, question: null, time: 0, hasIssue: false, issueType: null },
     ];
     
     let students = [...initialStudents];
+    let sortDirection = 'none'; // 'none', 'asc', 'desc'
 
     // --- DOM ELEMENTS ---
     const loginPage = document.getElementById('login-page');
@@ -300,6 +305,8 @@
     const totalStudentsCount = document.getElementById('total-students-count');
     const tableBody = document.getElementById('student-table-body');
     const searchInput = document.getElementById('search-input');
+    const sortByNameBtn = document.getElementById('sort-by-name-btn');
+    const sortIndicator = document.getElementById('sort-indicator');
     
     const unsubmitModal = document.getElementById('unsubmit-modal');
     const studentNameUnsubmitModal = document.getElementById('student-name-modal');
@@ -323,7 +330,7 @@
         totalStudentsCount.textContent = studentData.length;
 
         if (studentData.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-gray-500">No students found.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-gray-500">No students found.</td></tr>`;
             return;
         }
 
@@ -332,11 +339,31 @@
             row.className = 'border-b border-gray-200 hover:bg-gray-50';
             
             const sessionDotClass = student.sessionActive ? 'online' : 'offline';
-            let statusHtml = student.status;
-            if (student.issueType === 'Scan Issue') {
-                statusHtml += ` - <span class="scan-issue">Scan Issue</span>`;
+            
+            let statusContent = '';
+            if (student.status === 'Submitted') {
+                statusContent = `<div>
+                                    <button 
+                                        class="unsubmit-btn text-blue-700 hover:underline text-sm font-medium"
+                                        data-student-id="${student.id}"
+                                        data-student-name="${student.firstName} ${student.lastName}"
+                                    >
+                                        Unsubmit
+                                    </button>
+                                    <p class="text-xs text-gray-500">${student.time} minute(s)</p>
+                                 </div>`;
+            } else if (student.status === 'In Progress') {
+                 statusContent = `<div>
+                                    <p class="font-medium">Stage ${student.stage}, Question ${student.question}</p>
+                                    <p class="text-xs text-gray-500">${student.time} minute(s)</p>
+                                 </div>`;
+            } else {
+                statusContent = `<p class="font-medium text-gray-700">${student.status}</p>`;
             }
-            const unsubmitDisabled = student.status !== 'Submitted';
+            
+            if (student.issueType === 'Scan Issue') {
+                statusContent += ` - <span class="scan-issue">Scan Issue</span>`;
+            }
 
             let statusBgClass = '';
             if (student.status === 'Ready to Start') {
@@ -346,40 +373,54 @@
             }
 
             row.innerHTML = `
-                <td class="py-3 px-3">
-                    <button class="show-pen-btn text-blue-600 hover:underline text-sm font-medium" data-pen="${student.pen}">Show PEN</button>
+                <td class="py-3 px-3 table-cell-border">
+                    <button class="show-pen-btn text-gray-800 hover:text-blue-600 text-sm font-medium" data-pen="${student.pen}">Show PEN</button>
                 </td>
-                <td class="py-3 px-3">
-                    <button class="student-name-btn text-blue-600 font-medium hover:underline" data-student-id="${student.id}">${student.firstName} ${student.lastName}</button>
-                    <div class="text-xs text-gray-600 mt-1">
+                <td class="py-3 px-3 table-cell-border">
+                    <button class="student-name-btn text-blue-700 font-medium hover:underline" data-student-id="${student.id}">${student.firstName} ${student.lastName}</button>
+                    <div class="text-xs text-gray-700 mt-1">
                         <span class="status-dot ${sessionDotClass}"></span>
                         <span>${student.sessionActive ? 'Online' : 'Offline'}</span>
                     </div>
                 </td>
-                <td class="py-3 px-3 ${statusBgClass}">${statusHtml}</td>
-                <td class="py-3 px-3 text-right">
-                    <button 
-                        class="unsubmit-btn text-blue-600 hover:underline disabled:text-gray-400 disabled:no-underline text-sm font-medium"
-                        data-student-id="${student.id}"
-                        data-student-name="${student.firstName} ${student.lastName}"
-                        ${unsubmitDisabled ? 'disabled' : ''}
-                    >
-                        Unsubmit
-                    </button>
-                </td>
+                <td class="py-3 px-3 ${statusBgClass}">${statusContent}</td>
             `;
             tableBody.appendChild(row);
         });
     }
 
-    function handleSearch() {
+    function updateView() {
         const searchTerm = searchInput.value.toLowerCase();
-        const filteredStudents = initialStudents.filter(student => 
+        let displayedStudents = [...initialStudents].filter(student => 
             `${student.firstName} ${student.lastName}`.toLowerCase().includes(searchTerm) || 
             student.pen.toLowerCase().includes(searchTerm)
         );
-        students = [...filteredStudents];
-        renderTable(students);
+
+        if (sortDirection !== 'none') {
+            displayedStudents.sort((a, b) => {
+                const nameA = `${a.lastName} ${a.firstName}`.toLowerCase();
+                const nameB = `${b.lastName} ${b.firstName}`.toLowerCase();
+                if (nameA < nameB) return sortDirection === 'asc' ? -1 : 1;
+                if (nameA > nameB) return sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+        
+        renderTable(displayedStudents);
+    }
+
+    function handleSort() {
+        if (sortDirection === 'none') {
+            sortDirection = 'asc';
+            sortIndicator.innerHTML = '▲';
+        } else if (sortDirection === 'asc') {
+            sortDirection = 'desc';
+            sortIndicator.innerHTML = '▼';
+        } else {
+            sortDirection = 'none';
+            sortIndicator.innerHTML = '◆';
+        }
+        updateView();
     }
     
     function openUnsubmitModal(studentId, studentName) {
@@ -402,7 +443,7 @@
                 initialStudents[studentIndex].issueType = null;
             }
         }
-        handleSearch();
+        updateView();
         closeUnsubmitModal();
     }
     
@@ -435,10 +476,11 @@
         
         loginPage.classList.add('hidden');
         dashboardPage.classList.remove('hidden');
-        renderTable(students);
+        updateView();
     });
     
-    searchInput.addEventListener('keyup', handleSearch);
+    searchInput.addEventListener('keyup', updateView);
+    sortByNameBtn.addEventListener('click', handleSort);
     
     tableBody.addEventListener('click', function(e) {
         const unsubmitButton = e.target.closest('.unsubmit-btn');
@@ -450,14 +492,14 @@
         if (showPenButton) {
             const pen = showPenButton.dataset.pen;
             const cell = showPenButton.parentElement;
-            cell.innerHTML = `<button class="hide-pen-btn font-medium cursor-pointer" data-pen="${pen}">${pen}</button>`;
+            cell.innerHTML = `<button class="hide-pen-btn font-medium cursor-pointer text-gray-800" data-pen="${pen}">${pen}</button>`;
         }
 
         const hidePenButton = e.target.closest('.hide-pen-btn');
         if (hidePenButton) {
             const pen = hidePenButton.dataset.pen;
             const cell = hidePenButton.parentElement;
-            cell.innerHTML = `<button class="show-pen-btn text-blue-600 hover:underline text-sm font-medium" data-pen="${pen}">Show PEN</button>`;
+            cell.innerHTML = `<button class="show-pen-btn text-gray-800 hover:text-blue-600 text-sm font-medium" data-pen="${pen}">Show PEN</button>`;
         }
         
         const studentNameButton = e.target.closest('.student-name-btn');
