@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCED Invigilation Dashboard - Reskinned</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5; /* Matching the light grey background */
+        }
+        .header-bar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .main-content {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        .btn-primary {
+            background-color: #2c5cc5;
+            color: white;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #234a9e;
+        }
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+         .btn-secondary:hover {
+            background-color: #d1d1d1;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+        }
+        .status-dot.online { background-color: #4caf50; }
+        .status-dot.offline { background-color: #d32f2f; }
+        .scan-issue { color: #d32f2f; font-weight: 500; }
+        .table-cell-border {
+            border-right: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Login Page -->
+    <div id="login-page">
+        <div class="min-h-screen flex items-center justify-center bg-gray-100">
+            <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">BCED Assessment Invigilation</h2>
+                <form id="login-form">
+                    <div class="space-y-6">
+                        <div>
+                            <label for="user-name" class="block text-sm font-medium text-gray-700">User Name</label>
+                            <input type="text" id="user-name" name="user-name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label for="school-district" class="block text-sm font-medium text-gray-700">School District</label>
+                            <select id="school-district" name="school-district" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                <option>Saanich</option>
+                                <option>Vancouver</option>
+                                <option>Surrey</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="school-name" class="block text-sm font-medium text-gray-700">School Name</label>
+                            <select id="school-name" name="school-name" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                <option>Mount Douglas Secondary</option>
+                                <option>Oak Bay High School</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="session-code" class="block text-sm font-medium text-gray-700">Assessment Session Code/Password</label>
+                            <input type="password" id="session-code" name="session-code" value="12345" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <button type="submit" class="w-full btn-primary py-2">
+                                Enter Session
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page (Initially Hidden) -->
+    <div id="dashboard-page" class="hidden">
+        <header class="header-bar px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4 text-sm">
+                <a href="#" class="text-gray-600 hover:text-blue-600">Classic Viewings</a>
+                <span>/</span>
+                <a href="#" class="text-gray-600 hover:text-blue-600">Testing Class</a>
+                 <span>/</span>
+                <span class="text-gray-800 font-medium">Sample Test</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="tech-support-btn" class="text-sm font-medium text-blue-600 hover:underline">Technical Support</button>
+                <button id="message-centre-btn" class="text-sm font-medium text-blue-600 hover:underline">Message Centre</button>
+            </div>
+        </header>
+
+        <main class="p-6">
+            <div class="main-content">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h1 class="text-2xl font-medium">BCED Numeracy Assessment</h1>
+                            <p id="school-date-info" class="text-sm text-gray-500 mt-1">Mount Douglas Secondary • July 8, 2025</p>
+                        </div>
+                    </div>
+                     <p class="text-sm text-gray-600 mt-4">
+                        Number of students with access to the assessment session: <strong id="total-students-count" class="font-medium text-gray-800">20</strong>
+                    </p>
+                </div>
+                
+                <div class="p-6">
+                     <div class="mb-4">
+                        <input type="text" id="search-input" placeholder="Search by Student Name or PEN" class="px-3 py-2 border border-gray-300 rounded-md w-full max-w-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    <table class="w-full text-sm text-left table-fixed">
+                        <thead class="border-b-2 border-gray-300">
+                            <tr>
+                                <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[20%]">PEN</th>
+                                <th scope="col" class="py-2 px-3 font-medium text-blue-700 w-[40%]">
+                                    <button id="sort-by-name-btn" class="w-full text-left">First Name / Last Name <span id="sort-indicator">◆</span></button>
+                                </th>
+                                <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[40%]">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-table-body">
+                            <!-- Student rows will be injected here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Unsubmit Confirmation Modal -->
+    <div id="unsubmit-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Unsubmit Assessment</h3>
+            <p class="text-sm text-gray-500 mb-6">
+                Are you sure you want to unsubmit the assessment for <strong id="student-name-modal"></strong>? This will allow them to re-enter and complete their test. This action cannot be undone.
+            </p>
+            <div class="flex justify-end space-x-4">
+                <button id="cancel-unsubmit" type="button" class="btn-secondary">Cancel</button>
+                <button id="confirm-unsubmit" type="button" class="btn-primary">Confirm Unsubmit</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Technical Support Modal -->
+    <div id="tech-support-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-lg mx-4">
+            <h3 class="text-xl font-medium text-gray-900 mb-4">Information centre hours:</h3>
+            <p class="text-lg text-gray-700 mb-6">
+                <strong class="font-semibold">Monday to Friday:</strong><br>
+                8:00 a.m. to 5:00 p.m. (EST)
+            </p>
+            <div class="border rounded-md overflow-hidden">
+                <table class="w-full">
+                    <tbody>
+                        <tr class="border-b">
+                            <td class="p-3 font-medium bg-gray-50 w-1/3">Email</td>
+                            <td class="p-3 text-blue-600 font-medium">bced-support@vretta.com</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-medium bg-gray-50 w-1/3">Phone Number</td>
+                            <td class="p-3 font-medium">1 888-327-7377</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-6 text-center">
+                <button id="dismiss-support-modal" class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-2 px-6 rounded-md">
+                    Dismiss Notification
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Centre Modal -->
+    <div id="message-centre-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 h-3/4 flex flex-col">
+            <div class="p-4 border-b">
+                <h2 class="text-xl font-semibold text-gray-800">Message Centre</h2>
+            </div>
+            <div class="p-4 border-b flex space-x-1">
+                <button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md">All Messages</button>
+                <button class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-md">Unread Messages</button>
+                <button class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-md">Archived Messages</button>
+            </div>
+            <div class="flex-grow p-4 overflow-y-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="py-2 px-3 text-left font-medium text-gray-600">Subject</th>
+                            <th class="py-2 px-3 text-left font-medium text-gray-600">Sent On</th>
+                            <th class="py-2 px-3 text-left font-medium text-gray-600">Archive</th>
+                        </tr>
+                    </thead>
+                </table>
+                <div class="flex items-center justify-center h-full text-gray-500">
+                    No Rows To Show
+                </div>
+            </div>
+            <div class="p-4 border-t">
+                <div class="w-full h-2 bg-gray-200 rounded-full">
+                    <div class="w-1/4 h-full bg-gray-400 rounded-full"></div>
+                </div>
+            </div>
+             <div class="text-center pb-4">
+                 <button id="dismiss-message-modal" class="text-sm font-medium text-blue-600 hover:underline">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- View/Edit Student Info Modal -->
+    <div id="student-info-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+            <div class="p-4 border-b">
+                <h2 class="text-xl font-semibold text-gray-800">View/Edit Student Info</h2>
+            </div>
+            <div class="p-6">
+                <table class="w-full text-sm">
+                    <tbody>
+                        <tr class="border-b">
+                            <td class="py-3 px-2 font-medium text-gray-600 w-1/3">PEN</td>
+                            <td id="info-pen" class="py-3 px-2"></td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="py-3 px-2 font-medium text-gray-600">First Name</td>
+                            <td id="info-first-name" class="py-3 px-2"></td>
+                        </tr>
+                         <tr class="border-b">
+                            <td class="py-3 px-2 font-medium text-gray-600">Last Name</td>
+                            <td id="info-last-name" class="py-3 px-2"></td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="py-3 px-2 font-medium text-gray-600">Gender</td>
+                            <td id="info-gender" class="py-3 px-2"></td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="py-3 px-2 font-medium text-gray-600">Accommodations</td>
+                            <td id="info-accommodations" class="py-3 px-2"></td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="py-3 px-2 font-medium text-gray-600">Notes from the Teacher</td>
+                            <td id="info-notes" class="py-3 px-2"></td>
+                        </tr>
+                         <tr class="border-b">
+                            <td class="py-3 px-2 font-medium text-gray-600">Assistive Technology</td>
+                            <td id="info-assistive-tech" class="py-3 px-2"></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-2 font-medium text-gray-600">Non-participation Status</td>
+                            <td id="info-non-participation" class="py-3 px-2"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-4 bg-gray-50 text-right border-t">
+                 <button id="ok-student-info-modal" class="btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // --- DATA ---
+    const initialStudents = [
+        { id: 1, pen: '123456789', firstName: 'Emma', lastName: 'Thompson', gender: 'Female', accommodations: 'Extra time', notes: 'Seems anxious', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', stage: 1, question: 3, time: 429566, hasIssue: false, issueType: null },
+        { id: 2, pen: '987654321', firstName: 'Michael', lastName: 'Chen', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'Submitted', stage: null, question: null, time: 8946, hasIssue: false, issueType: null },
+        { id: 3, pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', gender: 'Male', accommodations: 'Separate setting', notes: '', assistiveTech: 'Screen reader', nonParticipation: 'N/A', sessionActive: true, status: 'Submitted', stage: null, question: null, time: 394, hasIssue: true, issueType: 'Scan Issue' },
+        { id: 4, pen: '789123456', firstName: 'David', lastName: 'Rodriguez', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'Not Started', stage: null, question: null, time: 0, hasIssue: false, issueType: null },
+        { id: 5, pen: '321654987', firstName: 'Jessica', lastName: 'Wu', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Submitted', stage: null, question: null, time: 0, hasIssue: false, issueType: null },
+        { id: 6, pen: '234567890', firstName: 'Amanda', lastName: 'Singh', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Not Started', stage: null, question: null, time: 0, hasIssue: false, issueType: null },
+        { id: 7, pen: '345678901', firstName: 'James', lastName: 'Wilson', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', stage: null, question: null, time: 0, hasIssue: false, issueType: null },
+    ];
+    
+    let students = [...initialStudents];
+    let sortDirection = 'none'; // 'none', 'asc', 'desc'
+
+    // --- DOM ELEMENTS ---
+    const loginPage = document.getElementById('login-page');
+    const dashboardPage = document.getElementById('dashboard-page');
+    const loginForm = document.getElementById('login-form');
+    const schoolDateInfo = document.getElementById('school-date-info');
+    const totalStudentsCount = document.getElementById('total-students-count');
+    const tableBody = document.getElementById('student-table-body');
+    const searchInput = document.getElementById('search-input');
+    const sortByNameBtn = document.getElementById('sort-by-name-btn');
+    const sortIndicator = document.getElementById('sort-indicator');
+    
+    const unsubmitModal = document.getElementById('unsubmit-modal');
+    const studentNameUnsubmitModal = document.getElementById('student-name-modal');
+    const confirmUnsubmitBtn = document.getElementById('confirm-unsubmit');
+    const cancelUnsubmitBtn = document.getElementById('cancel-unsubmit');
+
+    const techSupportBtn = document.getElementById('tech-support-btn');
+    const techSupportModal = document.getElementById('tech-support-modal');
+    const dismissSupportModalBtn = document.getElementById('dismiss-support-modal');
+    
+    const messageCentreBtn = document.getElementById('message-centre-btn');
+    const messageCentreModal = document.getElementById('message-centre-modal');
+    const dismissMessageModalBtn = document.getElementById('dismiss-message-modal');
+
+    const studentInfoModal = document.getElementById('student-info-modal');
+    const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
+
+    // --- FUNCTIONS ---
+    function renderTable(studentData) {
+        tableBody.innerHTML = '';
+        totalStudentsCount.textContent = studentData.length;
+
+        if (studentData.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-gray-500">No students found.</td></tr>`;
+            return;
+        }
+
+        studentData.forEach(student => {
+            const row = document.createElement('tr');
+            row.className = 'border-b border-gray-200 hover:bg-gray-50';
+            
+            const sessionDotClass = student.sessionActive ? 'online' : 'offline';
+            
+            let statusContent = '';
+            if (student.status === 'Submitted') {
+                statusContent = `<div>
+                                    <button 
+                                        class="unsubmit-btn text-blue-700 hover:underline text-sm font-medium"
+                                        data-student-id="${student.id}"
+                                        data-student-name="${student.firstName} ${student.lastName}"
+                                    >
+                                        Unsubmit
+                                    </button>
+                                    <p class="text-xs text-gray-500">${student.time} minute(s)</p>
+                                 </div>`;
+            } else if (student.status === 'In Progress') {
+                 statusContent = `<div>
+                                    <p class="font-medium">Stage ${student.stage}, Question ${student.question}</p>
+                                    <p class="text-xs text-gray-500">${student.time} minute(s)</p>
+                                 </div>`;
+            } else {
+                statusContent = `<p class="font-medium text-gray-700">${student.status}</p>`;
+            }
+            
+            if (student.issueType === 'Scan Issue') {
+                statusContent += ` - <span class="scan-issue">Scan Issue</span>`;
+            }
+
+            let statusBgClass = '';
+            if (student.status === 'Ready to Start') {
+                statusBgClass = 'bg-[#fff3e0]'; // Light orange/peach
+            } else if (student.status === 'Not Started') {
+                statusBgClass = 'bg-gray-100'; // Light grey
+            }
+
+            row.innerHTML = `
+                <td class="py-3 px-3 table-cell-border">
+                    <button class="show-pen-btn text-gray-800 hover:text-blue-600 text-sm font-medium" data-pen="${student.pen}">Show PEN</button>
+                </td>
+                <td class="py-3 px-3 table-cell-border">
+                    <button class="student-name-btn text-blue-700 font-medium hover:underline" data-student-id="${student.id}">${student.firstName} ${student.lastName}</button>
+                    <div class="text-xs text-gray-700 mt-1">
+                        <span class="status-dot ${sessionDotClass}"></span>
+                        <span>${student.sessionActive ? 'Online' : 'Offline'}</span>
+                    </div>
+                </td>
+                <td class="py-3 px-3 ${statusBgClass}">${statusContent}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    function updateView() {
+        const searchTerm = searchInput.value.toLowerCase();
+        let displayedStudents = [...initialStudents].filter(student => 
+            `${student.firstName} ${student.lastName}`.toLowerCase().includes(searchTerm) || 
+            student.pen.toLowerCase().includes(searchTerm)
+        );
+
+        if (sortDirection !== 'none') {
+            displayedStudents.sort((a, b) => {
+                const nameA = `${a.lastName} ${a.firstName}`.toLowerCase();
+                const nameB = `${b.lastName} ${b.firstName}`.toLowerCase();
+                if (nameA < nameB) return sortDirection === 'asc' ? -1 : 1;
+                if (nameA > nameB) return sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+        
+        renderTable(displayedStudents);
+    }
+
+    function handleSort() {
+        if (sortDirection === 'none') {
+            sortDirection = 'asc';
+            sortIndicator.innerHTML = '▲';
+        } else if (sortDirection === 'asc') {
+            sortDirection = 'desc';
+            sortIndicator.innerHTML = '▼';
+        } else {
+            sortDirection = 'none';
+            sortIndicator.innerHTML = '◆';
+        }
+        updateView();
+    }
+    
+    function openUnsubmitModal(studentId, studentName) {
+        studentNameUnsubmitModal.textContent = studentName;
+        confirmUnsubmitBtn.dataset.studentId = studentId;
+        unsubmitModal.classList.remove('hidden');
+    }
+
+    function closeUnsubmitModal() {
+        unsubmitModal.classList.add('hidden');
+    }
+
+    function handleUnsubmit() {
+        const studentId = parseInt(confirmUnsubmitBtn.dataset.studentId);
+        const studentIndex = initialStudents.findIndex(s => s.id === studentId);
+        if (studentIndex > -1) {
+            initialStudents[studentIndex].status = 'Ready to Start';
+            if(initialStudents[studentIndex].issueType === 'Scan Issue') {
+                initialStudents[studentIndex].hasIssue = false;
+                initialStudents[studentIndex].issueType = null;
+            }
+        }
+        updateView();
+        closeUnsubmitModal();
+    }
+    
+    function openStudentInfoModal(studentId) {
+        const student = initialStudents.find(s => s.id === parseInt(studentId));
+        if (!student) return;
+
+        document.getElementById('info-pen').textContent = student.pen;
+        document.getElementById('info-first-name').textContent = student.firstName;
+        document.getElementById('info-last-name').textContent = student.lastName;
+        document.getElementById('info-gender').textContent = student.gender;
+        document.getElementById('info-accommodations').textContent = student.accommodations || 'N/A';
+        document.getElementById('info-notes').textContent = student.notes || 'N/A';
+        document.getElementById('info-assistive-tech').textContent = student.assistiveTech || 'N/A';
+        document.getElementById('info-non-participation').textContent = student.nonParticipation || 'N/A';
+
+        studentInfoModal.classList.remove('hidden');
+    }
+
+    function closeStudentInfoModal() {
+        studentInfoModal.classList.add('hidden');
+    }
+
+    // --- EVENT LISTENERS ---
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const selectedSchool = document.getElementById('school-name').value;
+        const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        schoolDateInfo.textContent = `${selectedSchool} • ${currentDate}`;
+        
+        loginPage.classList.add('hidden');
+        dashboardPage.classList.remove('hidden');
+        updateView();
+    });
+    
+    searchInput.addEventListener('keyup', updateView);
+    sortByNameBtn.addEventListener('click', handleSort);
+    
+    tableBody.addEventListener('click', function(e) {
+        const unsubmitButton = e.target.closest('.unsubmit-btn');
+        if (unsubmitButton && !unsubmitButton.disabled) {
+            openUnsubmitModal(unsubmitButton.dataset.studentId, unsubmitButton.dataset.studentName);
+        }
+
+        const showPenButton = e.target.closest('.show-pen-btn');
+        if (showPenButton) {
+            const pen = showPenButton.dataset.pen;
+            const cell = showPenButton.parentElement;
+            cell.innerHTML = `<button class="hide-pen-btn font-medium cursor-pointer text-gray-800" data-pen="${pen}">${pen}</button>`;
+        }
+
+        const hidePenButton = e.target.closest('.hide-pen-btn');
+        if (hidePenButton) {
+            const pen = hidePenButton.dataset.pen;
+            const cell = hidePenButton.parentElement;
+            cell.innerHTML = `<button class="show-pen-btn text-gray-800 hover:text-blue-600 text-sm font-medium" data-pen="${pen}">Show PEN</button>`;
+        }
+        
+        const studentNameButton = e.target.closest('.student-name-btn');
+        if (studentNameButton) {
+            openStudentInfoModal(studentNameButton.dataset.studentId);
+        }
+    });
+
+    confirmUnsubmitBtn.addEventListener('click', handleUnsubmit);
+    cancelUnsubmitBtn.addEventListener('click', closeUnsubmitModal);
+    unsubmitModal.addEventListener('click', (e) => e.target === unsubmitModal && closeUnsubmitModal());
+
+    techSupportBtn.addEventListener('click', () => {
+        techSupportModal.classList.remove('hidden');
+    });
+    dismissSupportModalBtn.addEventListener('click', () => {
+        techSupportModal.classList.add('hidden');
+    });
+    techSupportModal.addEventListener('click', (e) => {
+        if (e.target === techSupportModal) techSupportModal.classList.add('hidden');
+    });
+
+    messageCentreBtn.addEventListener('click', () => {
+        messageCentreModal.classList.remove('hidden');
+    });
+    dismissMessageModalBtn.addEventListener('click', () => {
+        messageCentreModal.classList.add('hidden');
+    });
+    messageCentreModal.addEventListener('click', (e) => {
+        if (e.target === messageCentreModal) messageCentreModal.classList.add('hidden');
+    });
+    
+    okStudentInfoBtn.addEventListener('click', closeStudentInfoModal);
+    studentInfoModal.addEventListener('click', (e) => {
+        if (e.target === studentInfoModal) closeStudentInfoModal();
+    });
+
+</script>
+
+</body>
+</html>
