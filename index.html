@@ -66,6 +66,42 @@
             padding: 8px 16px;
             text-align: center;
         }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 280px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -140px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -368,9 +404,16 @@
                     : "text-gray-400 text-sm font-medium cursor-not-allowed";
                 const buttonText = canUnsubmit ? "Unsubmit" : "Unsubmit (3hr limit exceeded)";
                 
-                statusContent = `<div>
-                                    <button class="${buttonClass}" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}" ${!canUnsubmit ? 'disabled' : ''}>${buttonText}</button>
-                                 </div>`;
+                if (canUnsubmit) {
+                    statusContent = `<div>
+                                        <button class="${buttonClass}" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">${buttonText}</button>
+                                     </div>`;
+                } else {
+                    statusContent = `<div class="tooltip">
+                                        <button class="${buttonClass}" disabled>${buttonText}</button>
+                                        <span class="tooltiptext">The 3-hour unsubmission window has expired. Please contact technical support at bced-support@vretta.com or 1-888-327-7377 for assistance with unsubmissions beyond this timeframe.</span>
+                                     </div>`;
+                }
             } else if (student.status === 'In Progress') {
                  statusContent = `<div>
                                     <p class="font-medium">Stage ${student.stage}, Question ${student.question}</p>
