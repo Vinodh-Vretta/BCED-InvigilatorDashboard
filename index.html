@@ -135,11 +135,6 @@
                             <h1 class="text-2xl font-medium">BCED Numeracy Assessment</h1>
                             <p id="school-date-info" class="text-sm text-gray-500 mt-1">Mount Douglas Secondary • July 8, 2025</p>
                         </div>
-                        <div class="access-code-box">
-                            <p class="text-xs text-gray-700">ACCESS CODE</p>
-                            <p class="text-xl font-bold tracking-widest text-pink-800">X3J4-M3H8</p>
-                            <p class="text-xs text-gray-700">FOR THIS ASSESSMENT SESSION</p>
-                        </div>
                     </div>
                      <p class="text-sm text-gray-600 mt-4">
                         Number of students with access to the assessment session: <strong id="total-students-count" class="font-medium text-gray-800">0</strong>
@@ -362,12 +357,10 @@
             if (student.status === 'Submitted') {
                 statusContent = `<div>
                                     <button class="unsubmit-btn text-blue-700 hover:underline text-sm font-medium" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">Unsubmit</button>
-                                    <p class="text-xs text-gray-500">${student.time} minute(s)</p>
                                  </div>`;
             } else if (student.status === 'In Progress') {
                  statusContent = `<div>
                                     <p class="font-medium">Stage ${student.stage}, Question ${student.question}</p>
-                                    <p class="text-xs text-gray-500">${student.time} minute(s)</p>
                                  </div>`;
             } else {
                 statusContent = `<p class="font-medium text-gray-700">${student.status}</p>`;
