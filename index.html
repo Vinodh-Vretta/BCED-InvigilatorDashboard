@@ -78,8 +78,8 @@
                 <form id="login-form">
                     <div class="space-y-6">
                         <div>
-                            <label for="access-code" class="block text-sm font-medium text-gray-700">Invigilator Access Code</label>
-                            <input type="text" id="access-code" name="access-code" value="PROCTOR-A1" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <label for="user-name" class="block text-sm font-medium text-gray-700">User Name</label>
+                            <input type="text" id="user-name" name="user-name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
                         <div>
                             <label for="school-district" class="block text-sm font-medium text-gray-700">School District</label>
@@ -299,13 +299,13 @@
 <script>
     // --- MOCK DATA ---
     const initialStudents = [
-        { id: '1', pen: '123456789', firstName: 'Emma', lastName: 'Thompson', group: 'Group A', connectionStatus: 'online', status: 'In Progress', stage: 1, question: 3, time: 429566 },
-        { id: '2', pen: '987654321', firstName: 'Michael', lastName: 'Chen', group: 'Group A', connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, time: 8946 },
-        { id: '3', pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', group: 'Group B', connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 394 },
-        { id: '4', pen: '789123456', firstName: 'David', lastName: 'Rodriguez', group: 'Group B', connectionStatus: 'disconnected', status: 'In Progress', stage: 2, question: 5, time: 0 },
-        { id: '5', pen: '321654987', firstName: 'Jessica', lastName: 'Wu', group: 'Group A', connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 0 },
-        { id: '6', pen: '234567890', firstName: 'Amanda', lastName: 'Singh', group: 'Group B', connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0 },
-        { id: '7', pen: '345678901', firstName: 'James', lastName: 'Wilson', group: 'Group A', connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0 },
+        { id: '1', pen: '123456789', firstName: 'Emma', lastName: 'Thompson', group: 'Group A', connectionStatus: 'online', status: 'In Progress', stage: 1, question: 3, startTime: Date.now() - (2 * 60 * 60 * 1000) }, // Started 2 hours ago
+        { id: '2', pen: '987654321', firstName: 'Michael', lastName: 'Chen', group: 'Group A', connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, startTime: Date.now() - (4 * 60 * 60 * 1000) }, // Started 4 hours ago
+        { id: '3', pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', group: 'Group B', connectionStatus: 'online', status: 'Submitted', stage: null, question: null, startTime: Date.now() - (1 * 60 * 60 * 1000) }, // Started 1 hour ago
+        { id: '4', pen: '789123456', firstName: 'David', lastName: 'Rodriguez', group: 'Group B', connectionStatus: 'disconnected', status: 'In Progress', stage: 2, question: 5, startTime: Date.now() - (5 * 60 * 60 * 1000) }, // Started 5 hours ago
+        { id: '5', pen: '321654987', firstName: 'Jessica', lastName: 'Wu', group: 'Group A', connectionStatus: 'online', status: 'Submitted', stage: null, question: null, startTime: Date.now() - (30 * 60 * 1000) }, // Started 30 minutes ago
+        { id: '6', pen: '234567890', firstName: 'Amanda', lastName: 'Singh', group: 'Group B', connectionStatus: 'online', status: 'Not Started', stage: null, question: null, startTime: null },
+        { id: '7', pen: '345678901', firstName: 'James', lastName: 'Wilson', group: 'Group A', connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, startTime: null },
     ];
     
     let students = [...initialStudents];
@@ -336,6 +336,13 @@
     const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
 
     // --- FUNCTIONS ---
+    function isUnsubmitAllowed(student) {
+        if (!student.startTime || student.status !== 'Submitted') return false;
+        const threeHoursInMs = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+        const timeSinceStart = Date.now() - student.startTime;
+        return timeSinceStart < threeHoursInMs;
+    }
+
     function renderTable(studentData) {
         tableBody.innerHTML = '';
         totalStudentsCount.textContent = studentData.length;
@@ -355,8 +362,14 @@
             
             let statusContent = '';
             if (student.status === 'Submitted') {
+                const canUnsubmit = isUnsubmitAllowed(student);
+                const buttonClass = canUnsubmit 
+                    ? "unsubmit-btn text-blue-700 hover:underline text-sm font-medium cursor-pointer" 
+                    : "text-gray-400 text-sm font-medium cursor-not-allowed";
+                const buttonText = canUnsubmit ? "Unsubmit" : "Unsubmit (3hr limit exceeded)";
+                
                 statusContent = `<div>
-                                    <button class="unsubmit-btn text-blue-700 hover:underline text-sm font-medium" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">Unsubmit</button>
+                                    <button class="${buttonClass}" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}" ${!canUnsubmit ? 'disabled' : ''}>${buttonText}</button>
                                  </div>`;
             } else if (student.status === 'In Progress') {
                  statusContent = `<div>
@@ -471,7 +484,7 @@
     
     tableBody.addEventListener('click', function(e) {
         const unsubmitButton = e.target.closest('.unsubmit-btn');
-        if (unsubmitButton) {
+        if (unsubmitButton && !unsubmitButton.disabled) {
             studentNameUnsubmitModal.textContent = unsubmitButton.dataset.studentName;
             confirmUnsubmitBtn.dataset.studentId = unsubmitButton.dataset.studentId;
             unsubmitModal.classList.remove('hidden');
@@ -505,7 +518,7 @@
     // Add missing student info modal functionality
     tableBody.addEventListener('click', function(e) {
         const unsubmitButton = e.target.closest('.unsubmit-btn');
-        if (unsubmitButton) {
+        if (unsubmitButton && !unsubmitButton.disabled) {
             studentNameUnsubmitModal.textContent = unsubmitButton.dataset.studentName;
             confirmUnsubmitBtn.dataset.studentId = unsubmitButton.dataset.studentId;
             unsubmitModal.classList.remove('hidden');
