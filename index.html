@@ -54,9 +54,17 @@
         }
         .status-dot.online { background-color: #4caf50; }
         .status-dot.offline { background-color: #d32f2f; }
+        .status-dot.disconnected { background-color: #ffc107; } /* Yellow for disconnected */
         .scan-issue { color: #d32f2f; font-weight: 500; }
         .table-cell-border {
             border-right: 1px solid #e0e0e0;
+        }
+        .access-code-box {
+            background-color: #fce4ec; /* Light pink background */
+            border: 1px solid #f8bbd0;
+            border-radius: 6px;
+            padding: 8px 16px;
+            text-align: center;
         }
     </style>
 </head>
@@ -70,8 +78,8 @@
                 <form id="login-form">
                     <div class="space-y-6">
                         <div>
-                            <label for="user-name" class="block text-sm font-medium text-gray-700">User Name</label>
-                            <input type="text" id="user-name" name="user-name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <label for="access-code" class="block text-sm font-medium text-gray-700">Invigilator Access Code</label>
+                            <input type="text" id="access-code" name="access-code" value="PROCTOR-A1" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
                         <div>
                             <label for="school-district" class="block text-sm font-medium text-gray-700">School District</label>
@@ -127,15 +135,28 @@
                             <h1 class="text-2xl font-medium">BCED Numeracy Assessment</h1>
                             <p id="school-date-info" class="text-sm text-gray-500 mt-1">Mount Douglas Secondary • July 8, 2025</p>
                         </div>
+                        <div class="access-code-box">
+                            <p class="text-xs text-gray-700">ACCESS CODE</p>
+                            <p class="text-xl font-bold tracking-widest text-pink-800">X3J4-M3H8</p>
+                            <p class="text-xs text-gray-700">FOR THIS ASSESSMENT SESSION</p>
+                        </div>
                     </div>
                      <p class="text-sm text-gray-600 mt-4">
-                        Number of students with access to the assessment session: <strong id="total-students-count" class="font-medium text-gray-800">20</strong>
+                        Number of students with access to the assessment session: <strong id="total-students-count" class="font-medium text-gray-800">0</strong>
                     </p>
                 </div>
                 
                 <div class="p-6">
-                     <div class="mb-4">
+                     <div class="flex justify-between items-center mb-4">
                         <input type="text" id="search-input" placeholder="Search by Student Name or PEN" class="px-3 py-2 border border-gray-300 rounded-md w-full max-w-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        <div>
+                            <label for="group-filter" class="text-sm font-medium text-gray-700 mr-2">Filter by Group:</label>
+                            <select id="group-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                <option value="all">All Groups</option>
+                                <option value="Group A">Group A</option>
+                                <option value="Group B">Group B</option>
+                            </select>
+                        </div>
                     </div>
                     <table class="w-full text-sm text-left table-fixed">
                         <thead class="border-b-2 border-gray-300">
@@ -156,7 +177,7 @@
         </main>
     </div>
 
-    <!-- Unsubmit Confirmation Modal -->
+    <!-- Modals remain the same -->
     <div id="unsubmit-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Unsubmit Assessment</h3>
@@ -169,8 +190,6 @@
             </div>
         </div>
     </div>
-    
-    <!-- Technical Support Modal -->
     <div id="tech-support-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-lg mx-4">
             <h3 class="text-xl font-medium text-gray-900 mb-4">Information centre hours:</h3>
@@ -199,8 +218,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Message Centre Modal -->
     <div id="message-centre-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 h-3/4 flex flex-col">
             <div class="p-4 border-b">
@@ -235,8 +252,6 @@
             </div>
         </div>
     </div>
-    
-    <!-- View/Edit Student Info Modal -->
     <div id="student-info-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
             <div class="p-4 border-b">
@@ -286,20 +301,39 @@
         </div>
     </div>
 
-<script>
-    // --- DATA ---
+<script type="module">
+    // Firebase Imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, getDocs, onSnapshot, setDoc, updateDoc, query, where, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- FIREBASE CONFIG & INITIALIZATION ---
+    // These variables are placeholders and will be provided by the environment.
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "...", authDomain: "...", projectId: "..." };
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'bced-demo-app';
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : undefined;
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let userId;
+    let studentsCollectionRef;
+    let unsubscribe; // To store the onSnapshot listener
+
+    // --- MOCK DATA ---
     const initialStudents = [
-        { id: 1, pen: '123456789', firstName: 'Emma', lastName: 'Thompson', gender: 'Female', accommodations: 'Extra time', notes: 'Seems anxious', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'In Progress', stage: 1, question: 3, time: 429566, hasIssue: false, issueType: null },
-        { id: 2, pen: '987654321', firstName: 'Michael', lastName: 'Chen', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'Submitted', stage: null, question: null, time: 8946, hasIssue: false, issueType: null },
-        { id: 3, pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', gender: 'Male', accommodations: 'Separate setting', notes: '', assistiveTech: 'Screen reader', nonParticipation: 'N/A', sessionActive: true, status: 'Submitted', stage: null, question: null, time: 394, hasIssue: true, issueType: 'Scan Issue' },
-        { id: 4, pen: '789123456', firstName: 'David', lastName: 'Rodriguez', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: false, status: 'Not Started', stage: null, question: null, time: 0, hasIssue: false, issueType: null },
-        { id: 5, pen: '321654987', firstName: 'Jessica', lastName: 'Wu', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Submitted', stage: null, question: null, time: 0, hasIssue: false, issueType: null },
-        { id: 6, pen: '234567890', firstName: 'Amanda', lastName: 'Singh', gender: 'Female', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Not Started', stage: null, question: null, time: 0, hasIssue: false, issueType: null },
-        { id: 7, pen: '345678901', firstName: 'James', lastName: 'Wilson', gender: 'Male', accommodations: 'None', notes: '', assistiveTech: 'None', nonParticipation: 'N/A', sessionActive: true, status: 'Ready to Start', stage: null, question: null, time: 0, hasIssue: false, issueType: null },
+        { id: '1', pen: '123456789', firstName: 'Emma', lastName: 'Thompson', group: 'Group A', connectionStatus: 'online', status: 'In Progress', stage: 1, question: 3, time: 429566 },
+        { id: '2', pen: '987654321', firstName: 'Michael', lastName: 'Chen', group: 'Group A', connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, time: 8946 },
+        { id: '3', pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', group: 'Group B', connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 394 },
+        { id: '4', pen: '789123456', firstName: 'David', lastName: 'Rodriguez', group: 'Group B', connectionStatus: 'disconnected', status: 'In Progress', stage: 2, question: 5, time: 0 },
+        { id: '5', pen: '321654987', firstName: 'Jessica', lastName: 'Wu', group: 'Group A', connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 0 },
+        { id: '6', pen: '234567890', firstName: 'Amanda', lastName: 'Singh', group: 'Group B', connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0 },
+        { id: '7', pen: '345678901', firstName: 'James', lastName: 'Wilson', group: 'Group A', connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0 },
     ];
     
-    let students = [...initialStudents];
-    let sortDirection = 'none'; // 'none', 'asc', 'desc'
+    let students = [];
+    let sortDirection = 'none';
 
     // --- DOM ELEMENTS ---
     const loginPage = document.getElementById('login-page');
@@ -309,26 +343,39 @@
     const totalStudentsCount = document.getElementById('total-students-count');
     const tableBody = document.getElementById('student-table-body');
     const searchInput = document.getElementById('search-input');
+    const groupFilter = document.getElementById('group-filter');
     const sortByNameBtn = document.getElementById('sort-by-name-btn');
     const sortIndicator = document.getElementById('sort-indicator');
-    
     const unsubmitModal = document.getElementById('unsubmit-modal');
     const studentNameUnsubmitModal = document.getElementById('student-name-modal');
     const confirmUnsubmitBtn = document.getElementById('confirm-unsubmit');
     const cancelUnsubmitBtn = document.getElementById('cancel-unsubmit');
-
     const techSupportBtn = document.getElementById('tech-support-btn');
     const techSupportModal = document.getElementById('tech-support-modal');
     const dismissSupportModalBtn = document.getElementById('dismiss-support-modal');
-    
     const messageCentreBtn = document.getElementById('message-centre-btn');
     const messageCentreModal = document.getElementById('message-centre-modal');
     const dismissMessageModalBtn = document.getElementById('dismiss-message-modal');
-
     const studentInfoModal = document.getElementById('student-info-modal');
     const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
 
     // --- FUNCTIONS ---
+    async function seedData() {
+        const snapshot = await getDocs(studentsCollectionRef);
+        if (snapshot.empty) {
+            console.log('No data found, seeding initial data...');
+            const batch = writeBatch(db);
+            initialStudents.forEach(student => {
+                const docRef = doc(studentsCollectionRef, student.id);
+                batch.set(docRef, student);
+            });
+            await batch.commit();
+            console.log('Seeding complete.');
+        } else {
+            console.log('Data already exists, skipping seed.');
+        }
+    }
+    
     function renderTable(studentData) {
         tableBody.innerHTML = '';
         totalStudentsCount.textContent = studentData.length;
@@ -342,18 +389,14 @@
             const row = document.createElement('tr');
             row.className = 'border-b border-gray-200 hover:bg-gray-50';
             
-            const sessionDotClass = student.sessionActive ? 'online' : 'offline';
+            let connectionStatusClass = 'offline';
+            if (student.connectionStatus === 'online') connectionStatusClass = 'online';
+            if (student.connectionStatus === 'disconnected') connectionStatusClass = 'disconnected';
             
             let statusContent = '';
             if (student.status === 'Submitted') {
                 statusContent = `<div>
-                                    <button 
-                                        class="unsubmit-btn text-blue-700 hover:underline text-sm font-medium"
-                                        data-student-id="${student.id}"
-                                        data-student-name="${student.firstName} ${student.lastName}"
-                                    >
-                                        Unsubmit
-                                    </button>
+                                    <button class="unsubmit-btn text-blue-700 hover:underline text-sm font-medium" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">Unsubmit</button>
                                     <p class="text-xs text-gray-500">${student.time} minute(s)</p>
                                  </div>`;
             } else if (student.status === 'In Progress') {
@@ -364,17 +407,10 @@
             } else {
                 statusContent = `<p class="font-medium text-gray-700">${student.status}</p>`;
             }
-            
-            if (student.issueType === 'Scan Issue') {
-                statusContent += ` - <span class="scan-issue">Scan Issue</span>`;
-            }
 
             let statusBgClass = '';
-            if (student.status === 'Ready to Start') {
-                statusBgClass = 'bg-[#fff3e0]'; // Light orange/peach
-            } else if (student.status === 'Not Started') {
-                statusBgClass = 'bg-gray-100'; // Light grey
-            }
+            if (student.status === 'Ready to Start') statusBgClass = 'bg-[#fff3e0]';
+            else if (student.status === 'Not Started') statusBgClass = 'bg-gray-100';
 
             row.innerHTML = `
                 <td class="py-3 px-3 table-cell-border">
@@ -383,8 +419,8 @@
                 <td class="py-3 px-3 table-cell-border">
                     <button class="student-name-btn text-blue-700 font-medium hover:underline" data-student-id="${student.id}">${student.firstName} ${student.lastName}</button>
                     <div class="text-xs text-gray-700 mt-1">
-                        <span class="status-dot ${sessionDotClass}"></span>
-                        <span>${student.sessionActive ? 'Online' : 'Offline'}</span>
+                        <span class="status-dot ${connectionStatusClass}"></span>
+                        <span>${student.connectionStatus.charAt(0).toUpperCase() + student.connectionStatus.slice(1)}</span>
                     </div>
                 </td>
                 <td class="py-3 px-3 ${statusBgClass}">${statusContent}</td>
@@ -393,12 +429,15 @@
         });
     }
 
-    function updateView() {
+    function updateView(studentData) {
+        let displayedStudents = [...studentData];
         const searchTerm = searchInput.value.toLowerCase();
-        let displayedStudents = [...initialStudents].filter(student => 
-            `${student.firstName} ${student.lastName}`.toLowerCase().includes(searchTerm) || 
-            student.pen.toLowerCase().includes(searchTerm)
-        );
+        if (searchTerm) {
+            displayedStudents = displayedStudents.filter(student => 
+                `${student.firstName} ${student.lastName}`.toLowerCase().includes(searchTerm) || 
+                student.pen.toLowerCase().includes(searchTerm)
+            );
+        }
 
         if (sortDirection !== 'none') {
             displayedStudents.sort((a, b) => {
@@ -413,134 +452,90 @@
         renderTable(displayedStudents);
     }
 
-    function handleSort() {
-        if (sortDirection === 'none') {
-            sortDirection = 'asc';
-            sortIndicator.innerHTML = '▲';
-        } else if (sortDirection === 'asc') {
-            sortDirection = 'desc';
-            sortIndicator.innerHTML = '▼';
-        } else {
-            sortDirection = 'none';
-            sortIndicator.innerHTML = '◆';
+    function setupRealtimeListener() {
+        if (unsubscribe) unsubscribe(); // Detach any old listener
+
+        let q = query(studentsCollectionRef);
+        const selectedGroup = groupFilter.value;
+        if (selectedGroup !== 'all') {
+            q = query(studentsCollectionRef, where("group", "==", selectedGroup));
         }
-        updateView();
+
+        unsubscribe = onSnapshot(q, (snapshot) => {
+            students = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+            updateView(students);
+        });
     }
     
-    function openUnsubmitModal(studentId, studentName) {
-        studentNameUnsubmitModal.textContent = studentName;
-        confirmUnsubmitBtn.dataset.studentId = studentId;
-        unsubmitModal.classList.remove('hidden');
-    }
-
-    function closeUnsubmitModal() {
-        unsubmitModal.classList.add('hidden');
-    }
-
-    function handleUnsubmit() {
-        const studentId = parseInt(confirmUnsubmitBtn.dataset.studentId);
-        const studentIndex = initialStudents.findIndex(s => s.id === studentId);
-        if (studentIndex > -1) {
-            initialStudents[studentIndex].status = 'Ready to Start';
-            if(initialStudents[studentIndex].issueType === 'Scan Issue') {
-                initialStudents[studentIndex].hasIssue = false;
-                initialStudents[studentIndex].issueType = null;
-            }
-        }
-        updateView();
+    async function handleUnsubmit() {
+        const studentId = confirmUnsubmitBtn.dataset.studentId;
+        const studentDocRef = doc(db, `artifacts/${appId}/users/${userId}/students`, studentId);
+        await updateDoc(studentDocRef, { status: 'Ready to Start' });
         closeUnsubmitModal();
     }
     
-    function openStudentInfoModal(studentId) {
-        const student = initialStudents.find(s => s.id === parseInt(studentId));
-        if (!student) return;
-
-        document.getElementById('info-pen').textContent = student.pen;
-        document.getElementById('info-first-name').textContent = student.firstName;
-        document.getElementById('info-last-name').textContent = student.lastName;
-        document.getElementById('info-gender').textContent = student.gender;
-        document.getElementById('info-accommodations').textContent = student.accommodations || 'N/A';
-        document.getElementById('info-notes').textContent = student.notes || 'N/A';
-        document.getElementById('info-assistive-tech').textContent = student.assistiveTech || 'N/A';
-        document.getElementById('info-non-participation').textContent = student.nonParticipation || 'N/A';
-
-        studentInfoModal.classList.remove('hidden');
-    }
-
-    function closeStudentInfoModal() {
-        studentInfoModal.classList.add('hidden');
+    // --- REALTIME SIMULATOR ---
+    function startRealtimeSimulator() {
+        setInterval(async () => {
+            if (students.length > 0) {
+                const randomIndex = Math.floor(Math.random() * students.length);
+                const randomStudent = students[randomIndex];
+                const statuses = ['online', 'disconnected', 'offline'];
+                const currentStatusIndex = statuses.indexOf(randomStudent.connectionStatus);
+                const nextStatus = statuses[(currentStatusIndex + 1) % statuses.length];
+                
+                const studentDocRef = doc(db, `artifacts/${appId}/users/${userId}/students`, randomStudent.id);
+                await updateDoc(studentDocRef, { connectionStatus: nextStatus });
+            }
+        }, 3000); // Update every 3 seconds
     }
 
     // --- EVENT LISTENERS ---
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        if (initialAuthToken) {
+            await signInWithCustomToken(auth, initialAuthToken);
+        } else {
+            await signInAnonymously(auth);
+        }
+        userId = auth.currentUser.uid;
+        studentsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/students`);
+
+        await seedData();
+        setupRealtimeListener();
+        
         const selectedSchool = document.getElementById('school-name').value;
         const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         schoolDateInfo.textContent = `${selectedSchool} • ${currentDate}`;
         
         loginPage.classList.add('hidden');
         dashboardPage.classList.remove('hidden');
-        updateView();
+        startRealtimeSimulator();
     });
     
-    searchInput.addEventListener('keyup', updateView);
-    sortByNameBtn.addEventListener('click', handleSort);
+    searchInput.addEventListener('keyup', () => updateView(students));
+    groupFilter.addEventListener('change', setupRealtimeListener);
+    sortByNameBtn.addEventListener('click', () => {
+        if (sortDirection === 'none') sortDirection = 'asc';
+        else if (sortDirection === 'asc') sortDirection = 'desc';
+        else sortDirection = 'none';
+        sortIndicator.innerHTML = sortDirection === 'asc' ? '▲' : sortDirection === 'desc' ? '▼' : '◆';
+        updateView(students);
+    });
     
     tableBody.addEventListener('click', function(e) {
         const unsubmitButton = e.target.closest('.unsubmit-btn');
-        if (unsubmitButton && !unsubmitButton.disabled) {
-            openUnsubmitModal(unsubmitButton.dataset.studentId, unsubmitButton.dataset.studentName);
-        }
-
-        const showPenButton = e.target.closest('.show-pen-btn');
-        if (showPenButton) {
-            const pen = showPenButton.dataset.pen;
-            const cell = showPenButton.parentElement;
-            cell.innerHTML = `<button class="hide-pen-btn font-medium cursor-pointer text-gray-800" data-pen="${pen}">${pen}</button>`;
-        }
-
-        const hidePenButton = e.target.closest('.hide-pen-btn');
-        if (hidePenButton) {
-            const pen = hidePenButton.dataset.pen;
-            const cell = hidePenButton.parentElement;
-            cell.innerHTML = `<button class="show-pen-btn text-gray-800 hover:text-blue-600 text-sm font-medium" data-pen="${pen}">Show PEN</button>`;
-        }
-        
-        const studentNameButton = e.target.closest('.student-name-btn');
-        if (studentNameButton) {
-            openStudentInfoModal(studentNameButton.dataset.studentId);
+        if (unsubmitButton) {
+            studentNameUnsubmitModal.textContent = unsubmitButton.dataset.studentName;
+            confirmUnsubmitBtn.dataset.studentId = unsubmitButton.dataset.studentId;
+            unsubmitModal.classList.remove('hidden');
         }
     });
 
     confirmUnsubmitBtn.addEventListener('click', handleUnsubmit);
-    cancelUnsubmitBtn.addEventListener('click', closeUnsubmitModal);
-    unsubmitModal.addEventListener('click', (e) => e.target === unsubmitModal && closeUnsubmitModal());
-
-    techSupportBtn.addEventListener('click', () => {
-        techSupportModal.classList.remove('hidden');
-    });
-    dismissSupportModalBtn.addEventListener('click', () => {
-        techSupportModal.classList.add('hidden');
-    });
-    techSupportModal.addEventListener('click', (e) => {
-        if (e.target === techSupportModal) techSupportModal.classList.add('hidden');
-    });
-
-    messageCentreBtn.addEventListener('click', () => {
-        messageCentreModal.classList.remove('hidden');
-    });
-    dismissMessageModalBtn.addEventListener('click', () => {
-        messageCentreModal.classList.add('hidden');
-    });
-    messageCentreModal.addEventListener('click', (e) => {
-        if (e.target === messageCentreModal) messageCentreModal.classList.add('hidden');
-    });
+    cancelUnsubmitBtn.addEventListener('click', () => unsubmitModal.classList.add('hidden'));
     
-    okStudentInfoBtn.addEventListener('click', closeStudentInfoModal);
-    studentInfoModal.addEventListener('click', (e) => {
-        if (e.target === studentInfoModal) closeStudentInfoModal();
-    });
-
 </script>
 
 </body>
