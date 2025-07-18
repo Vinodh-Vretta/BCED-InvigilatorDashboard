@@ -114,25 +114,6 @@
                 <form id="login-form">
                     <div class="space-y-6">
                         <div>
-                            <label for="user-name" class="block text-sm font-medium text-gray-700">User Name</label>
-                            <input type="text" id="user-name" name="user-name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        </div>
-                        <div>
-                            <label for="school-district" class="block text-sm font-medium text-gray-700">School District</label>
-                            <select id="school-district" name="school-district" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                <option>Saanich</option>
-                                <option>Vancouver</option>
-                                <option>Surrey</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="school-name" class="block text-sm font-medium text-gray-700">School Name</label>
-                            <select id="school-name" name="school-name" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                <option>Mount Douglas Secondary</option>
-                                <option>Oak Bay High School</option>
-                            </select>
-                        </div>
-                        <div>
                             <label for="session-code" class="block text-sm font-medium text-gray-700">Assessment Session Code/Password</label>
                             <input type="password" id="session-code" name="session-code" value="12345" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
@@ -169,7 +150,7 @@
                     <div class="flex justify-between items-start">
                         <div>
                             <h1 class="text-2xl font-medium">BCED Numeracy Assessment</h1>
-                            <p id="school-date-info" class="text-sm text-gray-500 mt-1">Mount Douglas Secondary • July 8, 2025</p>
+                            <p id="school-date-info" class="text-sm text-gray-500 mt-1">July 8, 2025</p>
                         </div>
                     </div>
                      <p class="text-sm text-gray-600 mt-4">
@@ -498,9 +479,8 @@
         
         updateView(students);
         
-        const selectedSchool = document.getElementById('school-name').value;
         const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        schoolDateInfo.textContent = `${selectedSchool} • ${currentDate}`;
+        schoolDateInfo.textContent = currentDate;
         
         loginPage.classList.add('hidden');
         dashboardPage.classList.remove('hidden');
