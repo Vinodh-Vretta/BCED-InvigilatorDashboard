@@ -283,25 +283,7 @@
         </div>
     </div>
 
-<script type="module">
-    // Firebase Imports
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, doc, getDocs, onSnapshot, setDoc, updateDoc, query, where, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    // --- FIREBASE CONFIG & INITIALIZATION ---
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "...", authDomain: "...", projectId: "..." };
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'bced-demo-app';
-    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : undefined;
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    let userId;
-    let studentsCollectionRef;
-    let unsubscribe;
-
+<script>
     // --- MOCK DATA ---
     const initialStudents = [
         { id: '1', pen: '123456789', firstName: 'Emma', lastName: 'Thompson', component: 'Numeracy 10', watched: true, connectionStatus: 'online', status: 'In Progress', stage: 1, question: 3, time: 429566, lastSeen: null },
@@ -313,7 +295,7 @@
         { id: '7', pen: '345678901', firstName: 'James', lastName: 'Wilson', component: 'Numeracy 10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 86400000 },
     ];
     
-    let students = [];
+    let students = [...initialStudents];
     let sortDirection = 'none';
 
     // --- DOM ELEMENTS ---
@@ -334,26 +316,10 @@
     const cancelUnsubmitBtn = document.getElementById('cancel-unsubmit');
     
     // --- FUNCTIONS ---
-    async function seedData() {
-        const snapshot = await getDocs(studentsCollectionRef);
-        if (snapshot.empty) {
-            console.log('No data found, seeding initial data...');
-            const batch = writeBatch(db);
-            initialStudents.forEach(student => {
-                const docRef = doc(studentsCollectionRef, student.id);
-                batch.set(docRef, student);
-            });
-            await batch.commit();
-            console.log('Seeding complete.');
-        } else {
-            console.log('Data already exists, skipping seed.');
-        }
-    }
-    
     function renderTable(studentData) {
         tableBody.innerHTML = '';
         totalStudentsCount.textContent = studentData.filter(s => s.connectionStatus === 'online').length;
-        lastUpdatedTimestamp.textContent = `Last updated: ${new Date().toLocaleTimeString('en-US', { timeZone: 'America/Vancouver' })} (BC Local Time)`;
+        lastUpdatedTimestamp.textContent = `Last updated: ${new Date().toLocaleTimeString('en-US', { timeZone: 'America/Vancouver' })}`;
 
         if (studentData.length === 0) {
             tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-gray-500">No students found.</td></tr>`;
@@ -411,8 +377,8 @@
         });
     }
 
-    function updateView(studentData) {
-        let displayedStudents = [...studentData];
+    function updateView() {
+        let displayedStudents = [...students];
 
         // Apply filters
         const selectedStatus = statusFilter.value;
@@ -448,72 +414,37 @@
         
         renderTable(displayedStudents);
     }
-
-    function setupRealtimeListener() {
-        if (unsubscribe) unsubscribe(); 
-        unsubscribe = onSnapshot(collection(db, `artifacts/${appId}/users/${userId}/students`), (snapshot) => {
-            students = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-            updateView(students);
-        });
-    }
     
-    async function handleUnsubmit() {
+    function handleUnsubmit() {
         const studentId = confirmUnsubmitBtn.dataset.studentId;
-        const studentDocRef = doc(db, `artifacts/${appId}/users/${userId}/students`, studentId);
-        await updateDoc(studentDocRef, { status: 'Ready to Start' });
+        const studentIndex = students.findIndex(s => s.id === studentId);
+        if (studentIndex > -1) {
+            students[studentIndex].status = 'Ready to Start';
+        }
+        updateView();
         closeUnsubmitModal();
     }
     
-    // --- REALTIME SIMULATOR ---
-    function startRealtimeSimulator() {
-        setInterval(async () => {
-            if (students.length > 0) {
-                const randomIndex = Math.floor(Math.random() * students.length);
-                const randomStudent = students[randomIndex];
-                const statuses = ['online', 'disconnected', 'offline'];
-                const newStatus = statuses[Math.floor(Math.random() * statuses.length)];
-                
-                const studentDocRef = doc(db, `artifacts/${appId}/users/${userId}/students`, randomStudent.id);
-                await updateDoc(studentDocRef, { 
-                    connectionStatus: newStatus,
-                    lastSeen: newStatus !== 'online' ? new Date().getTime() : null
-                });
-            }
-        }, 5000); // Update every 5 seconds
-    }
-
     // --- EVENT LISTENERS ---
-    loginForm.addEventListener('submit', async (e) => {
+    loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
-        if (initialAuthToken) {
-            await signInWithCustomToken(auth, initialAuthToken);
-        } else {
-            await signInAnonymously(auth);
-        }
-        userId = auth.currentUser.uid;
-        studentsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/students`);
-
-        await seedData();
-        setupRealtimeListener();
-        
         loginPage.classList.add('hidden');
         dashboardPage.classList.remove('hidden');
-        startRealtimeSimulator();
+        updateView();
     });
     
-    searchInput.addEventListener('keyup', () => updateView(students));
-    statusFilter.addEventListener('change', () => updateView(students));
-    componentFilter.addEventListener('change', () => updateView(students));
+    searchInput.addEventListener('keyup', updateView);
+    statusFilter.addEventListener('change', updateView);
+    componentFilter.addEventListener('change', updateView);
     sortByNameBtn.addEventListener('click', () => {
         if (sortDirection === 'none') sortDirection = 'asc';
         else if (sortDirection === 'asc') sortDirection = 'desc';
         else sortDirection = 'none';
         sortIndicator.innerHTML = sortDirection === 'asc' ? '▲' : sortDirection === 'desc' ? '▼' : '◆';
-        updateView(students);
+        updateView();
     });
     
-    tableBody.addEventListener('click', async function(e) {
+    tableBody.addEventListener('click', function(e) {
         const unsubmitButton = e.target.closest('.unsubmit-btn');
         if (unsubmitButton) {
             studentNameUnsubmitModal.textContent = unsubmitButton.dataset.studentName;
@@ -524,8 +455,11 @@
         const watchCheckbox = e.target.closest('.watch-checkbox');
         if (watchCheckbox) {
             const studentId = watchCheckbox.dataset.studentId;
-            const studentDocRef = doc(db, `artifacts/${appId}/users/${userId}/students`, studentId);
-            await updateDoc(studentDocRef, { watched: watchCheckbox.checked });
+            const studentIndex = students.findIndex(s => s.id === studentId);
+            if(studentIndex > -1) {
+                students[studentIndex].watched = watchCheckbox.checked;
+            }
+            updateView();
         }
     });
 
