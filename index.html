@@ -149,8 +149,12 @@
                 <div class="p-6 border-b border-gray-200">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h1 class="text-2xl font-medium">BCED Numeracy Assessment</h1>
-                            <p id="school-date-info" class="text-sm text-gray-500 mt-1">July 8, 2025</p>
+                            <h1 class="text-2xl font-medium">Invigilation View</h1>
+                            <div class="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                                <span id="school-date-info">July 8, 2025</span>
+                                <span>•</span>
+                                <span id="last-updated">Last updated: <span id="last-updated-time"></span></span>
+                            </div>
                         </div>
                     </div>
                      <p class="text-sm text-gray-600 mt-4">
@@ -159,22 +163,37 @@
                 </div>
                 
                 <div class="p-6">
-                     <div class="flex justify-between items-center mb-4">
+                     <div class="flex justify-between items-center mb-4 space-x-4">
                         <input type="text" id="search-input" placeholder="Search by Student Name or PEN" class="px-3 py-2 border border-gray-300 rounded-md w-full max-w-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-                        <div>
-                            <label for="group-filter" class="text-sm font-medium text-gray-700 mr-2">Filter by Group:</label>
-                            <select id="group-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                <option value="all">All Groups</option>
-                                <option value="Group A">Group A</option>
-                                <option value="Group B">Group B</option>
+                        <div class="flex space-x-4">
+                            <div>
+                                <label for="status-filter" class="text-sm font-medium text-gray-700 mr-2">Filter by Status:</label>
+                                <select id="status-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    <option value="all">All Statuses</option>
+                                    <option value="Writing">Writing</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Submitted">Submitted</option>
+                                    <option value="Not Started">Not Started</option>
+                                    <option value="Ready to Start">Ready to Start</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="component-filter" class="text-sm font-medium text-gray-700 mr-2">Filter by Component:</label>
+                                <select id="component-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    <option value="all">All Components</option>
+                                    <option value="Numeracy">Numeracy</option>
+                                    <option value="Literacy">Literacy</option>
+                                </select>
+                            </div>
                             </select>
                         </div>
                     </div>
                     <table class="w-full text-sm text-left table-fixed">
                         <thead class="border-b-2 border-gray-300">
                             <tr>
-                                <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[20%]">PEN</th>
-                                <th scope="col" class="py-2 px-3 font-medium text-blue-700 w-[40%]">
+                                <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[10%]">Watch</th>
+                                <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[15%]">PEN</th>
+                                <th scope="col" class="py-2 px-3 font-medium text-blue-700 w-[35%]">
                                     <button id="sort-by-name-btn" class="w-full text-left">First Name / Last Name <span id="sort-indicator">◆</span></button>
                                 </th>
                                 <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[40%]">Status</th>
@@ -316,13 +335,13 @@
 <script>
     // --- MOCK DATA ---
     const initialStudents = [
-        { id: '1', pen: '123456789', firstName: 'Emma', lastName: 'Thompson', group: 'Group A', connectionStatus: 'online', status: 'In Progress', stage: 1, question: 3, startTime: Date.now() - (2 * 60 * 60 * 1000) }, // Started 2 hours ago
-        { id: '2', pen: '987654321', firstName: 'Michael', lastName: 'Chen', group: 'Group A', connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, startTime: Date.now() - (4 * 60 * 60 * 1000) }, // Started 4 hours ago
-        { id: '3', pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', group: 'Group B', connectionStatus: 'online', status: 'Submitted', stage: null, question: null, startTime: Date.now() - (1 * 60 * 60 * 1000) }, // Started 1 hour ago
-        { id: '4', pen: '789123456', firstName: 'David', lastName: 'Rodriguez', group: 'Group B', connectionStatus: 'disconnected', status: 'In Progress', stage: 2, question: 5, startTime: Date.now() - (5 * 60 * 60 * 1000) }, // Started 5 hours ago
-        { id: '5', pen: '321654987', firstName: 'Jessica', lastName: 'Wu', group: 'Group A', connectionStatus: 'online', status: 'Submitted', stage: null, question: null, startTime: Date.now() - (30 * 60 * 1000) }, // Started 30 minutes ago
-        { id: '6', pen: '234567890', firstName: 'Amanda', lastName: 'Singh', group: 'Group B', connectionStatus: 'online', status: 'Not Started', stage: null, question: null, startTime: null },
-        { id: '7', pen: '345678901', firstName: 'James', lastName: 'Wilson', group: 'Group A', connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, startTime: null },
+        { id: '1', pen: '123456789', firstName: 'Emma', lastName: 'Thompson', component: 'Numeracy', connectionStatus: 'writing', status: 'In Progress', stage: 1, question: 3, startTime: Date.now() - (2 * 60 * 60 * 1000), watched: false, lastSeen: null },
+        { id: '2', pen: '987654321', firstName: 'Michael', lastName: 'Chen', component: 'Numeracy', connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, startTime: Date.now() - (4 * 60 * 60 * 1000), watched: false, lastSeen: Date.now() - (10 * 60 * 1000) },
+        { id: '3', pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', component: 'Literacy', connectionStatus: 'writing', status: 'Submitted', stage: null, question: null, startTime: Date.now() - (1 * 60 * 60 * 1000), watched: false, lastSeen: null },
+        { id: '4', pen: '789123456', firstName: 'David', lastName: 'Rodriguez', component: 'Numeracy', connectionStatus: 'disconnected', status: 'In Progress', stage: 2, question: 5, startTime: Date.now() - (5 * 60 * 60 * 1000), watched: false, lastSeen: Date.now() - (5 * 60 * 1000) },
+        { id: '5', pen: '321654987', firstName: 'Jessica', lastName: 'Wu', component: 'Literacy', connectionStatus: 'writing', status: 'Submitted', stage: null, question: null, startTime: Date.now() - (30 * 60 * 1000), watched: false, lastSeen: null },
+        { id: '6', pen: '234567890', firstName: 'Amanda', lastName: 'Singh', component: 'Numeracy', connectionStatus: 'writing', status: 'Not Started', stage: null, question: null, startTime: null, watched: false, lastSeen: null },
+        { id: '7', pen: '345678901', firstName: 'James', lastName: 'Wilson', component: 'Literacy', connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, startTime: null, watched: false, lastSeen: Date.now() - (15 * 60 * 1000) },
     ];
     
     let students = [...initialStudents];
@@ -336,9 +355,11 @@
     const totalStudentsCount = document.getElementById('total-students-count');
     const tableBody = document.getElementById('student-table-body');
     const searchInput = document.getElementById('search-input');
-    const groupFilter = document.getElementById('group-filter');
+    const statusFilter = document.getElementById('status-filter');
+    const componentFilter = document.getElementById('component-filter');
     const sortByNameBtn = document.getElementById('sort-by-name-btn');
     const sortIndicator = document.getElementById('sort-indicator');
+    const lastUpdatedTime = document.getElementById('last-updated-time');
     const unsubmitModal = document.getElementById('unsubmit-modal');
     const studentNameUnsubmitModal = document.getElementById('student-name-modal');
     const confirmUnsubmitBtn = document.getElementById('confirm-unsubmit');
@@ -353,6 +374,22 @@
     const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
 
     // --- FUNCTIONS ---
+    function updateLastUpdatedTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: true 
+        });
+        lastUpdatedTime.textContent = timeString;
+    }
+
+    function formatLastSeen(lastSeenTime) {
+        if (!lastSeenTime) return '';
+        const minutesAgo = Math.floor((Date.now() - lastSeenTime) / (1000 * 60));
+        return `Last seen ${minutesAgo} min ago`;
+    }
+
     function isUnsubmitAllowed(student) {
         if (!student.startTime || student.status !== 'Submitted') return false;
         const threeHoursInMs = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
@@ -371,11 +408,21 @@
 
         studentData.forEach(student => {
             const row = document.createElement('tr');
-            row.className = 'border-b border-gray-200 hover:bg-gray-50';
+            row.className = `border-b border-gray-200 hover:bg-gray-50 ${student.watched ? 'bg-blue-50' : ''}`;
             
             let connectionStatusClass = 'offline';
-            if (student.connectionStatus === 'online') connectionStatusClass = 'online';
+            let connectionStatusText = 'Offline';
+            if (student.connectionStatus === 'writing') {
+                connectionStatusClass = 'online';
+                connectionStatusText = 'Writing';
+            }
             if (student.connectionStatus === 'disconnected') connectionStatusClass = 'disconnected';
+            if (student.connectionStatus === 'disconnected') connectionStatusText = 'Disconnected';
+            
+            let connectionDisplay = connectionStatusText;
+            if ((student.connectionStatus === 'offline' || student.connectionStatus === 'disconnected') && student.lastSeen) {
+                connectionDisplay += ` - ${formatLastSeen(student.lastSeen)}`;
+            }
             
             let statusContent = '';
             if (student.status === 'Submitted') {
@@ -409,13 +456,16 @@
 
             row.innerHTML = `
                 <td class="py-3 px-3 table-cell-border">
-                    <button class="show-pen-btn text-gray-800 hover:text-blue-600 text-sm font-medium" data-pen="${student.pen}">Show PEN</button>
+                    <input type="checkbox" class="watch-checkbox" data-student-id="${student.id}" ${student.watched ? 'checked' : ''}>
+                </td>
+                <td class="py-3 px-3 table-cell-border">
+                    <span class="text-gray-800 text-sm font-medium">${student.pen}</span>
                 </td>
                 <td class="py-3 px-3 table-cell-border">
                     <button class="student-name-btn text-blue-700 font-medium hover:underline" data-student-id="${student.id}">${student.firstName} ${student.lastName}</button>
                     <div class="text-xs text-gray-700 mt-1">
                         <span class="status-dot ${connectionStatusClass}"></span>
-                        <span>${student.connectionStatus.charAt(0).toUpperCase() + student.connectionStatus.slice(1)}</span>
+                        <span>${connectionDisplay}</span>
                     </div>
                 </td>
                 <td class="py-3 px-3 ${statusBgClass}">${statusContent}</td>
@@ -426,6 +476,8 @@
 
     function updateView(studentData) {
         let displayedStudents = [...studentData];
+        
+        // Apply search filter
         const searchTerm = searchInput.value.toLowerCase();
         if (searchTerm) {
             displayedStudents = displayedStudents.filter(student => 
@@ -434,8 +486,31 @@
             );
         }
 
+        // Apply status filter
+        const selectedStatus = statusFilter.value;
+        if (selectedStatus !== 'all') {
+            displayedStudents = displayedStudents.filter(student => student.status === selectedStatus);
+        }
+
+        // Apply component filter
+        const selectedComponent = componentFilter.value;
+        if (selectedComponent !== 'all') {
+            displayedStudents = displayedStudents.filter(student => student.component === selectedComponent);
+        }
+
+        // Sort watched students to top, then apply name sorting
+        displayedStudents.sort((a, b) => {
+            if (a.watched && !b.watched) return -1;
+            if (!a.watched && b.watched) return 1;
+            return 0;
+        });
+
         if (sortDirection !== 'none') {
             displayedStudents.sort((a, b) => {
+                // Maintain watched students at top
+                if (a.watched && !b.watched) return -1;
+                if (!a.watched && b.watched) return 1;
+                
                 const nameA = `${a.lastName} ${a.firstName}`.toLowerCase();
                 const nameB = `${b.lastName} ${b.firstName}`.toLowerCase();
                 if (nameA < nameB) return sortDirection === 'asc' ? -1 : 1;
@@ -460,14 +535,21 @@
     // --- REALTIME SIMULATOR ---
     function startRealtimeSimulator() {
         setInterval(() => {
+            updateLastUpdatedTime();
             if (students.length > 0) {
                 const randomIndex = Math.floor(Math.random() * students.length);
                 const randomStudent = students[randomIndex];
-                const statuses = ['online', 'disconnected', 'offline'];
+                const statuses = ['writing', 'disconnected', 'offline'];
                 const currentStatusIndex = statuses.indexOf(randomStudent.connectionStatus);
                 const nextStatus = statuses[(currentStatusIndex + 1) % statuses.length];
                 
                 students[randomIndex].connectionStatus = nextStatus;
+                
+                // Update last seen time for offline/disconnected students
+                if (nextStatus === 'offline' || nextStatus === 'disconnected') {
+                    students[randomIndex].lastSeen = Date.now();
+                }
+                
                 updateView(students);
             }
         }, 3000); // Update every 3 seconds
@@ -477,6 +559,7 @@
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         
+        updateLastUpdatedTime();
         updateView(students);
         
         const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -488,15 +571,8 @@
     });
     
     searchInput.addEventListener('keyup', () => updateView(students));
-    groupFilter.addEventListener('change', () => {
-        const selectedGroup = groupFilter.value;
-        let filteredStudents = [...initialStudents];
-        if (selectedGroup !== 'all') {
-            filteredStudents = filteredStudents.filter(student => student.group === selectedGroup);
-        }
-        students = filteredStudents;
-        updateView(students);
-    });
+    statusFilter.addEventListener('change', () => updateView(students));
+    componentFilter.addEventListener('change', () => updateView(students));
     sortByNameBtn.addEventListener('click', () => {
         if (sortDirection === 'none') sortDirection = 'asc';
         else if (sortDirection === 'asc') sortDirection = 'desc';
@@ -511,6 +587,35 @@
             studentNameUnsubmitModal.textContent = unsubmitButton.dataset.studentName;
             confirmUnsubmitBtn.dataset.studentId = unsubmitButton.dataset.studentId;
             unsubmitModal.classList.remove('hidden');
+        }
+        
+        const studentNameButton = e.target.closest('.student-name-btn');
+        if (studentNameButton) {
+            const studentId = studentNameButton.dataset.studentId;
+            const student = students.find(s => s.id === studentId);
+            if (student) {
+                document.getElementById('info-pen').textContent = student.pen;
+                document.getElementById('info-first-name').textContent = student.firstName;
+                document.getElementById('info-last-name').textContent = student.lastName;
+                document.getElementById('info-gender').textContent = 'N/A';
+                document.getElementById('info-accommodations').textContent = 'N/A';
+                document.getElementById('info-notes').textContent = 'N/A';
+                document.getElementById('info-assistive-tech').textContent = 'N/A';
+                document.getElementById('info-non-participation').textContent = 'N/A';
+                studentInfoModal.classList.remove('hidden');
+            }
+        }
+    });
+
+    tableBody.addEventListener('change', function(e) {
+        const watchCheckbox = e.target.closest('.watch-checkbox');
+        if (watchCheckbox) {
+            const studentId = watchCheckbox.dataset.studentId;
+            const student = students.find(s => s.id === studentId);
+            if (student) {
+                student.watched = watchCheckbox.checked;
+                updateView(students);
+            }
         }
     });
 
@@ -536,47 +641,6 @@
     });
     messageCentreModal.addEventListener('click', (e) => {
         if (e.target === messageCentreModal) messageCentreModal.classList.add('hidden');
-    });
-    
-    // Add missing student info modal functionality
-    tableBody.addEventListener('click', function(e) {
-        const unsubmitButton = e.target.closest('.unsubmit-btn');
-        if (unsubmitButton && !unsubmitButton.disabled) {
-            studentNameUnsubmitModal.textContent = unsubmitButton.dataset.studentName;
-            confirmUnsubmitBtn.dataset.studentId = unsubmitButton.dataset.studentId;
-            unsubmitModal.classList.remove('hidden');
-        }
-        
-        const showPenButton = e.target.closest('.show-pen-btn');
-        if (showPenButton) {
-            const pen = showPenButton.dataset.pen;
-            const cell = showPenButton.parentElement;
-            cell.innerHTML = `<button class="hide-pen-btn font-medium cursor-pointer text-gray-800" data-pen="${pen}">${pen}</button>`;
-        }
-
-        const hidePenButton = e.target.closest('.hide-pen-btn');
-        if (hidePenButton) {
-            const pen = hidePenButton.dataset.pen;
-            const cell = hidePenButton.parentElement;
-            cell.innerHTML = `<button class="show-pen-btn text-gray-800 hover:text-blue-600 text-sm font-medium" data-pen="${pen}">Show PEN</button>`;
-        }
-        
-        const studentNameButton = e.target.closest('.student-name-btn');
-        if (studentNameButton) {
-            const studentId = studentNameButton.dataset.studentId;
-            const student = students.find(s => s.id === studentId);
-            if (student) {
-                document.getElementById('info-pen').textContent = student.pen;
-                document.getElementById('info-first-name').textContent = student.firstName;
-                document.getElementById('info-last-name').textContent = student.lastName;
-                document.getElementById('info-gender').textContent = 'N/A';
-                document.getElementById('info-accommodations').textContent = 'N/A';
-                document.getElementById('info-notes').textContent = 'N/A';
-                document.getElementById('info-assistive-tech').textContent = 'N/A';
-                document.getElementById('info-non-participation').textContent = 'N/A';
-                studentInfoModal.classList.remove('hidden');
-            }
-        }
     });
     
     okStudentInfoBtn.addEventListener('click', () => {
