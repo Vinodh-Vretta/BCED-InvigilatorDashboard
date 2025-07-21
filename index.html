@@ -12,7 +12,7 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f0f2f5; /* Matching the light grey background */
+            background-color: #f0f2f5;
         }
         .header-bar {
             background-color: #ffffff;
@@ -59,49 +59,6 @@
         .table-cell-border {
             border-right: 1px solid #e0e0e0;
         }
-        .access-code-box {
-            background-color: #fce4ec; /* Light pink background */
-            border: 1px solid #f8bbd0;
-            border-radius: 6px;
-            padding: 8px 16px;
-            text-align: center;
-        }
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 280px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 8px;
-            position: absolute;
-            z-index: 1000;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -140px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 12px;
-            line-height: 1.4;
-        }
-        .tooltip .tooltiptext::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: #333 transparent transparent transparent;
-        }
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -114,8 +71,8 @@
                 <form id="login-form">
                     <div class="space-y-6">
                         <div>
-                            <label for="session-code" class="block text-sm font-medium text-gray-700">Assessment Session Code/Password</label>
-                            <input type="password" id="session-code" name="session-code" value="12345" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <label for="access-code" class="block text-sm font-medium text-gray-700">Invigilator Access Code</label>
+                            <input type="text" id="access-code" name="access-code" value="PROCTOR-A1" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
                         <div>
                             <button type="submit" class="w-full btn-primary py-2">
@@ -150,50 +107,44 @@
                     <div class="flex justify-between items-start">
                         <div>
                             <h1 class="text-2xl font-medium">Invigilation View</h1>
-                            <div class="flex items-center space-x-4 text-sm text-gray-500 mt-1">
-                                <span id="school-date-info">July 8, 2025</span>
-                                <span>•</span>
-                                <span id="last-updated">Last updated: <span id="last-updated-time"></span></span>
-                            </div>
+                            <p id="last-updated-timestamp" class="text-xs text-gray-500 mt-1">Last updated: ...</p>
                         </div>
                     </div>
                      <p class="text-sm text-gray-600 mt-4">
-                        Number of students with access to the assessment session: <strong id="total-students-count" class="font-medium text-gray-800">0</strong>
+                        Number of students writing right now: <strong id="total-students-count" class="font-medium text-gray-800">0</strong>
                     </p>
                 </div>
                 
                 <div class="p-6">
-                     <div class="flex justify-between items-center mb-4 space-x-4">
-                        <input type="text" id="search-input" placeholder="Search by Student Name or PEN" class="px-3 py-2 border border-gray-300 rounded-md w-full max-w-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-                        <div class="flex space-x-4">
-                            <div>
-                                <label for="status-filter" class="text-sm font-medium text-gray-700 mr-2">Filter by Status:</label>
-                                <select id="status-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                    <option value="all">All Statuses</option>
-                                    <option value="Writing">Writing</option>
-                                    <option value="In Progress">In Progress</option>
-                                    <option value="Submitted">Submitted</option>
-                                    <option value="Not Started">Not Started</option>
-                                    <option value="Ready to Start">Ready to Start</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="component-filter" class="text-sm font-medium text-gray-700 mr-2">Filter by Component:</label>
+                     <div class="flex justify-between items-center mb-4">
+                        <input type="text" id="search-input" placeholder="Search by Student Name or PEN" class="px-3 py-2 border border-gray-300 rounded-md w-full max-w-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        <div class="flex items-center space-x-4">
+                             <div>
+                                <label for="component-filter" class="text-sm font-medium text-gray-700 mr-2">Component:</label>
                                 <select id="component-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
                                     <option value="all">All Components</option>
-                                    <option value="Numeracy">Numeracy</option>
-                                    <option value="Literacy">Literacy</option>
+                                    <option value="Numeracy 10">Numeracy 10</option>
+                                    <option value="Literacy 10">Literacy 10</option>
                                 </select>
                             </div>
-                            </select>
+                            <div>
+                                <label for="status-filter" class="text-sm font-medium text-gray-700 mr-2">Status:</label>
+                                <select id="status-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    <option value="all">All Statuses</option>
+                                    <option value="Not Started">Not Started</option>
+                                    <option value="Ready to Start">Ready to Start</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Submitted">Submitted</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <table class="w-full text-sm text-left table-fixed">
                         <thead class="border-b-2 border-gray-300">
                             <tr>
-                                <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[10%]">Watch</th>
+                                <th class="py-2 px-3 w-12"><i class="fa fa-eye"></i></th>
                                 <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[15%]">PEN</th>
-                                <th scope="col" class="py-2 px-3 font-medium text-blue-700 w-[35%]">
+                                <th scope="col" class="py-2 px-3 font-medium text-blue-700 w-[40%]">
                                     <button id="sort-by-name-btn" class="w-full text-left">First Name / Last Name <span id="sort-indicator">◆</span></button>
                                 </th>
                                 <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[40%]">Status</th>
@@ -332,26 +283,44 @@
         </div>
     </div>
 
-<script>
+<script type="module">
+    // Firebase Imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, getDocs, onSnapshot, setDoc, updateDoc, query, where, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- FIREBASE CONFIG & INITIALIZATION ---
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "...", authDomain: "...", projectId: "..." };
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'bced-demo-app';
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : undefined;
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let userId;
+    let studentsCollectionRef;
+    let unsubscribe;
+
     // --- MOCK DATA ---
     const initialStudents = [
-        { id: '1', pen: '123456789', firstName: 'Emma', lastName: 'Thompson', component: 'Numeracy', connectionStatus: 'writing', status: 'In Progress', stage: 1, question: 3, startTime: Date.now() - (2 * 60 * 60 * 1000), watched: false, lastSeen: null },
-        { id: '2', pen: '987654321', firstName: 'Michael', lastName: 'Chen', component: 'Numeracy', connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, startTime: Date.now() - (4 * 60 * 60 * 1000), watched: false, lastSeen: Date.now() - (10 * 60 * 1000) },
-        { id: '3', pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', component: 'Literacy', connectionStatus: 'writing', status: 'Submitted', stage: null, question: null, startTime: Date.now() - (1 * 60 * 60 * 1000), watched: false, lastSeen: null },
-        { id: '4', pen: '789123456', firstName: 'David', lastName: 'Rodriguez', component: 'Numeracy', connectionStatus: 'disconnected', status: 'In Progress', stage: 2, question: 5, startTime: Date.now() - (5 * 60 * 60 * 1000), watched: false, lastSeen: Date.now() - (5 * 60 * 1000) },
-        { id: '5', pen: '321654987', firstName: 'Jessica', lastName: 'Wu', component: 'Literacy', connectionStatus: 'writing', status: 'Submitted', stage: null, question: null, startTime: Date.now() - (30 * 60 * 1000), watched: false, lastSeen: null },
-        { id: '6', pen: '234567890', firstName: 'Amanda', lastName: 'Singh', component: 'Numeracy', connectionStatus: 'writing', status: 'Not Started', stage: null, question: null, startTime: null, watched: false, lastSeen: null },
-        { id: '7', pen: '345678901', firstName: 'James', lastName: 'Wilson', component: 'Literacy', connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, startTime: null, watched: false, lastSeen: Date.now() - (15 * 60 * 1000) },
+        { id: '1', pen: '123456789', firstName: 'Emma', lastName: 'Thompson', component: 'Numeracy 10', watched: true, connectionStatus: 'online', status: 'In Progress', stage: 1, question: 3, time: 429566, lastSeen: null },
+        { id: '2', pen: '987654321', firstName: 'Michael', lastName: 'Chen', component: 'Numeracy 10', watched: false, connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, time: 8946, lastSeen: new Date().getTime() - 300000 },
+        { id: '3', pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', component: 'Literacy 10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 394, lastSeen: null },
+        { id: '4', pen: '789123456', firstName: 'David', lastName: 'Rodriguez', component: 'Literacy 10', watched: true, connectionStatus: 'disconnected', status: 'In Progress', stage: 2, question: 5, time: 0, lastSeen: new Date().getTime() - 60000 },
+        { id: '5', pen: '321654987', firstName: 'Jessica', lastName: 'Wu', component: 'Numeracy 10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 0, lastSeen: null },
+        { id: '6', pen: '234567890', firstName: 'Amanda', lastName: 'Singh', component: 'Literacy 10', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null },
+        { id: '7', pen: '345678901', firstName: 'James', lastName: 'Wilson', component: 'Numeracy 10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 86400000 },
     ];
     
-    let students = [...initialStudents];
+    let students = [];
     let sortDirection = 'none';
 
     // --- DOM ELEMENTS ---
     const loginPage = document.getElementById('login-page');
     const dashboardPage = document.getElementById('dashboard-page');
     const loginForm = document.getElementById('login-form');
-    const schoolDateInfo = document.getElementById('school-date-info');
+    const lastUpdatedTimestamp = document.getElementById('last-updated-timestamp');
     const totalStudentsCount = document.getElementById('total-students-count');
     const tableBody = document.getElementById('student-table-body');
     const searchInput = document.getElementById('search-input');
@@ -359,92 +328,56 @@
     const componentFilter = document.getElementById('component-filter');
     const sortByNameBtn = document.getElementById('sort-by-name-btn');
     const sortIndicator = document.getElementById('sort-indicator');
-    const lastUpdatedTime = document.getElementById('last-updated-time');
     const unsubmitModal = document.getElementById('unsubmit-modal');
     const studentNameUnsubmitModal = document.getElementById('student-name-modal');
     const confirmUnsubmitBtn = document.getElementById('confirm-unsubmit');
     const cancelUnsubmitBtn = document.getElementById('cancel-unsubmit');
-    const techSupportBtn = document.getElementById('tech-support-btn');
-    const techSupportModal = document.getElementById('tech-support-modal');
-    const dismissSupportModalBtn = document.getElementById('dismiss-support-modal');
-    const messageCentreBtn = document.getElementById('message-centre-btn');
-    const messageCentreModal = document.getElementById('message-centre-modal');
-    const dismissMessageModalBtn = document.getElementById('dismiss-message-modal');
-    const studentInfoModal = document.getElementById('student-info-modal');
-    const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
-
+    
     // --- FUNCTIONS ---
-    function updateLastUpdatedTime() {
-        const now = new Date();
-        const timeString = now.toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            hour12: true 
-        });
-        lastUpdatedTime.textContent = timeString;
+    async function seedData() {
+        const snapshot = await getDocs(studentsCollectionRef);
+        if (snapshot.empty) {
+            console.log('No data found, seeding initial data...');
+            const batch = writeBatch(db);
+            initialStudents.forEach(student => {
+                const docRef = doc(studentsCollectionRef, student.id);
+                batch.set(docRef, student);
+            });
+            await batch.commit();
+            console.log('Seeding complete.');
+        } else {
+            console.log('Data already exists, skipping seed.');
+        }
     }
-
-    function formatLastSeen(lastSeenTime) {
-        if (!lastSeenTime) return '';
-        const minutesAgo = Math.floor((Date.now() - lastSeenTime) / (1000 * 60));
-        return `Last seen ${minutesAgo} min ago`;
-    }
-
-    function isUnsubmitAllowed(student) {
-        if (!student.startTime || student.status !== 'Submitted') return false;
-        const threeHoursInMs = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
-        const timeSinceStart = Date.now() - student.startTime;
-        return timeSinceStart < threeHoursInMs;
-    }
-
+    
     function renderTable(studentData) {
         tableBody.innerHTML = '';
-        totalStudentsCount.textContent = studentData.length;
+        totalStudentsCount.textContent = studentData.filter(s => s.connectionStatus === 'online').length;
+        lastUpdatedTimestamp.textContent = `Last updated: ${new Date().toLocaleTimeString('en-US', { timeZone: 'America/Vancouver' })} (BC Local Time)`;
 
         if (studentData.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-gray-500">No students found.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-gray-500">No students found.</td></tr>`;
             return;
         }
 
         studentData.forEach(student => {
             const row = document.createElement('tr');
-            row.className = `border-b border-gray-200 hover:bg-gray-50 ${student.watched ? 'bg-blue-50' : ''}`;
+            row.className = 'border-b border-gray-200 hover:bg-gray-50';
             
             let connectionStatusClass = 'offline';
-            let connectionStatusText = 'Offline';
-            if (student.connectionStatus === 'writing') {
-                connectionStatusClass = 'online';
-                connectionStatusText = 'Writing';
-            }
+            if (student.connectionStatus === 'online') connectionStatusClass = 'online';
             if (student.connectionStatus === 'disconnected') connectionStatusClass = 'disconnected';
-            if (student.connectionStatus === 'disconnected') connectionStatusText = 'Disconnected';
-            
-            let connectionDisplay = connectionStatusText;
-            if ((student.connectionStatus === 'offline' || student.connectionStatus === 'disconnected') && student.lastSeen) {
-                connectionDisplay += ` - ${formatLastSeen(student.lastSeen)}`;
-            }
             
             let statusContent = '';
             if (student.status === 'Submitted') {
-                const canUnsubmit = isUnsubmitAllowed(student);
-                const buttonClass = canUnsubmit 
-                    ? "unsubmit-btn text-blue-700 hover:underline text-sm font-medium cursor-pointer" 
-                    : "text-gray-400 text-sm font-medium cursor-not-allowed";
-                const buttonText = canUnsubmit ? "Unsubmit" : "Unsubmit (3hr limit exceeded)";
-                
-                if (canUnsubmit) {
-                    statusContent = `<div>
-                                        <button class="${buttonClass}" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">${buttonText}</button>
-                                     </div>`;
-                } else {
-                    statusContent = `<div class="tooltip">
-                                        <button class="${buttonClass}" disabled>${buttonText}</button>
-                                        <span class="tooltiptext">The 3-hour unsubmission window has expired. Please contact technical support at bced-support@vretta.com or 1-888-327-7377 for assistance with unsubmissions beyond this timeframe.</span>
-                                     </div>`;
-                }
+                statusContent = `<div>
+                                    <button class="unsubmit-btn text-blue-700 hover:underline text-sm font-medium" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">Unsubmit</button>
+                                    <p class="text-xs text-gray-500">${student.time} minute(s)</p>
+                                 </div>`;
             } else if (student.status === 'In Progress') {
                  statusContent = `<div>
                                     <p class="font-medium">Stage ${student.stage}, Question ${student.question}</p>
+                                    <p class="text-xs text-gray-500">${student.time} minute(s)</p>
                                  </div>`;
             } else {
                 statusContent = `<p class="font-medium text-gray-700">${student.status}</p>`;
@@ -454,18 +387,22 @@
             if (student.status === 'Ready to Start') statusBgClass = 'bg-[#fff3e0]';
             else if (student.status === 'Not Started') statusBgClass = 'bg-gray-100';
 
+            let lastSeenHtml = '';
+            if (student.connectionStatus !== 'online' && student.lastSeen) {
+                lastSeenHtml = `<p class="text-xs text-gray-500 mt-1">Last seen: ${new Date(student.lastSeen).toLocaleTimeString()}</p>`;
+            }
+
             row.innerHTML = `
-                <td class="py-3 px-3 table-cell-border">
+                <td class="py-3 px-3 table-cell-border text-center">
                     <input type="checkbox" class="watch-checkbox" data-student-id="${student.id}" ${student.watched ? 'checked' : ''}>
                 </td>
-                <td class="py-3 px-3 table-cell-border">
-                    <span class="text-gray-800 text-sm font-medium">${student.pen}</span>
-                </td>
+                <td class="py-3 px-3 table-cell-border">${student.pen}</td>
                 <td class="py-3 px-3 table-cell-border">
                     <button class="student-name-btn text-blue-700 font-medium hover:underline" data-student-id="${student.id}">${student.firstName} ${student.lastName}</button>
                     <div class="text-xs text-gray-700 mt-1">
                         <span class="status-dot ${connectionStatusClass}"></span>
-                        <span>${connectionDisplay}</span>
+                        <span>${student.connectionStatus === 'online' ? 'Writing' : student.connectionStatus.charAt(0).toUpperCase() + student.connectionStatus.slice(1)}</span>
+                        ${lastSeenHtml}
                     </div>
                 </td>
                 <td class="py-3 px-3 ${statusBgClass}">${statusContent}</td>
@@ -476,8 +413,17 @@
 
     function updateView(studentData) {
         let displayedStudents = [...studentData];
-        
-        // Apply search filter
+
+        // Apply filters
+        const selectedStatus = statusFilter.value;
+        const selectedComponent = componentFilter.value;
+        if (selectedStatus !== 'all') {
+            displayedStudents = displayedStudents.filter(s => s.status === selectedStatus);
+        }
+        if (selectedComponent !== 'all') {
+            displayedStudents = displayedStudents.filter(s => s.component === selectedComponent);
+        }
+
         const searchTerm = searchInput.value.toLowerCase();
         if (searchTerm) {
             displayedStudents = displayedStudents.filter(student => 
@@ -486,84 +432,70 @@
             );
         }
 
-        // Apply status filter
-        const selectedStatus = statusFilter.value;
-        if (selectedStatus !== 'all') {
-            displayedStudents = displayedStudents.filter(student => student.status === selectedStatus);
-        }
-
-        // Apply component filter
-        const selectedComponent = componentFilter.value;
-        if (selectedComponent !== 'all') {
-            displayedStudents = displayedStudents.filter(student => student.component === selectedComponent);
-        }
-
-        // Sort watched students to top, then apply name sorting
+        // Apply sorting
         displayedStudents.sort((a, b) => {
             if (a.watched && !b.watched) return -1;
             if (!a.watched && b.watched) return 1;
-            return 0;
-        });
 
-        if (sortDirection !== 'none') {
-            displayedStudents.sort((a, b) => {
-                // Maintain watched students at top
-                if (a.watched && !b.watched) return -1;
-                if (!a.watched && b.watched) return 1;
-                
+            if (sortDirection !== 'none') {
                 const nameA = `${a.lastName} ${a.firstName}`.toLowerCase();
                 const nameB = `${b.lastName} ${b.firstName}`.toLowerCase();
                 if (nameA < nameB) return sortDirection === 'asc' ? -1 : 1;
                 if (nameA > nameB) return sortDirection === 'asc' ? 1 : -1;
-                return 0;
-            });
-        }
+            }
+            return 0;
+        });
         
         renderTable(displayedStudents);
     }
 
-    function handleUnsubmit() {
+    function setupRealtimeListener() {
+        if (unsubscribe) unsubscribe(); 
+        unsubscribe = onSnapshot(collection(db, `artifacts/${appId}/users/${userId}/students`), (snapshot) => {
+            students = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+            updateView(students);
+        });
+    }
+    
+    async function handleUnsubmit() {
         const studentId = confirmUnsubmitBtn.dataset.studentId;
-        const studentIndex = students.findIndex(s => s.id === studentId);
-        if (studentIndex > -1) {
-            students[studentIndex].status = 'Ready to Start';
-        }
-        updateView(students);
+        const studentDocRef = doc(db, `artifacts/${appId}/users/${userId}/students`, studentId);
+        await updateDoc(studentDocRef, { status: 'Ready to Start' });
         closeUnsubmitModal();
     }
     
     // --- REALTIME SIMULATOR ---
     function startRealtimeSimulator() {
-        setInterval(() => {
-            updateLastUpdatedTime();
+        setInterval(async () => {
             if (students.length > 0) {
                 const randomIndex = Math.floor(Math.random() * students.length);
                 const randomStudent = students[randomIndex];
-                const statuses = ['writing', 'disconnected', 'offline'];
-                const currentStatusIndex = statuses.indexOf(randomStudent.connectionStatus);
-                const nextStatus = statuses[(currentStatusIndex + 1) % statuses.length];
+                const statuses = ['online', 'disconnected', 'offline'];
+                const newStatus = statuses[Math.floor(Math.random() * statuses.length)];
                 
-                students[randomIndex].connectionStatus = nextStatus;
-                
-                // Update last seen time for offline/disconnected students
-                if (nextStatus === 'offline' || nextStatus === 'disconnected') {
-                    students[randomIndex].lastSeen = Date.now();
-                }
-                
-                updateView(students);
+                const studentDocRef = doc(db, `artifacts/${appId}/users/${userId}/students`, randomStudent.id);
+                await updateDoc(studentDocRef, { 
+                    connectionStatus: newStatus,
+                    lastSeen: newStatus !== 'online' ? new Date().getTime() : null
+                });
             }
-        }, 3000); // Update every 3 seconds
+        }, 5000); // Update every 5 seconds
     }
 
     // --- EVENT LISTENERS ---
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        updateLastUpdatedTime();
-        updateView(students);
-        
-        const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        schoolDateInfo.textContent = currentDate;
+        if (initialAuthToken) {
+            await signInWithCustomToken(auth, initialAuthToken);
+        } else {
+            await signInAnonymously(auth);
+        }
+        userId = auth.currentUser.uid;
+        studentsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/students`);
+
+        await seedData();
+        setupRealtimeListener();
         
         loginPage.classList.add('hidden');
         dashboardPage.classList.remove('hidden');
@@ -581,75 +513,25 @@
         updateView(students);
     });
     
-    tableBody.addEventListener('click', function(e) {
+    tableBody.addEventListener('click', async function(e) {
         const unsubmitButton = e.target.closest('.unsubmit-btn');
-        if (unsubmitButton && !unsubmitButton.disabled) {
+        if (unsubmitButton) {
             studentNameUnsubmitModal.textContent = unsubmitButton.dataset.studentName;
             confirmUnsubmitBtn.dataset.studentId = unsubmitButton.dataset.studentId;
             unsubmitModal.classList.remove('hidden');
         }
-        
-        const studentNameButton = e.target.closest('.student-name-btn');
-        if (studentNameButton) {
-            const studentId = studentNameButton.dataset.studentId;
-            const student = students.find(s => s.id === studentId);
-            if (student) {
-                document.getElementById('info-pen').textContent = student.pen;
-                document.getElementById('info-first-name').textContent = student.firstName;
-                document.getElementById('info-last-name').textContent = student.lastName;
-                document.getElementById('info-gender').textContent = 'N/A';
-                document.getElementById('info-accommodations').textContent = 'N/A';
-                document.getElementById('info-notes').textContent = 'N/A';
-                document.getElementById('info-assistive-tech').textContent = 'N/A';
-                document.getElementById('info-non-participation').textContent = 'N/A';
-                studentInfoModal.classList.remove('hidden');
-            }
-        }
-    });
 
-    tableBody.addEventListener('change', function(e) {
         const watchCheckbox = e.target.closest('.watch-checkbox');
         if (watchCheckbox) {
             const studentId = watchCheckbox.dataset.studentId;
-            const student = students.find(s => s.id === studentId);
-            if (student) {
-                student.watched = watchCheckbox.checked;
-                updateView(students);
-            }
+            const studentDocRef = doc(db, `artifacts/${appId}/users/${userId}/students`, studentId);
+            await updateDoc(studentDocRef, { watched: watchCheckbox.checked });
         }
     });
 
     confirmUnsubmitBtn.addEventListener('click', handleUnsubmit);
     cancelUnsubmitBtn.addEventListener('click', () => unsubmitModal.classList.add('hidden'));
     
-    // Add missing modal event listeners
-    techSupportBtn.addEventListener('click', () => {
-        techSupportModal.classList.remove('hidden');
-    });
-    dismissSupportModalBtn.addEventListener('click', () => {
-        techSupportModal.classList.add('hidden');
-    });
-    techSupportModal.addEventListener('click', (e) => {
-        if (e.target === techSupportModal) techSupportModal.classList.add('hidden');
-    });
-
-    messageCentreBtn.addEventListener('click', () => {
-        messageCentreModal.classList.remove('hidden');
-    });
-    dismissMessageModalBtn.addEventListener('click', () => {
-        messageCentreModal.classList.add('hidden');
-    });
-    messageCentreModal.addEventListener('click', (e) => {
-        if (e.target === messageCentreModal) messageCentreModal.classList.add('hidden');
-    });
-    
-    okStudentInfoBtn.addEventListener('click', () => {
-        studentInfoModal.classList.add('hidden');
-    });
-    studentInfoModal.addEventListener('click', (e) => {
-        if (e.target === studentInfoModal) studentInfoModal.classList.add('hidden');
-    });
-
 </script>
 
 </body>
