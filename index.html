@@ -287,10 +287,10 @@
     // --- MOCK DATA ---
     const initialStudents = [
         { id: '1', pen: '123456789', firstName: 'Emma', lastName: 'Thompson', component: 'Numeracy 10', watched: true, connectionStatus: 'online', status: 'In Progress', stage: 1, question: 3, time: 429566, lastSeen: null },
-        { id: '2', pen: '987654321', firstName: 'Michael', lastName: 'Chen', component: 'Numeracy 10', watched: false, connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, time: 8946, lastSeen: new Date().getTime() - 300000 },
-        { id: '3', pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', component: 'Literacy 10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 394, lastSeen: null },
+        { id: '2', pen: '987654321', firstName: 'Michael', lastName: 'Chen', component: 'Numeracy 10', watched: false, connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, time: 8946, lastSeen: new Date().getTime() - 300000, startTime: new Date().getTime() - (2 * 60 * 60 * 1000) }, // Started 2 hours ago
+        { id: '3', pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', component: 'Literacy 10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 394, lastSeen: null, startTime: new Date().getTime() - (4 * 60 * 60 * 1000) }, // Started 4 hours ago (unsubmit disabled)
         { id: '4', pen: '789123456', firstName: 'David', lastName: 'Rodriguez', component: 'Literacy 10', watched: true, connectionStatus: 'disconnected', status: 'In Progress', stage: 2, question: 5, time: 0, lastSeen: new Date().getTime() - 60000 },
-        { id: '5', pen: '321654987', firstName: 'Jessica', lastName: 'Wu', component: 'Numeracy 10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 0, lastSeen: null },
+        { id: '5', pen: '321654987', firstName: 'Jessica', lastName: 'Wu', component: 'Numeracy 10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 0, lastSeen: null, startTime: new Date().getTime() - (1 * 60 * 60 * 1000) }, // Started 1 hour ago
         { id: '6', pen: '234567890', firstName: 'Amanda', lastName: 'Singh', component: 'Literacy 10', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null },
         { id: '7', pen: '345678901', firstName: 'James', lastName: 'Wilson', component: 'Numeracy 10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 86400000 },
     ];
@@ -315,6 +315,17 @@
     const confirmUnsubmitBtn = document.getElementById('confirm-unsubmit');
     const cancelUnsubmitBtn = document.getElementById('cancel-unsubmit');
     
+    const techSupportBtn = document.getElementById('tech-support-btn');
+    const techSupportModal = document.getElementById('tech-support-modal');
+    const dismissSupportModalBtn = document.getElementById('dismiss-support-modal');
+    
+    const messageCentreBtn = document.getElementById('message-centre-btn');
+    const messageCentreModal = document.getElementById('message-centre-modal');
+    const dismissMessageModalBtn = document.getElementById('dismiss-message-modal');
+
+    const studentInfoModal = document.getElementById('student-info-modal');
+    const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
+    
     // --- FUNCTIONS ---
     function renderTable(studentData) {
         tableBody.innerHTML = '';
@@ -336,10 +347,22 @@
             
             let statusContent = '';
             if (student.status === 'Submitted') {
-                statusContent = `<div>
-                                    <button class="unsubmit-btn text-blue-700 hover:underline text-sm font-medium" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">Unsubmit</button>
-                                    <p class="text-xs text-gray-500">${student.time} minute(s)</p>
-                                 </div>`;
+                const canUnsubmit = isUnsubmitAllowed(student.startTime);
+                if (canUnsubmit) {
+                    statusContent = `<div>
+                                        <button class="unsubmit-btn text-blue-700 hover:underline text-sm font-medium" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">Unsubmit</button>
+                                     </div>`;
+                } else {
+                    statusContent = `<div class="relative">
+                                        <button class="unsubmit-btn-disabled text-gray-400 text-sm font-medium cursor-not-allowed" disabled>Unsubmit (3hr limit exceeded)</button>
+                                        <div class="unsubmit-tooltip hidden absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-md whitespace-nowrap z-50">
+                                            3-hour window expired. Contact support for unsubmission:<br>
+                                            Email: bced-support@vretta.com<br>
+                                            Phone: 1-888-327-7377
+                                            <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                                        </div>
+                                     </div>`;
+                }
             } else if (student.status === 'In Progress') {
                  statusContent = `<div>
                                     <p class="font-medium">Stage ${student.stage}, Question ${student.question}</p>
@@ -415,6 +438,23 @@
         renderTable(displayedStudents);
     }
     
+    function isUnsubmitAllowed(startTime) {
+        if (!startTime) return true; // If no start time, allow unsubmit
+        const threeHoursInMs = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+        const currentTime = new Date().getTime();
+        return (currentTime - startTime) < threeHoursInMs;
+    }
+    
+    function openUnsubmitModal(studentId, studentName) {
+        studentNameUnsubmitModal.textContent = studentName;
+        confirmUnsubmitBtn.dataset.studentId = studentId;
+        unsubmitModal.classList.remove('hidden');
+    }
+
+    function closeUnsubmitModal() {
+        unsubmitModal.classList.add('hidden');
+    }
+
     function handleUnsubmit() {
         const studentId = confirmUnsubmitBtn.dataset.studentId;
         const studentIndex = students.findIndex(s => s.id === studentId);
@@ -446,6 +486,11 @@
     
     tableBody.addEventListener('click', function(e) {
         const unsubmitButton = e.target.closest('.unsubmit-btn');
+        if (unsubmitButton && !unsubmitButton.disabled) {
+            openUnsubmitModal(unsubmitButton.dataset.studentId, unsubmitButton.dataset.studentName);
+        }
+
+        const unsubmitButton = e.target.closest('.unsubmit-btn');
         if (unsubmitButton) {
             studentNameUnsubmitModal.textContent = unsubmitButton.dataset.studentName;
             confirmUnsubmitBtn.dataset.studentId = unsubmitButton.dataset.studentId;
@@ -461,10 +506,78 @@
             }
             updateView();
         }
+
+        const studentNameButton = e.target.closest('.student-name-btn');
+        if (studentNameButton) {
+            openStudentInfoModal(studentNameButton.dataset.studentId);
+        }
+    });
+
+    // Add hover functionality for disabled unsubmit buttons
+    tableBody.addEventListener('mouseover', function(e) {
+        const disabledButton = e.target.closest('.unsubmit-btn-disabled');
+        if (disabledButton) {
+            const tooltip = disabledButton.parentElement.querySelector('.unsubmit-tooltip');
+            if (tooltip) tooltip.classList.remove('hidden');
+        }
+    });
+
+    tableBody.addEventListener('mouseout', function(e) {
+        const disabledButton = e.target.closest('.unsubmit-btn-disabled');
+        if (disabledButton) {
+            const tooltip = disabledButton.parentElement.querySelector('.unsubmit-tooltip');
+            if (tooltip) tooltip.classList.add('hidden');
+        }
     });
 
     confirmUnsubmitBtn.addEventListener('click', handleUnsubmit);
-    cancelUnsubmitBtn.addEventListener('click', () => unsubmitModal.classList.add('hidden'));
+    cancelUnsubmitBtn.addEventListener('click', closeUnsubmitModal);
+    unsubmitModal.addEventListener('click', (e) => e.target === unsubmitModal && closeUnsubmitModal());
+
+    techSupportBtn.addEventListener('click', () => {
+        techSupportModal.classList.remove('hidden');
+    });
+    dismissSupportModalBtn.addEventListener('click', () => {
+        techSupportModal.classList.add('hidden');
+    });
+    techSupportModal.addEventListener('click', (e) => {
+        if (e.target === techSupportModal) techSupportModal.classList.add('hidden');
+    });
+
+    messageCentreBtn.addEventListener('click', () => {
+        messageCentreModal.classList.remove('hidden');
+    });
+    dismissMessageModalBtn.addEventListener('click', () => {
+        messageCentreModal.classList.add('hidden');
+    });
+    messageCentreModal.addEventListener('click', (e) => {
+        if (e.target === messageCentreModal) messageCentreModal.classList.add('hidden');
+    });
+    
+    function openStudentInfoModal(studentId) {
+        const student = students.find(s => s.id === studentId);
+        if (!student) return;
+
+        document.getElementById('info-pen').textContent = student.pen;
+        document.getElementById('info-first-name').textContent = student.firstName;
+        document.getElementById('info-last-name').textContent = student.lastName;
+        document.getElementById('info-gender').textContent = student.gender || 'N/A';
+        document.getElementById('info-accommodations').textContent = student.accommodations || 'N/A';
+        document.getElementById('info-notes').textContent = student.notes || 'N/A';
+        document.getElementById('info-assistive-tech').textContent = student.assistiveTech || 'N/A';
+        document.getElementById('info-non-participation').textContent = student.nonParticipation || 'N/A';
+
+        studentInfoModal.classList.remove('hidden');
+    }
+
+    function closeStudentInfoModal() {
+        studentInfoModal.classList.add('hidden');
+    }
+    
+    okStudentInfoBtn.addEventListener('click', closeStudentInfoModal);
+    studentInfoModal.addEventListener('click', (e) => {
+        if (e.target === studentInfoModal) closeStudentInfoModal();
+    });
     
 </script>
 
