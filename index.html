@@ -490,13 +490,6 @@
             openUnsubmitModal(unsubmitButton.dataset.studentId, unsubmitButton.dataset.studentName);
         }
 
-        const unsubmitButton = e.target.closest('.unsubmit-btn');
-        if (unsubmitButton) {
-            studentNameUnsubmitModal.textContent = unsubmitButton.dataset.studentName;
-            confirmUnsubmitBtn.dataset.studentId = unsubmitButton.dataset.studentId;
-            unsubmitModal.classList.remove('hidden');
-        }
-
         const watchCheckbox = e.target.closest('.watch-checkbox');
         if (watchCheckbox) {
             const studentId = watchCheckbox.dataset.studentId;
