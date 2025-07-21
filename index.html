@@ -59,6 +59,105 @@
         .table-cell-border {
             border-right: 1px solid #e0e0e0;
         }
+        
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            .header-bar {
+                flex-direction: column;
+                gap: 8px;
+                padding: 12px;
+            }
+            
+            .header-bar .flex {
+                flex-wrap: wrap;
+                justify-content: center;
+                text-align: center;
+            }
+            
+            .main-content {
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .p-6 {
+                padding: 16px;
+            }
+            
+            .filter-controls {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+            
+            .filter-controls input,
+            .filter-controls select {
+                width: 100%;
+                max-width: none;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            table {
+                min-width: 600px;
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px 4px;
+                white-space: nowrap;
+            }
+            
+            .student-name-btn {
+                font-size: 12px;
+            }
+            
+            .unsubmit-btn,
+            .unsubmit-btn-disabled {
+                font-size: 11px;
+                padding: 4px 8px;
+            }
+            
+            /* Modal adjustments for mobile */
+            .modal-content {
+                margin: 16px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            
+            .unsubmit-tooltip {
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 90%;
+                max-width: 300px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-bar {
+                padding: 8px;
+            }
+            
+            .p-6 {
+                padding: 12px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            table {
+                font-size: 11px;
+            }
+            
+            th, td {
+                padding: 6px 2px;
+            }
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -116,7 +215,7 @@
                 </div>
                 
                 <div class="p-6">
-                     <div class="flex justify-between items-center mb-4">
+                     <div class="filter-controls flex justify-between items-center mb-4">
                         <input type="text" id="search-input" placeholder="Search by Student Name or PEN" class="px-3 py-2 border border-gray-300 rounded-md w-full max-w-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
                         <div class="flex items-center space-x-4">
                              <div>
@@ -139,6 +238,7 @@
                             </div>
                         </div>
                     </div>
+                    <div class="table-container">
                     <table class="w-full text-sm text-left table-fixed">
                         <thead class="border-b-2 border-gray-300">
                             <tr>
@@ -154,6 +254,7 @@
                             <!-- Student rows will be injected here by JavaScript -->
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
         </main>
@@ -161,7 +262,7 @@
 
     <!-- Modals remain the same -->
     <div id="unsubmit-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+        <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Unsubmit Assessment</h3>
             <p class="text-sm text-gray-500 mb-6">
                 Are you sure you want to unsubmit the assessment for <strong id="student-name-modal"></strong>? This will allow them to re-enter and complete their test. This action cannot be undone.
@@ -173,7 +274,7 @@
         </div>
     </div>
     <div id="tech-support-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-lg mx-4">
+        <div class="modal-content bg-white rounded-lg shadow-xl p-8 w-full max-w-lg mx-4">
             <h3 class="text-xl font-medium text-gray-900 mb-4">Information centre hours:</h3>
             <p class="text-lg text-gray-700 mb-6">
                 <strong class="font-semibold">Monday to Friday:</strong><br>
@@ -201,7 +302,7 @@
         </div>
     </div>
     <div id="message-centre-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 h-3/4 flex flex-col">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 h-3/4 flex flex-col">
             <div class="p-4 border-b">
                 <h2 class="text-xl font-semibold text-gray-800">Message Centre</h2>
             </div>
@@ -235,7 +336,7 @@
         </div>
     </div>
     <div id="student-info-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
             <div class="p-4 border-b">
                 <h2 class="text-xl font-semibold text-gray-800">View/Edit Student Info</h2>
             </div>
@@ -293,6 +394,26 @@
         { id: '5', pen: '321654987', firstName: 'Jessica', lastName: 'Wu', component: 'Numeracy 10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 0, lastSeen: null, startTime: new Date().getTime() - (1 * 60 * 60 * 1000) }, // Started 1 hour ago
         { id: '6', pen: '234567890', firstName: 'Amanda', lastName: 'Singh', component: 'Literacy 10', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null },
         { id: '7', pen: '345678901', firstName: 'James', lastName: 'Wilson', component: 'Numeracy 10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 86400000 },
+        { id: '8', pen: '567890123', firstName: 'Olivia', lastName: 'Martinez', component: 'Numeracy 10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 3, question: 7, time: 1245, lastSeen: null },
+        { id: '9', pen: '678901234', firstName: 'Ethan', lastName: 'Brown', component: 'Literacy 10', watched: true, connectionStatus: 'disconnected', status: 'In Progress', stage: 1, question: 2, time: 567, lastSeen: new Date().getTime() - 120000 },
+        { id: '10', pen: '789012345', firstName: 'Sophia', lastName: 'Davis', component: 'Numeracy 10', watched: false, connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, time: 2134, lastSeen: new Date().getTime() - 1800000, startTime: new Date().getTime() - (30 * 60 * 1000) }, // Started 30 min ago
+        { id: '11', pen: '890123456', firstName: 'Liam', lastName: 'Miller', component: 'Literacy 10', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null },
+        { id: '12', pen: '901234567', firstName: 'Ava', lastName: 'Wilson', component: 'Numeracy 10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 2, question: 4, time: 892, lastSeen: null },
+        { id: '13', pen: '012345678', firstName: 'Noah', lastName: 'Moore', component: 'Literacy 10', watched: false, connectionStatus: 'disconnected', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 900000 },
+        { id: '14', pen: '123450789', firstName: 'Isabella', lastName: 'Taylor', component: 'Numeracy 10', watched: true, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 1567, lastSeen: null, startTime: new Date().getTime() - (5 * 60 * 60 * 1000) }, // Started 5 hours ago (unsubmit disabled)
+        { id: '15', pen: '234561890', firstName: 'Mason', lastName: 'Anderson', component: 'Literacy 10', watched: false, connectionStatus: 'offline', status: 'In Progress', stage: 1, question: 1, time: 234, lastSeen: new Date().getTime() - 600000 },
+        { id: '16', pen: '345672901', firstName: 'Mia', lastName: 'Thomas', component: 'Numeracy 10', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null },
+        { id: '17', pen: '456783012', firstName: 'Lucas', lastName: 'Jackson', component: 'Literacy 10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 4, question: 9, time: 1789, lastSeen: null },
+        { id: '18', pen: '567894123', firstName: 'Charlotte', lastName: 'White', component: 'Numeracy 10', watched: false, connectionStatus: 'disconnected', status: 'Submitted', stage: null, question: null, time: 1456, lastSeen: new Date().getTime() - 240000, startTime: new Date().getTime() - (90 * 60 * 1000) }, // Started 90 min ago
+        { id: '19', pen: '678905234', firstName: 'Benjamin', lastName: 'Harris', component: 'Literacy 10', watched: true, connectionStatus: 'offline', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 3600000 },
+        { id: '20', pen: '789016345', firstName: 'Amelia', lastName: 'Martin', component: 'Numeracy 10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 2, question: 6, time: 678, lastSeen: null },
+        { id: '21', pen: '890127456', firstName: 'Alexander', lastName: 'Garcia', component: 'Literacy 10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 2345, lastSeen: null, startTime: new Date().getTime() - (45 * 60 * 1000) }, // Started 45 min ago
+        { id: '22', pen: '901238567', firstName: 'Harper', lastName: 'Rodriguez', component: 'Numeracy 10', watched: false, connectionStatus: 'disconnected', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 180000 },
+        { id: '23', pen: '012349678', firstName: 'William', lastName: 'Lewis', component: 'Literacy 10', watched: false, connectionStatus: 'offline', status: 'In Progress', stage: 3, question: 8, time: 1123, lastSeen: new Date().getTime() - 420000 },
+        { id: '24', pen: '123460789', firstName: 'Evelyn', lastName: 'Lee', component: 'Numeracy 10', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null },
+        { id: '25', pen: '234571890', firstName: 'Henry', lastName: 'Walker', component: 'Literacy 10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 1890, lastSeen: null, startTime: new Date().getTime() - (6 * 60 * 60 * 1000) }, // Started 6 hours ago (unsubmit disabled)
+        { id: '26', pen: '345682901', firstName: 'Abigail', lastName: 'Hall', component: 'Numeracy 10', watched: true, connectionStatus: 'disconnected', status: 'In Progress', stage: 1, question: 4, time: 445, lastSeen: new Date().getTime() - 90000 },
+        { id: '27', pen: '456793012', firstName: 'Sebastian', lastName: 'Allen', component: 'Literacy 10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 1200000 }
     ];
     
     let students = [...initialStudents];
