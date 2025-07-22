@@ -626,6 +626,16 @@
         document.getElementById('info-gender').textContent = student.gender || 'N/A';
         document.getElementById('info-accommodations').textContent = student.accommodations || 'N/A';
         document.getElementById('info-notes').textContent = student.notes || 'N/A';
+        document.getElementById('info-assistive-tech').textContent = student.assistiveTech || 'N/A';
+        document.getElementById('info-non-participation').textContent = student.nonParticipation || 'N/A';
+        
+        studentInfoModal.classList.remove('hidden');
+    }
+    
+    function closeStudentInfoModal() {
+        studentInfoModal.classList.add('hidden');
+    }
+    
     okStudentInfoBtn.addEventListener('click', closeStudentInfoModal);
     studentInfoModal.addEventListener('click', (e) => {
         if (e.target === studentInfoModal) closeStudentInfoModal();
