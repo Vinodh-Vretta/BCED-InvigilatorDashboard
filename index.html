@@ -238,6 +238,7 @@
                                 <th scope="col" class="py-2 px-3 font-medium text-blue-700 w-[40%]">
                                     <button id="sort-by-name-btn" class="w-full text-left">First Name / Last Name <span id="sort-indicator">◆</span></button>
                                 </th>
+                                <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[20%]">Component</th>
                                 <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[40%]">Status</th>
                             </tr>
                         </thead>
@@ -412,7 +413,7 @@
         lastUpdatedTimestamp.textContent = `Last updated: ${new Date().toLocaleTimeString('en-US', { timeZone: 'America/Vancouver' })}`;
 
         if (studentData.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-gray-500">No students found.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-gray-500">No students found.</td></tr>`;
             return;
         }
 
@@ -472,6 +473,9 @@
                         <span>${student.connectionStatus === 'online' ? 'Writing' : student.connectionStatus.charAt(0).toUpperCase() + student.connectionStatus.slice(1)}</span>
                         ${lastSeenHtml}
                     </div>
+                </td>
+                <td class="py-3 px-3 table-cell-border">
+                    <span class="text-sm font-medium text-gray-700">${student.component}</span>
                 </td>
                 <td class="py-3 px-3 ${statusBgClass}">${statusContent}</td>
             `;
