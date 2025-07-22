@@ -388,10 +388,6 @@
     const confirmUnsubmitBtn = document.getElementById('confirm-unsubmit');
     const cancelUnsubmitBtn = document.getElementById('cancel-unsubmit');
     
-    const techSupportBtn = document.getElementById('tech-support-btn');
-    const techSupportModal = document.getElementById('tech-support-modal');
-    const dismissSupportModalBtn = document.getElementById('dismiss-support-modal');
-    
     const studentInfoModal = document.getElementById('student-info-modal');
     const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
     
@@ -604,16 +600,6 @@
     });
     techSupportModal.addEventListener('click', (e) => {
         if (e.target === techSupportModal) techSupportModal.classList.add('hidden');
-    });
-
-    messageCentreBtn.addEventListener('click', () => {
-        messageCentreModal.classList.remove('hidden');
-    });
-    dismissMessageModalBtn.addEventListener('click', () => {
-        messageCentreModal.classList.add('hidden');
-    });
-    messageCentreModal.addEventListener('click', (e) => {
-        if (e.target === messageCentreModal) messageCentreModal.classList.add('hidden');
     });
     
     function openStudentInfoModal(studentId) {
