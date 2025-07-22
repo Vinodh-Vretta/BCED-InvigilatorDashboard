@@ -247,11 +247,11 @@
                             <tr>
                                 <th class="py-2 px-3 w-24 font-medium text-gray-700">Watch</th>
                                 <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[15%]">PEN</th>
-                                <th scope="col" class="py-2 px-3 font-medium text-blue-700 w-[35%]">
+                                <th scope="col" class="py-2 px-3 font-medium text-blue-700 w-[40%]">
                                     <button id="sort-by-name-btn" class="w-full text-left">First Name / Last Name <span id="sort-indicator">◆</span></button>
                                 </th>
                                 <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[20%]">Component</th>
-                                <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[30%]">Status</th>
+                                <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[25%]">Status</th>
                             </tr>
                         </thead>
                         <tbody id="student-table-body">
@@ -475,7 +475,7 @@
 
             let lastSeenHtml = '';
             if (student.connectionStatus !== 'online' && student.lastSeen) {
-                lastSeenHtml = `<p class="text-xs text-gray-500 mt-1">Last seen: ${new Date(student.lastSeen).toLocaleTimeString()}</p>`;
+                lastSeenHtml = `<span class="ml-1 text-gray-500">(Last seen: ${new Date(student.lastSeen).toLocaleTimeString()})</span>`;
             }
 
             row.innerHTML = `
@@ -484,11 +484,13 @@
                 </td>
                 <td class="py-3 px-3 table-cell-border">${student.pen}</td>
                 <td class="py-3 px-3 table-cell-border">
-                    <button class="student-name-btn text-blue-700 font-medium hover:underline" data-student-id="${student.id}">${student.firstName} ${student.lastName}</button>
-                    <div class="text-xs text-gray-700 mt-1">
-                        <span class="status-dot ${connectionStatusClass}"></span>
-                        <span>${student.connectionStatus === 'online' ? 'Writing' : student.connectionStatus.charAt(0).toUpperCase() + student.connectionStatus.slice(1)}</span>
-                        ${lastSeenHtml}
+                    <div class="flex items-center space-x-2">
+                        <button class="student-name-btn text-blue-700 font-medium hover:underline truncate" data-student-id="${student.id}">${student.firstName} ${student.lastName}</button>
+                        <div class="text-xs text-gray-700 flex items-center flex-shrink-0">
+                            <span class="status-dot ${connectionStatusClass}"></span>
+                            <span>${student.connectionStatus === 'online' ? 'Writing' : student.connectionStatus.charAt(0).toUpperCase() + student.connectionStatus.slice(1)}</span>
+                            ${lastSeenHtml}
+                        </div>
                     </div>
                 </td>
                 <td class="py-3 px-3 table-cell-border">
