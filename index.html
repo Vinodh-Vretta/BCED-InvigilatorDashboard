@@ -481,24 +481,6 @@
                 </td>
                 <td class="py-3 px-3 ${statusBgClass}">${statusContent}</td>
             `;
-            row.innerHTML = `
-                <td class="py-3 px-3 table-cell-border text-center">
-                    <input type="checkbox" class="watch-checkbox" data-student-id="${student.id}" ${student.watched ? 'checked' : ''}>
-                </td>
-                <td class="py-3 px-3 table-cell-border">${student.pen}</td>
-                <td class="py-3 px-3 table-cell-border">
-                    <button class="student-name-btn text-blue-700 font-medium hover:underline" data-student-id="${student.id}">${student.firstName} ${student.lastName}</button>
-                    <div class="text-xs text-gray-700 mt-1">
-                        <span class="status-dot ${connectionStatusClass}"></span>
-                        <span>${student.connectionStatus === 'online' ? 'Writing' : student.connectionStatus.charAt(0).toUpperCase() + student.connectionStatus.slice(1)}</span>
-                        ${lastSeenHtml}
-                    </div>
-                </td>
-                <td class="py-3 px-3 table-cell-border">
-                    <span class="text-sm font-medium text-gray-700">${student.component}</span>
-                </td>
-                <td class="py-3 px-3 ${statusBgClass}">${statusContent}</td>
-            `;
             tableBody.appendChild(row);
         });
     }
