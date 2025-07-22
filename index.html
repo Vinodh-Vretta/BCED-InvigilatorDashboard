@@ -59,8 +59,8 @@
             border-right: 1px solid #e0e0e0;
         }
         .btn-unsubmit-active {
-            background-color: #4CAF50; /* Green */
-            color: white;
+            background-color: #e0e0e0; /* Neutral grey */
+            color: #333;
             padding: 4px 12px;
             border-radius: 4px;
             font-size: 12px;
@@ -68,7 +68,7 @@
             transition: background-color 0.2s;
         }
         .btn-unsubmit-active:hover {
-            background-color: #45a049;
+            background-color: #d1d1d1;
         }
         .btn-unsubmit-disabled {
             background-color: #e0e0e0;
@@ -446,7 +446,7 @@
                     buttonHtml = `<button class="unsubmit-btn btn-unsubmit-active ml-4" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">Unsubmit</button>`;
                 } else {
                     buttonHtml = `<div class="relative">
-                                    <button class="btn-unsubmit-disabled ml-4" disabled>3 hours limit exceeded</button>
+                                    <button class="btn-unsubmit-disabled ml-4" disabled>Unsubmit</button>
                                     <div class="unsubmit-tooltip hidden absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-md whitespace-nowrap z-10">
                                         3-hour window expired. Contact support for unsubmission:<br>
                                         Email: bced-support@vretta.com<br>
