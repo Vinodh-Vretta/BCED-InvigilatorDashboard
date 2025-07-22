@@ -155,7 +155,6 @@
 </head>
 <body class="text-gray-800">
 
-    <!-- Login Page -->
     <div id="login-page">
         <div class="min-h-screen flex items-center justify-center bg-gray-100">
             <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
@@ -177,7 +176,6 @@
         </div>
     </div>
 
-    <!-- Dashboard Page (Initially Hidden) -->
     <div id="dashboard-page" class="hidden">
         <header class="header-bar px-6 py-3 flex justify-between items-center">
             <div></div>
@@ -210,9 +208,12 @@
                                     <option value="all">All Components</option>
                                     <option value="Numeracy 10">Numeracy 10</option>
                                     <option value="Literacy 10">Literacy 10</option>
-                                    <option value="LTF12">LTF12</option>
-                                    <option value="LTP10">LTP10</option>
-                                    <option value="LTP12">LTP12</option>
+                                    <option value="LTF12 (ORAL)">LTF12 (ORAL)</option>
+                                    <option value="LTF12 (WRITTEN)">LTF12 (WRITTEN)</option>
+                                    <option value="LTP10 (ORAL)">LTP10 (ORAL)</option>
+                                    <option value="LTP10 (WRITTEN)">LTP10 (WRITTEN)</option>
+                                    <option value="LTP12 (ORAL)">LTP12 (ORAL)</option>
+                                    <option value="LTP12 (WRITTEN)">LTP12 (WRITTEN)</option>
                                     <option value="Oral">Oral</option>
                                     <option value="Written">Written</option>
                                 </select>
@@ -243,8 +244,7 @@
                             </tr>
                         </thead>
                         <tbody id="student-table-body">
-                            <!-- Student rows will be injected here by JavaScript -->
-                        </tbody>
+                            </tbody>
                     </table>
                     </div>
                 </div>
@@ -252,7 +252,6 @@
         </main>
     </div>
 
-    <!-- Modals remain the same -->
     <div id="unsubmit-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Unsubmit Assessment</h3>
@@ -372,11 +371,14 @@
         { id: '25', pen: '234571890', firstName: 'Henry', lastName: 'Walker', component: 'Literacy 10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 1890, lastSeen: null, startTime: new Date().getTime() - (6 * 60 * 60 * 1000) }, // Started 6 hours ago (unsubmit disabled)
         { id: '26', pen: '345682901', firstName: 'Abigail', lastName: 'Hall', component: 'Numeracy 10', watched: true, connectionStatus: 'disconnected', status: 'In Progress', stage: 1, question: 4, time: 445, lastSeen: new Date().getTime() - 90000 },
         { id: '27', pen: '456793012', firstName: 'Sebastian', lastName: 'Allen', component: 'Literacy 10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 1200000 },
-        { id: '28', pen: '567804123', firstName: 'Grace', lastName: 'Young', component: 'LTF12', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 2, question: 5, time: 567, lastSeen: null },
-        { id: '29', pen: '678915234', firstName: 'Jack', lastName: 'King', component: 'LTP10', watched: false, connectionStatus: 'disconnected', status: 'Submitted', stage: null, question: null, time: 1234, lastSeen: new Date().getTime() - 180000, startTime: new Date().getTime() - (2 * 60 * 60 * 1000) },
-        { id: '30', pen: '789026345', firstName: 'Lily', lastName: 'Wright', component: 'LTP12', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null },
+        { id: '28', pen: '567804123', firstName: 'Grace', lastName: 'Young', component: 'LTF12 (ORAL)', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 2, question: 5, time: 567, lastSeen: null },
+        { id: '29', pen: '678915234', firstName: 'Jack', lastName: 'King', component: 'LTP10 (ORAL)', watched: false, connectionStatus: 'disconnected', status: 'Submitted', stage: null, question: null, time: 1234, lastSeen: new Date().getTime() - 180000, startTime: new Date().getTime() - (2 * 60 * 60 * 1000) },
+        { id: '30', pen: '789026345', firstName: 'Lily', lastName: 'Wright', component: 'LTP12 (ORAL)', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null },
         { id: '31', pen: '890137456', firstName: 'Owen', lastName: 'Lopez', component: 'Oral', watched: true, connectionStatus: 'online', status: 'In Progress', stage: 1, question: 3, time: 234, lastSeen: null },
-        { id: '32', pen: '901248567', firstName: 'Zoe', lastName: 'Hill', component: 'Written', watched: false, connectionStatus: 'offline', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 600000 }
+        { id: '32', pen: '901248567', firstName: 'Zoe', lastName: 'Hill', component: 'Written', watched: false, connectionStatus: 'offline', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 600000 },
+        { id: '33', pen: '135792468', firstName: 'Chloe', lastName: 'Scott', component: 'LTF12 (WRITTEN)', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 1, question: 1, time: 150, lastSeen: null },
+        { id: '34', pen: '246813579', firstName: 'Ryan', lastName: 'Green', component: 'LTP10 (WRITTEN)', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null },
+        { id: '35', pen: '975318642', firstName: 'Madison', lastName: 'Adams', component: 'LTP12 (WRITTEN)', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 7200000 }
     ];
     
     let students = [...initialStudents];
@@ -461,7 +463,7 @@
                 lastSeenHtml = `<p class="text-xs text-gray-500 mt-1">Last seen: ${new Date(student.lastSeen).toLocaleTimeString()}</p>`;
             }
 
-            row.innerHTML = `
+            row.innerHTML = \`
                 <td class="py-3 px-3 table-cell-border text-center">
                     <input type="checkbox" class="watch-checkbox" data-student-id="${student.id}" ${student.watched ? 'checked' : ''}>
                 </td>
@@ -478,7 +480,7 @@
                     <span class="text-sm font-medium text-gray-700">${student.component}</span>
                 </td>
                 <td class="py-3 px-3 ${statusBgClass}">${statusContent}</td>
-            `;
+            \`;
             tableBody.appendChild(row);
         });
     }
@@ -499,7 +501,7 @@
         const searchTerm = searchInput.value.toLowerCase();
         if (searchTerm) {
             displayedStudents = displayedStudents.filter(student => 
-                `${student.firstName} ${student.lastName}`.toLowerCase().includes(searchTerm) || 
+                \`${student.firstName} ${student.lastName}\`.toLowerCase().includes(searchTerm) || 
                 student.pen.toLowerCase().includes(searchTerm)
             );
         }
@@ -510,8 +512,8 @@
             if (!a.watched && b.watched) return 1;
 
             if (sortDirection !== 'none') {
-                const nameA = `${a.lastName} ${a.firstName}`.toLowerCase();
-                const nameB = `${b.lastName} ${b.firstName}`.toLowerCase();
+                const nameA = \`${a.lastName} ${a.firstName}\`.toLowerCase();
+                const nameB = \`${b.lastName} ${b.firstName}\`.toLowerCase();
                 if (nameA < nameB) return sortDirection === 'asc' ? -1 : 1;
                 if (nameA > nameB) return sortDirection === 'asc' ? 1 : -1;
             }
