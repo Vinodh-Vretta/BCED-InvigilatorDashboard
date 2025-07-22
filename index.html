@@ -210,6 +210,11 @@
                                     <option value="all">All Components</option>
                                     <option value="Numeracy 10">Numeracy 10</option>
                                     <option value="Literacy 10">Literacy 10</option>
+                                    <option value="LTF12">LTF12</option>
+                                    <option value="LTP10">LTP10</option>
+                                    <option value="LTP12">LTP12</option>
+                                    <option value="Oral">Oral</option>
+                                    <option value="Written">Written</option>
                                 </select>
                             </div>
                             <div>
@@ -365,7 +370,12 @@
         { id: '24', pen: '123460789', firstName: 'Evelyn', lastName: 'Lee', component: 'Numeracy 10', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null },
         { id: '25', pen: '234571890', firstName: 'Henry', lastName: 'Walker', component: 'Literacy 10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 1890, lastSeen: null, startTime: new Date().getTime() - (6 * 60 * 60 * 1000) }, // Started 6 hours ago (unsubmit disabled)
         { id: '26', pen: '345682901', firstName: 'Abigail', lastName: 'Hall', component: 'Numeracy 10', watched: true, connectionStatus: 'disconnected', status: 'In Progress', stage: 1, question: 4, time: 445, lastSeen: new Date().getTime() - 90000 },
-        { id: '27', pen: '456793012', firstName: 'Sebastian', lastName: 'Allen', component: 'Literacy 10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 1200000 }
+        { id: '27', pen: '456793012', firstName: 'Sebastian', lastName: 'Allen', component: 'Literacy 10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 1200000 },
+        { id: '28', pen: '567804123', firstName: 'Grace', lastName: 'Young', component: 'LTF12', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 2, question: 5, time: 567, lastSeen: null },
+        { id: '29', pen: '678915234', firstName: 'Jack', lastName: 'King', component: 'LTP10', watched: false, connectionStatus: 'disconnected', status: 'Submitted', stage: null, question: null, time: 1234, lastSeen: new Date().getTime() - 180000, startTime: new Date().getTime() - (2 * 60 * 60 * 1000) },
+        { id: '30', pen: '789026345', firstName: 'Lily', lastName: 'Wright', component: 'LTP12', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null },
+        { id: '31', pen: '890137456', firstName: 'Owen', lastName: 'Lopez', component: 'Oral', watched: true, connectionStatus: 'online', status: 'In Progress', stage: 1, question: 3, time: 234, lastSeen: null },
+        { id: '32', pen: '901248567', firstName: 'Zoe', lastName: 'Hill', component: 'Written', watched: false, connectionStatus: 'offline', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 600000 }
     ];
     
     let students = [...initialStudents];
