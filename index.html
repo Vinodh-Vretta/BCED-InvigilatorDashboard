@@ -308,45 +308,10 @@
     <div id="student-info-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
             <div class="p-4 border-b">
-                <h2 class="text-xl font-semibold text-gray-800">View/Edit Student Info</h2>
+                <h2 class="text-xl font-semibold text-gray-800">Student Info</h2>
             </div>
-            <div class="p-6">
-                <table class="w-full text-sm">
-                    <tbody>
-                        <tr class="border-b">
-                            <td class="py-3 px-2 font-medium text-gray-600 w-1/3">PEN</td>
-                            <td id="info-pen" class="py-3 px-2"></td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="py-3 px-2 font-medium text-gray-600">First Name</td>
-                            <td id="info-first-name" class="py-3 px-2"></td>
-                        </tr>
-                         <tr class="border-b">
-                            <td class="py-3 px-2 font-medium text-gray-600">Last Name</td>
-                            <td id="info-last-name" class="py-3 px-2"></td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="py-3 px-2 font-medium text-gray-600">Gender</td>
-                            <td id="info-gender" class="py-3 px-2"></td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="py-3 px-2 font-medium text-gray-600">Accommodations</td>
-                            <td id="info-accommodations" class="py-3 px-2"></td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="py-3 px-2 font-medium text-gray-600">Notes from the Teacher</td>
-                            <td id="info-notes" class="py-3 px-2"></td>
-                        </tr>
-                         <tr class="border-b">
-                            <td class="py-3 px-2 font-medium text-gray-600">Assistive Technology</td>
-                            <td id="info-assistive-tech" class="py-3 px-2"></td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 px-2 font-medium text-gray-600">Non-participation Status</td>
-                            <td id="info-non-participation" class="py-3 px-2"></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div id="student-info-content" class="p-6">
+                <!-- Content will be dynamically generated here -->
             </div>
             <div class="p-4 bg-gray-50 text-right border-t">
                  <button id="ok-student-info-modal" class="btn-primary">OK</button>
@@ -357,39 +322,39 @@
 <script>
     // --- MOCK DATA ---
     const initialStudents = [
-        { id: '1', pen: '123456789', firstName: 'Emma', lastName: 'Thompson', component: 'NME 10', watched: true, connectionStatus: 'online', status: 'In Progress', stage: 1, question: 3, time: 429566, lastSeen: null },
-        { id: '2', pen: '987654321', firstName: 'Michael', lastName: 'Chen', component: 'NME 10', watched: false, connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, time: 8946, lastSeen: new Date().getTime() - 300000, startTime: new Date().getTime() - (2 * 60 * 60 * 1000) }, // Started 2 hours ago
-        { id: '3', pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 394, lastSeen: null, startTime: new Date().getTime() - (4 * 60 * 60 * 1000) }, // Started 4 hours ago (unsubmit disabled)
-        { id: '4', pen: '789123456', firstName: 'David', lastName: 'Rodriguez', component: 'LTE10', watched: true, connectionStatus: 'disconnected', status: 'In Progress', stage: 2, question: 5, time: 0, lastSeen: new Date().getTime() - 60000 },
-        { id: '5', pen: '321654987', firstName: 'Jessica', lastName: 'Wu', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 0, lastSeen: null, startTime: new Date().getTime() - (1 * 60 * 60 * 1000) }, // Started 1 hour ago
-        { id: '6', pen: '234567890', firstName: 'Amanda', lastName: 'Singh', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null },
-        { id: '7', pen: '345678901', firstName: 'James', lastName: 'Wilson', component: 'NME 10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 86400000 },
-        { id: '8', pen: '567890123', firstName: 'Olivia', lastName: 'Martinez', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 3, question: 7, time: 1245, lastSeen: null },
-        { id: '9', pen: '678901234', firstName: 'Ethan', lastName: 'Brown', component: 'LTE10', watched: true, connectionStatus: 'disconnected', status: 'In Progress', stage: 1, question: 2, time: 567, lastSeen: new Date().getTime() - 120000 },
-        { id: '10', pen: '789012345', firstName: 'Sophia', lastName: 'Davis', component: 'NME 10', watched: false, connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, time: 2134, lastSeen: new Date().getTime() - 1800000, startTime: new Date().getTime() - (30 * 60 * 1000) }, // Started 30 min ago
-        { id: '11', pen: '890123456', firstName: 'Liam', lastName: 'Miller', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null },
-        { id: '12', pen: '901234567', firstName: 'Ava', lastName: 'Wilson', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 2, question: 4, time: 892, lastSeen: null },
-        { id: '13', pen: '012345678', firstName: 'Noah', lastName: 'Moore', component: 'LTE10', watched: false, connectionStatus: 'disconnected', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 900000 },
-        { id: '14', pen: '123450789', firstName: 'Isabella', lastName: 'Taylor', component: 'NME 10', watched: true, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 1567, lastSeen: null, startTime: new Date().getTime() - (5 * 60 * 60 * 1000) }, // Started 5 hours ago (unsubmit disabled)
-        { id: '15', pen: '234561890', firstName: 'Mason', lastName: 'Anderson', component: 'LTE10', watched: false, connectionStatus: 'offline', status: 'In Progress', stage: 1, question: 1, time: 234, lastSeen: new Date().getTime() - 600000 },
-        { id: '16', pen: '345672901', firstName: 'Mia', lastName: 'Thomas', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null },
-        { id: '17', pen: '456783012', firstName: 'Lucas', lastName: 'Jackson', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 4, question: 9, time: 1789, lastSeen: null },
-        { id: '18', pen: '567894123', firstName: 'Charlotte', lastName: 'White', component: 'NME 10', watched: false, connectionStatus: 'disconnected', status: 'Submitted', stage: null, question: null, time: 1456, lastSeen: new Date().getTime() - 240000, startTime: new Date().getTime() - (90 * 60 * 1000) }, // Started 90 min ago
-        { id: '19', pen: '678905234', firstName: 'Benjamin', lastName: 'Harris', component: 'LTE10', watched: true, connectionStatus: 'offline', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 3600000 },
-        { id: '20', pen: '789016345', firstName: 'Amelia', lastName: 'Martin', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 2, question: 6, time: 678, lastSeen: null },
-        { id: '21', pen: '890127456', firstName: 'Alexander', lastName: 'Garcia', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 2345, lastSeen: null, startTime: new Date().getTime() - (45 * 60 * 1000) }, // Started 45 min ago
-        { id: '22', pen: '901238567', firstName: 'Harper', lastName: 'Rodriguez', component: 'NME 10', watched: false, connectionStatus: 'disconnected', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 180000 },
-        { id: '23', pen: '012349678', firstName: 'William', lastName: 'Lewis', component: 'LTE10', watched: false, connectionStatus: 'offline', status: 'In Progress', stage: 3, question: 8, time: 1123, lastSeen: new Date().getTime() - 420000 },
-        { id: '24', pen: '123460789', firstName: 'Evelyn', lastName: 'Lee', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null },
-        { id: '25', pen: '234571890', firstName: 'Henry', lastName: 'Walker', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 1890, lastSeen: null, startTime: new Date().getTime() - (6 * 60 * 60 * 1000) }, // Started 6 hours ago (unsubmit disabled)
-        { id: '26', pen: '345682901', firstName: 'Abigail', lastName: 'Hall', component: 'NME 10', watched: true, connectionStatus: 'disconnected', status: 'In Progress', stage: 1, question: 4, time: 445, lastSeen: new Date().getTime() - 90000 },
-        { id: '27', pen: '456793012', firstName: 'Sebastian', lastName: 'Allen', component: 'LTE10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 1200000 },
-        { id: '28', pen: '567804123', firstName: 'Grace', lastName: 'Young', component: 'LTF12 (ORAL)', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 2, question: 5, time: 567, lastSeen: null },
-        { id: '29', pen: '678915234', firstName: 'Jack', lastName: 'King', component: 'LTP10 (ORAL)', watched: false, connectionStatus: 'disconnected', status: 'Submitted', stage: null, question: null, time: 1234, lastSeen: new Date().getTime() - 180000, startTime: new Date().getTime() - (2 * 60 * 60 * 1000) },
-        { id: '30', pen: '789026345', firstName: 'Lily', lastName: 'Wright', component: 'LTP12 (ORAL)', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null },
-        { id: '33', pen: '135792468', firstName: 'Chloe', lastName: 'Scott', component: 'LTF12 (WRITTEN)', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 1, question: 1, time: 150, lastSeen: null },
-        { id: '34', pen: '246813579', firstName: 'Ryan', lastName: 'Green', component: 'LTP10 (WRITTEN)', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null },
-        { id: '35', pen: '975318642', firstName: 'Madison', lastName: 'Adams', component: 'LTP12 (WRITTEN)', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 7200000 }
+        { id: '1', pen: '123456789', firstName: 'Emma', lastName: 'Thompson', component: 'NME 10', watched: true, connectionStatus: 'online', status: 'In Progress', stage: 1, question: 3, time: 429566, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null },
+        { id: '2', pen: '987654321', firstName: 'Michael', lastName: 'Chen', component: 'NME 10', watched: false, connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, time: 8946, lastSeen: new Date().getTime() - 300000, startTime: new Date().getTime() - (2 * 60 * 60 * 1000), loginTime: new Date().getTime() - (2 * 60 * 60 * 1000), submissionTime: new Date().getTime() - (1 * 60 * 60 * 1000) }, // Started 2 hours ago
+        { id: '3', pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 394, lastSeen: null, startTime: new Date().getTime() - (4 * 60 * 60 * 1000), loginTime: new Date().getTime() - (4 * 60 * 60 * 1000), submissionTime: new Date().getTime() - (3 * 60 * 60 * 1000) }, // Started 4 hours ago (unsubmit disabled)
+        { id: '4', pen: '789123456', firstName: 'David', lastName: 'Rodriguez', component: 'LTE10', watched: true, connectionStatus: 'disconnected', status: 'In Progress', stage: 2, question: 5, time: 0, lastSeen: new Date().getTime() - 60000, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null },
+        { id: '5', pen: '321654987', firstName: 'Jessica', lastName: 'Wu', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 0, lastSeen: null, startTime: new Date().getTime() - (1 * 60 * 60 * 1000), loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: new Date().getTime() - (30 * 60 * 1000) }, // Started 1 hour ago
+        { id: '6', pen: '234567890', firstName: 'Amanda', lastName: 'Singh', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null, loginTime: null, submissionTime: null },
+        { id: '7', pen: '345678901', firstName: 'James', lastName: 'Wilson', component: 'NME 10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 86400000, loginTime: null, submissionTime: null },
+        { id: '8', pen: '567890123', firstName: 'Olivia', lastName: 'Martinez', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 3, question: 7, time: 1245, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null },
+        { id: '9', pen: '678901234', firstName: 'Ethan', lastName: 'Brown', component: 'LTE10', watched: true, connectionStatus: 'disconnected', status: 'In Progress', stage: 1, question: 2, time: 567, lastSeen: new Date().getTime() - 120000, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null },
+        { id: '10', pen: '789012345', firstName: 'Sophia', lastName: 'Davis', component: 'NME 10', watched: false, connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, time: 2134, lastSeen: new Date().getTime() - 1800000, startTime: new Date().getTime() - (30 * 60 * 1000), loginTime: new Date().getTime() - (30 * 60 * 1000), submissionTime: new Date().getTime() - (15 * 60 * 1000) }, // Started 30 min ago
+        { id: '11', pen: '890123456', firstName: 'Liam', lastName: 'Miller', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null, loginTime: null, submissionTime: null },
+        { id: '12', pen: '901234567', firstName: 'Ava', lastName: 'Wilson', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 2, question: 4, time: 892, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null },
+        { id: '13', pen: '012345678', firstName: 'Noah', lastName: 'Moore', component: 'LTE10', watched: false, connectionStatus: 'disconnected', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 900000, loginTime: null, submissionTime: null },
+        { id: '14', pen: '123450789', firstName: 'Isabella', lastName: 'Taylor', component: 'NME 10', watched: true, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 1567, lastSeen: null, startTime: new Date().getTime() - (5 * 60 * 60 * 1000), loginTime: new Date().getTime() - (5 * 60 * 60 * 1000), submissionTime: new Date().getTime() - (4 * 60 * 60 * 1000) }, // Started 5 hours ago (unsubmit disabled)
+        { id: '15', pen: '234561890', firstName: 'Mason', lastName: 'Anderson', component: 'LTE10', watched: false, connectionStatus: 'offline', status: 'In Progress', stage: 1, question: 1, time: 234, lastSeen: new Date().getTime() - 600000, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null },
+        { id: '16', pen: '345672901', firstName: 'Mia', lastName: 'Thomas', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null, loginTime: null, submissionTime: null },
+        { id: '17', pen: '456783012', firstName: 'Lucas', lastName: 'Jackson', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 4, question: 9, time: 1789, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null },
+        { id: '18', pen: '567894123', firstName: 'Charlotte', lastName: 'White', component: 'NME 10', watched: false, connectionStatus: 'disconnected', status: 'Submitted', stage: null, question: null, time: 1456, lastSeen: new Date().getTime() - 240000, startTime: new Date().getTime() - (90 * 60 * 1000), loginTime: new Date().getTime() - (90 * 60 * 1000), submissionTime: new Date().getTime() - (80 * 60 * 1000) }, // Started 90 min ago
+        { id: '19', pen: '678905234', firstName: 'Benjamin', lastName: 'Harris', component: 'LTE10', watched: true, connectionStatus: 'offline', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 3600000, loginTime: null, submissionTime: null },
+        { id: '20', pen: '789016345', firstName: 'Amelia', lastName: 'Martin', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 2, question: 6, time: 678, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null },
+        { id: '21', pen: '890127456', firstName: 'Alexander', lastName: 'Garcia', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 2345, lastSeen: null, startTime: new Date().getTime() - (45 * 60 * 1000), loginTime: new Date().getTime() - (45 * 60 * 1000), submissionTime: new Date().getTime() - (30 * 60 * 1000) }, // Started 45 min ago
+        { id: '22', pen: '901238567', firstName: 'Harper', lastName: 'Rodriguez', component: 'NME 10', watched: false, connectionStatus: 'disconnected', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 180000, loginTime: null, submissionTime: null },
+        { id: '23', pen: '012349678', firstName: 'William', lastName: 'Lewis', component: 'LTE10', watched: false, connectionStatus: 'offline', status: 'In Progress', stage: 3, question: 8, time: 1123, lastSeen: new Date().getTime() - 420000, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null },
+        { id: '24', pen: '123460789', firstName: 'Evelyn', lastName: 'Lee', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null, loginTime: null, submissionTime: null },
+        { id: '25', pen: '234571890', firstName: 'Henry', lastName: 'Walker', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 1890, lastSeen: null, startTime: new Date().getTime() - (6 * 60 * 60 * 1000), loginTime: new Date().getTime() - (6 * 60 * 60 * 1000), submissionTime: new Date().getTime() - (5 * 60 * 60 * 1000) }, // Started 6 hours ago (unsubmit disabled)
+        { id: '26', pen: '345682901', firstName: 'Abigail', lastName: 'Hall', component: 'NME 10', watched: true, connectionStatus: 'disconnected', status: 'In Progress', stage: 1, question: 4, time: 445, lastSeen: new Date().getTime() - 90000, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null },
+        { id: '27', pen: '456793012', firstName: 'Sebastian', lastName: 'Allen', component: 'LTE10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 1200000, loginTime: null, submissionTime: null },
+        { id: '28', pen: '567804123', firstName: 'Grace', lastName: 'Young', component: 'LTF12 (ORAL)', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 2, question: 5, time: 567, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null },
+        { id: '29', pen: '678915234', firstName: 'Jack', lastName: 'King', component: 'LTP10 (ORAL)', watched: false, connectionStatus: 'disconnected', status: 'Submitted', stage: null, question: null, time: 1234, lastSeen: new Date().getTime() - 180000, startTime: new Date().getTime() - (2 * 60 * 60 * 1000), loginTime: new Date().getTime() - (2 * 60 * 60 * 1000), submissionTime: new Date().getTime() - (1 * 60 * 60 * 1000) },
+        { id: '30', pen: '789026345', firstName: 'Lily', lastName: 'Wright', component: 'LTP12 (ORAL)', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null, loginTime: null, submissionTime: null },
+        { id: '33', pen: '135792468', firstName: 'Chloe', lastName: 'Scott', component: 'LTF12 (WRITTEN)', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 1, question: 1, time: 150, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null },
+        { id: '34', pen: '246813579', firstName: 'Ryan', lastName: 'Green', component: 'LTP10 (WRITTEN)', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null, loginTime: null, submissionTime: null },
+        { id: '35', pen: '975318642', firstName: 'Madison', lastName: 'Adams', component: 'LTP12 (WRITTEN)', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 7200000, loginTime: null, submissionTime: null }
     ];
     
     let students = [...initialStudents];
@@ -417,6 +382,7 @@
     const dismissSupportModalBtn = document.getElementById('dismiss-support-modal');
     
     const studentInfoModal = document.getElementById('student-info-modal');
+    const studentInfoContent = document.getElementById('student-info-content');
     const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
     
     // --- FUNCTIONS ---
@@ -475,7 +441,7 @@
 
             let lastSeenHtml = '';
             if (student.connectionStatus !== 'online' && student.lastSeen) {
-                lastSeenHtml = `<span class="ml-1 text-gray-500">(Last seen: ${new Date(student.lastSeen).toLocaleTimeString()})</span>`;
+                lastSeenHtml = `<span class="ml-1 text-gray-500">(Last seen: ${new Date(student.lastSeen).toLocaleTimeString('en-US', {timeZone: 'America/Vancouver'})})</span>`;
             }
 
             row.innerHTML = `
@@ -646,15 +612,43 @@
         const student = students.find(s => s.id === studentId);
         if (!student) return;
 
-        document.getElementById('info-pen').textContent = student.pen;
-        document.getElementById('info-first-name').textContent = student.firstName;
-        document.getElementById('info-last-name').textContent = student.lastName;
-        document.getElementById('info-gender').textContent = student.gender || 'N/A';
-        document.getElementById('info-accommodations').textContent = student.accommodations || 'N/A';
-        document.getElementById('info-notes').textContent = student.notes || 'N/A';
-        document.getElementById('info-assistive-tech').textContent = student.assistiveTech || 'N/A';
-        document.getElementById('info-non-participation').textContent = student.nonParticipation || 'N/A';
+        const formatDate = (timestamp) => {
+            if (!timestamp) return 'N/A';
+            return new Date(timestamp).toLocaleString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric', 
+                hour: 'numeric', 
+                minute: '2-digit', 
+                timeZone: 'America/Vancouver',
+                timeZoneName: 'short' 
+            });
+        };
+
+        const content = `
+            <table class="w-full text-sm">
+                <tbody>
+                    <tr class="border-b">
+                        <td class="py-3 px-2 font-medium text-gray-600 w-1/3">Assessment Component</td>
+                        <td class="py-3 px-2">${student.component}</td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-3 px-2 font-medium text-gray-600">Assessment Status</td>
+                        <td class="py-3 px-2">${student.status}</td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-3 px-2 font-medium text-gray-600">Login Date & Time</td>
+                        <td class="py-3 px-2">${formatDate(student.loginTime)}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-3 px-2 font-medium text-gray-600">Submission Date & Time</td>
+                        <td class="py-3 px-2">${formatDate(student.submissionTime)}</td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
         
+        studentInfoContent.innerHTML = content;
         studentInfoModal.classList.remove('hidden');
     }
     
