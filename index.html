@@ -557,7 +557,7 @@
     function handleUnblock(studentId) {
         const studentIndex = students.findIndex(s => s.id === studentId);
         if (studentIndex > -1) {
-            students[studentIndex].status = 'Ready to Start';
+            students[studentIndex].status = 'In Progress';
         }
         updateView();
         closeStudentInfoModal();
