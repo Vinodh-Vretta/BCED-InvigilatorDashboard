@@ -414,16 +414,23 @@
             
             let statusContent = '';
             if (student.status === 'Submitted') {
-                const canUnsubmit = isUnsubmitAllowed(student.startTime);
+                const after4PM = isAfter4PM();
+                const timeLimitExceeded = !isUnsubmitAllowed(student.startTime) && !after4PM;
                 let buttonHtml;
-                if (canUnsubmit) {
+
+                if (!after4PM && !timeLimitExceeded) {
                     buttonHtml = `<button class="unsubmit-btn btn-unsubmit-active ml-4" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">Unsubmit</button>`;
                 } else {
+                    let tooltipMessage = '';
+                    if (after4PM) {
+                        tooltipMessage = `Unsubmit is unavailable after 4 PM. Contact support:<br>Phone: 1-888-887-3882`;
+                    } else { // timeLimitExceeded
+                        tooltipMessage = `3-hour window expired. Contact support for unsubmission:<br>Email: bced-support@vretta.com<br>Phone: 1-888-887-3882`;
+                    }
                     buttonHtml = `<div class="relative">
                                     <button class="btn-unsubmit-disabled ml-4" disabled>Unsubmit</button>
                                     <div class="unsubmit-tooltip hidden absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-md whitespace-nowrap z-10">
-                                        Unsubmit is unavailable after 4 PM. Contact support:<br>
-                                        Phone: 1-888-887-3882
+                                        ${tooltipMessage}
                                         <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
                                     </div>
                                   </div>`;
@@ -526,7 +533,6 @@
     }
 
     function isUnsubmitAllowed(startTime) {
-        if (isAfter4PM()) return false;
         if (!startTime) return true; 
         const threeHoursInMs = 3 * 60 * 60 * 1000;
         const currentTime = new Date().getTime();
@@ -664,7 +670,7 @@
 
         let actionsHtml = '';
         if (student.status === 'Submitted') {
-            if (isUnsubmitAllowed(student.startTime)) {
+            if (!isAfter4PM() && isUnsubmitAllowed(student.startTime)) {
                 actionsHtml = `<button class="unsubmit-btn-modal btn-unsubmit-active" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">Unsubmit</button>`;
             }
         } else if (student.status === 'Blocked') {
