@@ -79,6 +79,9 @@
             font-weight: 500;
             cursor: not-allowed;
         }
+        .status-blocked {
+            background-color: #ffebee; /* Pale Red */
+        }
         
         /* Mobile responsive styles */
         @media (max-width: 768px) {
@@ -237,6 +240,7 @@
                                     <option value="Ready to Start">Ready to Start</option>
                                     <option value="In Progress">In Progress</option>
                                     <option value="Submitted">Submitted</option>
+                                    <option value="Blocked">Blocked</option>
                                 </select>
                             </div>
                         </div>
@@ -293,7 +297,7 @@
                         </tr>
                         <tr>
                             <td class="p-3 font-medium bg-gray-50 w-1/3">Phone Number</td>
-                            <td class="p-3 font-medium">1 888-327-7377</td>
+                            <td class="p-3 font-medium">1-888-887-3882</td>
                         </tr>
                     </tbody>
                 </table>
@@ -308,7 +312,7 @@
     <div id="student-info-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
             <div class="p-4 border-b">
-                <h2 class="text-xl font-semibold text-gray-800">Student Info</h2>
+                <h2 id="student-info-title" class="text-xl font-semibold text-gray-800">Student Info</h2>
             </div>
             <div id="student-info-content" class="p-6">
                 <!-- Content will be dynamically generated here -->
@@ -354,7 +358,10 @@
         { id: '30', pen: '789026345', firstName: 'Lily', lastName: 'Wright', component: 'LTP12 (ORAL)', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null, loginTime: null, submissionTime: null },
         { id: '33', pen: '135792468', firstName: 'Chloe', lastName: 'Scott', component: 'LTF12 (WRITTEN)', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 1, question: 1, time: 150, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null },
         { id: '34', pen: '246813579', firstName: 'Ryan', lastName: 'Green', component: 'LTP10 (WRITTEN)', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null, loginTime: null, submissionTime: null },
-        { id: '35', pen: '975318642', firstName: 'Madison', lastName: 'Adams', component: 'LTP12 (WRITTEN)', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 7200000, loginTime: null, submissionTime: null }
+        { id: '35', pen: '975318642', firstName: 'Madison', lastName: 'Adams', component: 'LTP12 (WRITTEN)', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 7200000, loginTime: null, submissionTime: null },
+        { id: '36', pen: '112233445', firstName: 'Daniel', lastName: 'Lee', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'Blocked', stage: 2, question: 8, time: 1500, lastSeen: null, loginTime: new Date().getTime() - (20 * 60 * 1000), submissionTime: null },
+        { id: '37', pen: '223344556', firstName: 'Sophie', lastName: 'Clark', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Blocked', stage: 1, question: 2, time: 800, lastSeen: null, loginTime: new Date().getTime() - (10 * 60 * 1000), submissionTime: null },
+        { id: '38', pen: '334455667', firstName: 'Logan', lastName: 'Hall', component: 'LTF12 (ORAL)', watched: false, connectionStatus: 'online', status: 'Blocked', stage: 3, question: 5, time: 2200, lastSeen: null, loginTime: new Date().getTime() - (35 * 60 * 1000), submissionTime: null }
     ];
     
     let students = [...initialStudents];
@@ -382,6 +389,7 @@
     const dismissSupportModalBtn = document.getElementById('dismiss-support-modal');
     
     const studentInfoModal = document.getElementById('student-info-modal');
+    const studentInfoTitle = document.getElementById('student-info-title');
     const studentInfoContent = document.getElementById('student-info-content');
     const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
     
@@ -414,9 +422,8 @@
                     buttonHtml = `<div class="relative">
                                     <button class="btn-unsubmit-disabled ml-4" disabled>Unsubmit</button>
                                     <div class="unsubmit-tooltip hidden absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-md whitespace-nowrap z-10">
-                                        3-hour window expired. Contact support for unsubmission:<br>
-                                        Email: bced-support@vretta.com<br>
-                                        Phone: 1-888-327-7377
+                                        Unsubmit is unavailable after 4 PM. Contact support:<br>
+                                        Phone: 1-888-887-3882
                                         <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
                                     </div>
                                   </div>`;
@@ -425,6 +432,11 @@
                 statusContent = `<div class="flex items-center">
                                     <p class="font-medium text-gray-700">Submitted</p>
                                     ${buttonHtml}
+                                 </div>`;
+            } else if (student.status === 'Blocked') {
+                 statusContent = `<div class="flex items-center">
+                                    <p class="font-medium text-red-600">Blocked</p>
+                                    <button class="unblock-btn btn-unsubmit-active ml-4" data-student-id="${student.id}">Unblock</button>
                                  </div>`;
             } else if (student.status === 'In Progress') {
                 statusContent = `<div>
@@ -438,6 +450,7 @@
             let statusBgClass = '';
             if (student.status === 'Ready to Start') statusBgClass = 'bg-[#fff3e0]';
             else if (student.status === 'Not Started') statusBgClass = 'bg-gray-100';
+            else if (student.status === 'Blocked') statusBgClass = 'status-blocked';
 
             let lastSeenHtml = '';
             if (student.connectionStatus !== 'online' && student.lastSeen) {
@@ -506,9 +519,16 @@
         renderTable(displayedStudents);
     }
     
+    function isAfter4PM() {
+        const now = new Date();
+        const localTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Vancouver' }));
+        return localTime.getHours() >= 16;
+    }
+
     function isUnsubmitAllowed(startTime) {
-        if (!startTime) return true; // If no start time, allow unsubmit
-        const threeHoursInMs = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+        if (isAfter4PM()) return false;
+        if (!startTime) return true; 
+        const threeHoursInMs = 3 * 60 * 60 * 1000;
         const currentTime = new Date().getTime();
         return (currentTime - startTime) < threeHoursInMs;
     }
@@ -531,6 +551,16 @@
         }
         updateView();
         closeUnsubmitModal();
+        closeStudentInfoModal();
+    }
+    
+    function handleUnblock(studentId) {
+        const studentIndex = students.findIndex(s => s.id === studentId);
+        if (studentIndex > -1) {
+            students[studentIndex].status = 'Ready to Start';
+        }
+        updateView();
+        closeStudentInfoModal();
     }
     
     // --- EVENT LISTENERS ---
@@ -556,6 +586,11 @@
         const unsubmitButton = e.target.closest('.unsubmit-btn');
         if (unsubmitButton && !unsubmitButton.disabled) {
             openUnsubmitModal(unsubmitButton.dataset.studentId, unsubmitButton.dataset.studentName);
+        }
+
+        const unblockButton = e.target.closest('.unblock-btn');
+        if (unblockButton) {
+            handleUnblock(unblockButton.dataset.studentId);
         }
 
         const watchCheckbox = e.target.closest('.watch-checkbox');
@@ -612,6 +647,8 @@
         const student = students.find(s => s.id === studentId);
         if (!student) return;
 
+        studentInfoTitle.textContent = `Student Info: ${student.firstName} ${student.lastName}`;
+
         const formatDate = (timestamp) => {
             if (!timestamp) return 'N/A';
             return new Date(timestamp).toLocaleString('en-US', { 
@@ -625,6 +662,15 @@
             });
         };
 
+        let actionsHtml = '';
+        if (student.status === 'Submitted') {
+            if (isUnsubmitAllowed(student.startTime)) {
+                actionsHtml = `<button class="unsubmit-btn-modal btn-unsubmit-active" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">Unsubmit</button>`;
+            }
+        } else if (student.status === 'Blocked') {
+            actionsHtml = `<button class="unblock-btn-modal btn-unsubmit-active" data-student-id="${student.id}">Unblock</button>`;
+        }
+
         const content = `
             <table class="w-full text-sm">
                 <tbody>
@@ -634,7 +680,10 @@
                     </tr>
                     <tr class="border-b">
                         <td class="py-3 px-2 font-medium text-gray-600">Assessment Status</td>
-                        <td class="py-3 px-2">${student.status}</td>
+                        <td class="py-3 px-2 flex items-center justify-between">
+                            <span>${student.status}</span>
+                            ${actionsHtml}
+                        </td>
                     </tr>
                     <tr class="border-b">
                         <td class="py-3 px-2 font-medium text-gray-600">Login Date & Time</td>
@@ -647,11 +696,22 @@
                 </tbody>
             </table>
         `;
-        
         studentInfoContent.innerHTML = content;
+        
         studentInfoModal.classList.remove('hidden');
     }
     
+    studentInfoContent.addEventListener('click', function(e) {
+        const unsubmitButton = e.target.closest('.unsubmit-btn-modal');
+        if (unsubmitButton) {
+            openUnsubmitModal(unsubmitButton.dataset.studentId, unsubmitButton.dataset.studentName);
+        }
+        const unblockButton = e.target.closest('.unblock-btn-modal');
+        if (unblockButton) {
+            handleUnblock(unblockButton.dataset.studentId);
+        }
+    });
+
     function closeStudentInfoModal() {
         studentInfoModal.classList.add('hidden');
     }
