@@ -34,6 +34,10 @@
         .btn-primary:hover {
             background-color: #234a9e;
         }
+        .btn-primary:disabled {
+            background-color: #a0aec0;
+            cursor: not-allowed;
+        }
         .btn-secondary {
             background-color: #e0e0e0;
             color: #333;
@@ -241,6 +245,7 @@
                                     <option value="In Progress">In Progress</option>
                                     <option value="Submitted">Submitted</option>
                                     <option value="Blocked">Blocked</option>
+                                    <option value="Unsubmit Requested">Unsubmit Requested</option>
                                 </select>
                             </div>
                         </div>
@@ -271,14 +276,31 @@
     <!-- Modals -->
     <div id="unsubmit-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Unsubmit Assessment</h3>
-            <p class="text-sm text-gray-500 mb-6">
-                Are you sure you want to unsubmit the assessment for <strong id="student-name-modal"></strong>? This will allow them to re-enter and complete their test. This action cannot be undone.
-            </p>
-            <div class="flex justify-end space-x-4">
-                <button id="confirm-unsubmit" type="button" class="btn-primary">Confirm Unsubmit</button>
-                <button id="cancel-unsubmit" type="button" class="btn-secondary">Cancel</button>
-            </div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Request to Unsubmit Assessment</h3>
+            <form id="unsubmit-request-form">
+                <p class="text-sm text-gray-600 mb-4">For: <strong id="student-name-modal"></strong></p>
+                
+                <div class="mb-4">
+                    <label for="unsubmit-reason" class="block text-sm font-medium text-gray-700">Reason for Request</label>
+                    <select id="unsubmit-reason" name="unsubmit-reason" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <option>Accidental Submission</option>
+                        <option>Technical Issue</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div id="other-reason-container" class="mb-4 hidden">
+                    <label for="other-reason-text" class="block text-sm font-medium text-gray-700">Please specify</label>
+                    <textarea id="other-reason-text" name="other-reason-text" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                </div>
+
+                <p class="text-xs text-gray-500 mb-6">This request will be sent for approval and is not immediate.</p>
+                
+                <div class="flex justify-end space-x-4">
+                    <button id="cancel-unsubmit" type="button" class="btn-secondary">Cancel</button>
+                    <button id="submit-request-btn" type="submit" class="btn-primary">Submit Request</button>
+                </div>
+            </form>
         </div>
     </div>
     <div id="tech-support-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
@@ -380,9 +402,13 @@
     const sortByNameBtn = document.getElementById('sort-by-name-btn');
     const sortIndicator = document.getElementById('sort-indicator');
     const unsubmitModal = document.getElementById('unsubmit-modal');
+    const unsubmitRequestForm = document.getElementById('unsubmit-request-form');
     const studentNameUnsubmitModal = document.getElementById('student-name-modal');
-    const confirmUnsubmitBtn = document.getElementById('confirm-unsubmit');
     const cancelUnsubmitBtn = document.getElementById('cancel-unsubmit');
+    const submitRequestBtn = document.getElementById('submit-request-btn');
+    const unsubmitReason = document.getElementById('unsubmit-reason');
+    const otherReasonContainer = document.getElementById('other-reason-container');
+    const otherReasonText = document.getElementById('other-reason-text');
     
     const techSupportBtn = document.getElementById('tech-support-btn');
     const techSupportModal = document.getElementById('tech-support-modal');
@@ -541,23 +567,26 @@
     
     function openUnsubmitModal(studentId, studentName) {
         studentNameUnsubmitModal.textContent = studentName;
-        confirmUnsubmitBtn.dataset.studentId = studentId;
+        unsubmitRequestForm.dataset.studentId = studentId;
         unsubmitModal.classList.remove('hidden');
+        validateUnsubmitRequestForm();
     }
 
     function closeUnsubmitModal() {
         unsubmitModal.classList.add('hidden');
+        unsubmitRequestForm.reset();
+        otherReasonContainer.classList.add('hidden');
     }
 
-    function handleUnsubmit() {
-        const studentId = confirmUnsubmitBtn.dataset.studentId;
+    function handleUnsubmitRequest(e) {
+        e.preventDefault();
+        const studentId = unsubmitRequestForm.dataset.studentId;
         const studentIndex = students.findIndex(s => s.id === studentId);
         if (studentIndex > -1) {
-            students[studentIndex].status = 'Ready to Start';
+            students[studentIndex].status = 'Unsubmit Requested';
         }
         updateView();
         closeUnsubmitModal();
-        closeStudentInfoModal();
     }
     
     function handleUnblock(studentId) {
@@ -569,6 +598,16 @@
         closeStudentInfoModal();
     }
     
+    function validateUnsubmitRequestForm() {
+        const reason = unsubmitReason.value;
+        const otherText = otherReasonText.value.trim();
+        if (reason === 'other' && otherText === '') {
+            submitRequestBtn.disabled = true;
+        } else {
+            submitRequestBtn.disabled = false;
+        }
+    }
+
     // --- EVENT LISTENERS ---
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -635,9 +674,20 @@
         }
     });
 
-    confirmUnsubmitBtn.addEventListener('click', handleUnsubmit);
+    unsubmitRequestForm.addEventListener('submit', handleUnsubmitRequest);
     cancelUnsubmitBtn.addEventListener('click', closeUnsubmitModal);
     unsubmitModal.addEventListener('click', (e) => e.target === unsubmitModal && closeUnsubmitModal());
+
+    unsubmitReason.addEventListener('change', function() {
+        if (this.value === 'other') {
+            otherReasonContainer.classList.remove('hidden');
+        } else {
+            otherReasonContainer.classList.add('hidden');
+        }
+        validateUnsubmitRequestForm();
+    });
+    
+    otherReasonText.addEventListener('input', validateUnsubmitRequestForm);
 
     techSupportBtn.addEventListener('click', () => {
         techSupportModal.classList.remove('hidden');
