@@ -49,6 +49,17 @@
          .btn-secondary:hover {
             background-color: #d1d1d1;
         }
+        .btn-danger {
+            background-color: #fbe9e7;
+            color: #c62828;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .btn-danger:hover {
+             background-color: #ffcdd2;
+        }
         .status-dot {
             width: 8px;
             height: 8px;
@@ -198,7 +209,12 @@
     <!-- Dashboard Page (Initially Hidden) -->
     <div id="dashboard-page" class="hidden">
         <header class="header-bar px-6 py-3 flex justify-between items-center">
-            <div></div>
+            <div>
+                <button id="report-issue-btn" class="btn-danger flex items-center space-x-2">
+                    <i class="fas fa-flag"></i>
+                    <span>Report an Issue</span>
+                </button>
+            </div>
             <div class="flex items-center space-x-4">
                 <button id="tech-support-btn" class="text-sm font-medium text-blue-600 hover:underline">Technical Support</button>
             </div>
@@ -345,6 +361,64 @@
         </div>
     </div>
 
+    <!-- Report an Issue Modals -->
+    <div id="report-issue-info-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Report an Issue</h3>
+            <p class="text-sm text-gray-600 mb-4">During the assessment, school administrators and teachers must report issues to BCED that may affect the security, validity, or reliability of the assessment.</p>
+            
+            <div class="mb-4 p-4 border-l-4 border-blue-500 bg-blue-50">
+                <h4 class="font-bold text-blue-800">Time-sensitive Issues Requiring Technical Support</h4>
+                <p class="text-sm text-blue-700 mt-1">If the issue requires support to allow the student to start or continue the assessment, please report it here under the <strong>Technical Support</strong> category or phone <strong>1-888-887-3882</strong> for assistance. Issues reported in the <strong>Technical Support</strong> category will automatically be forwarded to the technical support team for immediate follow-up.</p>
+            </div>
+
+            <div class="mb-6 p-4 border-l-4 border-yellow-500 bg-yellow-50">
+                <h4 class="font-bold text-yellow-800">Issues NOT Requiring Immediate Technical Support</h4>
+                <p class="text-sm text-yellow-700 mt-1">If the issue does not require immediate support (e.g., the student has already completed the assessment or can continue despite the issue) but may affect the student's results or security of the test, report it under <strong>Student Response Issue</strong> or <strong>Administration Anomaly or Academic Dishonesty</strong>. Issues that are not time-sensitive will be reviewed by BCED at the end of the assessment window.</p>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <button id="cancel-report-issue-info" type="button" class="btn-secondary">Cancel</button>
+                <button id="ok-report-issue-info" type="button" class="btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="report-issue-form-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Report an Issue</h3>
+            <form id="report-issue-form">
+                <div class="mb-4">
+                    <label for="issue-category" class="block text-sm font-medium text-gray-700">Reported Issue Category:*</label>
+                    <select id="issue-category" name="issue-category" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" required>
+                        <option value="" disabled selected>Select a category</option>
+                        <option>Technical Support</option>
+                        <option>Student Response Issue</option>
+                        <option>Administration Anomaly or Academic Dishonesty</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label for="issue-description" class="block text-sm font-medium text-gray-700">Report Issue:*</label>
+                    <textarea id="issue-description" name="issue-description" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" required></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Students:*</label>
+                    <div id="report-issue-student-list" class="mt-2 border rounded-md h-48 overflow-y-auto p-2">
+                        <!-- Student list will be populated here -->
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-4">
+                    <button id="cancel-report-issue-form" type="button" class="btn-secondary">Cancel</button>
+                    <button id="submit-issue-report-btn" type="submit" class="btn-primary" disabled>Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
 <script>
     // --- MOCK DATA ---
     const initialStudents = [
@@ -418,6 +492,18 @@
     const studentInfoTitle = document.getElementById('student-info-title');
     const studentInfoContent = document.getElementById('student-info-content');
     const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
+
+    const reportIssueBtn = document.getElementById('report-issue-btn');
+    const reportIssueInfoModal = document.getElementById('report-issue-info-modal');
+    const cancelReportIssueInfoBtn = document.getElementById('cancel-report-issue-info');
+    const okReportIssueInfoBtn = document.getElementById('ok-report-issue-info');
+    const reportIssueFormModal = document.getElementById('report-issue-form-modal');
+    const reportIssueForm = document.getElementById('report-issue-form');
+    const cancelReportIssueFormBtn = document.getElementById('cancel-report-issue-form');
+    const submitIssueReportBtn = document.getElementById('submit-issue-report-btn');
+    const issueCategory = document.getElementById('issue-category');
+    const issueDescription = document.getElementById('issue-description');
+    const reportIssueStudentList = document.getElementById('report-issue-student-list');
     
     // --- FUNCTIONS ---
     function renderTable(studentData) {
@@ -608,6 +694,31 @@
         }
     }
 
+    function populateReportIssueStudentList() {
+        reportIssueStudentList.innerHTML = '';
+        students.forEach(student => {
+            const studentDiv = document.createElement('div');
+            studentDiv.className = 'flex items-center p-1';
+            studentDiv.innerHTML = `
+                <input type="checkbox" id="student-${student.id}" name="students" value="${student.id}" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                <label for="student-${student.id}" class="ml-3 text-sm text-gray-700">${student.firstName} ${student.lastName}</label>
+            `;
+            reportIssueStudentList.appendChild(studentDiv);
+        });
+    }
+
+    function validateReportIssueForm() {
+        const category = issueCategory.value;
+        const description = issueDescription.value.trim();
+        const selectedStudents = reportIssueStudentList.querySelectorAll('input[type="checkbox"]:checked').length;
+        
+        if (category && description && selectedStudents > 0) {
+            submitIssueReportBtn.disabled = false;
+        } else {
+            submitIssueReportBtn.disabled = true;
+        }
+    }
+
     // --- EVENT LISTENERS ---
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -775,6 +886,41 @@
     okStudentInfoBtn.addEventListener('click', closeStudentInfoModal);
     studentInfoModal.addEventListener('click', (e) => {
         if (e.target === studentInfoModal) closeStudentInfoModal();
+    });
+
+    // Report an Issue Logic
+    reportIssueBtn.addEventListener('click', () => {
+        reportIssueInfoModal.classList.remove('hidden');
+    });
+
+    cancelReportIssueInfoBtn.addEventListener('click', () => {
+        reportIssueInfoModal.classList.add('hidden');
+    });
+
+    okReportIssueInfoBtn.addEventListener('click', () => {
+        reportIssueInfoModal.classList.add('hidden');
+        reportIssueFormModal.classList.remove('hidden');
+        populateReportIssueStudentList();
+        validateReportIssueForm();
+    });
+
+    cancelReportIssueFormBtn.addEventListener('click', () => {
+        reportIssueFormModal.classList.add('hidden');
+        reportIssueForm.reset();
+    });
+
+    reportIssueForm.addEventListener('input', validateReportIssueForm);
+
+    reportIssueForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // In a real application, you would send this data to a server.
+        console.log('Issue Reported:', {
+            category: issueCategory.value,
+            description: issueDescription.value,
+            students: Array.from(reportIssueStudentList.querySelectorAll('input:checked')).map(cb => cb.value)
+        });
+        reportIssueFormModal.classList.add('hidden');
+        reportIssueForm.reset();
     });
     
 </script>
