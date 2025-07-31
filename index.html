@@ -309,8 +309,6 @@
                     <label for="other-reason-text" class="block text-sm font-medium text-gray-700">Please specify</label>
                     <textarea id="other-reason-text" name="other-reason-text" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
                 </div>
-
-                <p class="text-xs text-gray-500 mb-6">This request will be sent for approval and is not immediate.</p>
                 
                 <div class="flex justify-end space-x-4">
                     <button id="cancel-unsubmit" type="button" class="btn-secondary">Cancel</button>
@@ -369,12 +367,12 @@
             
             <div class="mb-4 p-4 border-l-4 border-blue-500 bg-blue-50">
                 <h4 class="font-bold text-blue-800">Time-sensitive Issues Requiring Technical Support</h4>
-                <p class="text-sm text-blue-700 mt-1">If the issue requires support to allow the student to start or continue the assessment, please report it here under the <strong>Technical Support</strong> category or phone <strong>1-888-887-3882</strong> for assistance. Issues reported in the <strong>Technical Support</strong> category will automatically be forwarded to the technical support team for immediate follow-up.</p>
+                <p class="text-sm text-blue-700 mt-1">If the issue requires support to allow the student to start or continue the assessment, please report it here under the <strong>Technical Issue / Device Issue</strong> category or phone <strong>1-888-887-3882</strong> for assistance. Issues reported in the <strong>Technical Issue / Device Issue</strong> category will automatically be forwarded to the technical support team for immediate follow-up.</p>
             </div>
 
             <div class="mb-6 p-4 border-l-4 border-yellow-500 bg-yellow-50">
                 <h4 class="font-bold text-yellow-800">Issues NOT Requiring Immediate Technical Support</h4>
-                <p class="text-sm text-yellow-700 mt-1">If the issue does not require immediate support (e.g., the student has already completed the assessment or can continue despite the issue) but may affect the student's results or security of the test, report it under <strong>Student Response Issue</strong> or <strong>Administration Anomaly or Academic Dishonesty</strong>. Issues that are not time-sensitive will be reviewed by BCED at the end of the assessment window.</p>
+                <p class="text-sm text-yellow-700 mt-1">If the issue does not require immediate support (e.g., the student has already completed the assessment or can continue despite the issue) but may affect the student's results or security of the test, report it under <strong>Problem with the Assessment</strong> or <strong>Administration Anomaly or Academic Dishonesty</strong>. Issues that are not time-sensitive will be reviewed by BCED at the end of the assessment window.</p>
             </div>
 
             <div class="flex justify-end space-x-4">
@@ -392,9 +390,24 @@
                     <label for="issue-category" class="block text-sm font-medium text-gray-700">Reported Issue Category:*</label>
                     <select id="issue-category" name="issue-category" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" required>
                         <option value="" disabled selected>Select a category</option>
-                        <option>Technical Support</option>
-                        <option>Student Response Issue</option>
+                        <option>Technical Issue / Device Issue</option>
+                        <option>Problem with the Assessment</option>
                         <option>Administration Anomaly or Academic Dishonesty</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label for="issue-assessment" class="block text-sm font-medium text-gray-700">Assessment(s):*</label>
+                    <select id="issue-assessment" name="issue-assessment" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" required>
+                        <option value="" disabled selected>Select an assessment</option>
+                        <option>NME 10</option>
+                        <option>LTE10</option>
+                        <option>LTF12 (ORAL)</option>
+                        <option>LTF12 (WRITTEN)</option>
+                        <option>LTP10 (ORAL)</option>
+                        <option>LTP10 (WRITTEN)</option>
+                        <option>LTP12 (ORAL)</option>
+                        <option>LTP12 (WRITTEN)</option>
                     </select>
                 </div>
 
