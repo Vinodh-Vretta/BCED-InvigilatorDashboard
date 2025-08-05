@@ -364,32 +364,11 @@
         </div>
     </div>
 
-    <!-- Report an Issue Modals -->
-    <div id="report-issue-info-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4">
-            <h3 class="text-xl font-bold text-gray-900 mb-4">Report an Issue</h3>
-            <p class="text-sm text-gray-600 mb-4">During the assessment, school administrators and teachers must report issues to BCED that may affect the security, validity, or reliability of the assessment.</p>
-            
-            <div class="mb-4 p-4 border-l-4 border-blue-500 bg-blue-50">
-                <h4 class="font-bold text-blue-800">Time-sensitive Issues Requiring Technical Support</h4>
-                <p class="text-sm text-blue-700 mt-1">If the issue requires support to allow the student to start or continue the assessment, please report it here under the <strong>Technical Issue / Device Issue</strong> category or phone <strong>1-888-887-3882</strong> for assistance. Issues reported in the <strong>Technical Issue / Device Issue</strong> category will automatically be forwarded to the technical support team for immediate follow-up.</p>
-            </div>
-
-            <div class="mb-6 p-4 border-l-4 border-yellow-500 bg-yellow-50">
-                <h4 class="font-bold text-yellow-800">Issues NOT Requiring Immediate Technical Support</h4>
-                <p class="text-sm text-yellow-700 mt-1">If the issue does not require immediate support (e.g., the student has already completed the assessment or can continue despite the issue) but may affect the student's results or security of the test, report it under <strong>Problem with the Assessment</strong> or <strong>Administration Anomaly or Academic Dishonesty</strong>. Issues that are not time-sensitive will be reviewed by BCED at the end of the assessment window.</p>
-            </div>
-
-            <div class="flex justify-end space-x-4">
-                <button id="cancel-report-issue-info" type="button" class="btn-secondary">Cancel</button>
-                <button id="ok-report-issue-info" type="button" class="btn-primary">OK</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- Report an Issue Modal -->
     <div id="report-issue-form-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4">
             <h3 class="text-xl font-bold text-gray-900 mb-4">Report an Issue</h3>
+            <p class="text-sm text-gray-500 mb-4">For time-sensitive issues requiring immediate support, please call <strong>1-888-887-3882</strong>.</p>
             <form id="report-issue-form">
                 <div class="mb-4">
                     <label for="issue-category" class="block text-sm font-medium text-gray-700">Reported Issue Category:*</label>
@@ -442,8 +421,8 @@
             <p class="text-sm text-gray-600 mb-2">For: <strong id="unblock-student-name"></strong></p>
             <p class="text-sm text-gray-600 mb-4">Violation: <strong id="unblock-violation-reason"></strong></p>
             <div class="flex justify-end space-x-4">
-                <button id="cancel-unblock" type="button" class="btn-secondary">Cancel</button>
-                <button id="confirm-unblock" type="button" class="btn-primary">Unblock</button>
+                <button id="confirm-unblock" type="button" class="btn-secondary">Unblock</button>
+                <button id="cancel-unblock" type="button" class="btn-primary">Cancel</button>
             </div>
         </div>
     </div>
@@ -524,9 +503,6 @@
     const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
 
     const reportIssueBtn = document.getElementById('report-issue-btn');
-    const reportIssueInfoModal = document.getElementById('report-issue-info-modal');
-    const cancelReportIssueInfoBtn = document.getElementById('cancel-report-issue-info');
-    const okReportIssueInfoBtn = document.getElementById('ok-report-issue-info');
     const reportIssueFormModal = document.getElementById('report-issue-form-modal');
     const reportIssueForm = document.getElementById('report-issue-form');
     const cancelReportIssueFormBtn = document.getElementById('cancel-report-issue-form');
@@ -659,7 +635,7 @@
 
         // Apply sorting
         displayedStudents.sort((a, b) => {
-            // 0. Pinned students first
+            // 0. Watched students first
             if (a.watched && !b.watched) return -1;
             if (!a.watched && b.watched) return 1;
 
@@ -992,15 +968,6 @@
 
     // Report an Issue Logic
     reportIssueBtn.addEventListener('click', () => {
-        reportIssueInfoModal.classList.remove('hidden');
-    });
-
-    cancelReportIssueInfoBtn.addEventListener('click', () => {
-        reportIssueInfoModal.classList.add('hidden');
-    });
-
-    okReportIssueInfoBtn.addEventListener('click', () => {
-        reportIssueInfoModal.classList.add('hidden');
         reportIssueFormModal.classList.remove('hidden');
         populateReportIssueStudentList();
         validateReportIssueForm();
