@@ -471,6 +471,7 @@
     
     let students = [...initialStudents];
     let sortDirection = 'none';
+    let unsubmitRequestData = {};
 
     // --- DOM ELEMENTS ---
     const loginPage = document.getElementById('login-page');
@@ -492,6 +493,7 @@
     const unsubmitReason = document.getElementById('unsubmit-reason');
     const otherReasonContainer = document.getElementById('other-reason-container');
     const otherReasonText = document.getElementById('other-reason-text');
+    const invigilatorEmail = document.getElementById('invigilator-email');
     
     const techSupportBtn = document.getElementById('tech-support-btn');
     const techSupportModal = document.getElementById('tech-support-modal');
@@ -702,14 +704,27 @@
             accidentalSubmissionOption.disabled = true;
         }
 
+        if (unsubmitRequestData[studentId]) {
+            invigilatorEmail.value = unsubmitRequestData[studentId].email;
+            unsubmitReason.value = unsubmitRequestData[studentId].reason;
+            otherReasonText.value = unsubmitRequestData[studentId].otherText;
+            if (unsubmitReason.value === 'other') {
+                otherReasonContainer.classList.remove('hidden');
+            }
+        }
+
         unsubmitModal.classList.remove('hidden');
         validateUnsubmitRequestForm();
     }
 
     function closeUnsubmitModal() {
+        const studentId = unsubmitRequestForm.dataset.studentId;
+        unsubmitRequestData[studentId] = {
+            email: invigilatorEmail.value,
+            reason: unsubmitReason.value,
+            otherText: otherReasonText.value
+        };
         unsubmitModal.classList.add('hidden');
-        unsubmitRequestForm.reset();
-        otherReasonContainer.classList.add('hidden');
     }
 
     function isAutoApprovalAllowed(submissionTime) {
@@ -727,12 +742,11 @@
             const student = students[studentIndex];
             if (isAutoApprovalAllowed(student.submissionTime)) {
                 student.status = 'In Progress';
-                console.log(`Unsubmission for ${student.firstName} ${student.lastName} auto-approved.`);
             } else {
                 student.status = 'Awaiting Ministerial Decision';
-                console.log(`Unsubmission request for ${student.firstName} ${student.lastName} sent for approval.`);
             }
         }
+        delete unsubmitRequestData[studentId];
         updateView();
         closeUnsubmitModal();
     }
@@ -765,7 +779,11 @@
     function validateUnsubmitRequestForm() {
         const reason = unsubmitReason.value;
         const otherText = otherReasonText.value.trim();
-        if (reason === 'other' && otherText === '') {
+        const email = invigilatorEmail.value.trim();
+        
+        let isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+        if (!email || !isEmailValid || (reason === 'other' && otherText === '')) {
             submitRequestBtn.disabled = true;
         } else {
             submitRequestBtn.disabled = false;
@@ -865,7 +883,11 @@
 
     unsubmitRequestForm.addEventListener('submit', handleUnsubmitRequest);
     cancelUnsubmitBtn.addEventListener('click', closeUnsubmitModal);
-    unsubmitModal.addEventListener('click', (e) => e.target === unsubmitModal && closeUnsubmitModal());
+    unsubmitModal.addEventListener('click', (e) => {
+        if (e.target === unsubmitModal) {
+            closeUnsubmitModal();
+        }
+    });
 
     unsubmitReason.addEventListener('change', function() {
         if (this.value === 'other') {
@@ -877,6 +899,7 @@
     });
     
     otherReasonText.addEventListener('input', validateUnsubmitRequestForm);
+    invigilatorEmail.addEventListener('input', validateUnsubmitRequestForm);
 
     techSupportBtn.addEventListener('click', () => {
         techSupportModal.classList.remove('hidden');
