@@ -659,6 +659,10 @@
 
         // Apply sorting
         displayedStudents.sort((a, b) => {
+            // 0. Pinned students first
+            if (a.watched && !b.watched) return -1;
+            if (!a.watched && b.watched) return 1;
+
             // 1. Primary sort: Online students first
             const isOnlineA = a.connectionStatus === 'online';
             const isOnlineB = b.connectionStatus === 'online';
