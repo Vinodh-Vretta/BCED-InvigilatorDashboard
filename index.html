@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BCED Invigilation Dashboard - Reskinned</title>
+    <title>BCED Invigilation Dashboard - Updated</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,10 +34,6 @@
         .btn-primary:hover {
             background-color: #234a9e;
         }
-        .btn-primary:disabled {
-            background-color: #a0aec0;
-            cursor: not-allowed;
-        }
         .btn-secondary {
             background-color: #e0e0e0;
             color: #333;
@@ -49,17 +45,6 @@
          .btn-secondary:hover {
             background-color: #d1d1d1;
         }
-        .btn-danger {
-            background-color: #fbe9e7;
-            color: #c62828;
-            border-radius: 4px;
-            padding: 8px 16px;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-        .btn-danger:hover {
-             background-color: #ffcdd2;
-        }
         .status-dot {
             width: 8px;
             height: 8px;
@@ -69,116 +54,9 @@
         }
         .status-dot.online { background-color: #4caf50; }
         .status-dot.offline { background-color: #d32f2f; }
-        .status-dot.disconnected { background-color: #ffc107; } /* Yellow for Idle */
+        .status-dot.disconnected { background-color: #ffc107; } /* Yellow for disconnected */
         .table-cell-border {
             border-right: 1px solid #e0e0e0;
-        }
-        .btn-unsubmit-active {
-            background-color: #e0e0e0; /* Neutral grey */
-            color: #333;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-        .btn-unsubmit-active:hover {
-            background-color: #d1d1d1;
-        }
-        .btn-unsubmit-disabled {
-            background-color: #e0e0e0;
-            color: #a0a0a0;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: not-allowed;
-        }
-        .status-blocked {
-            background-color: #ffebee; /* Pale Red */
-        }
-        
-        /* Mobile responsive styles */
-        @media (max-width: 768px) {
-            .header-bar {
-                justify-content: center;
-                padding: 12px;
-            }
-            
-            .main-content {
-                margin: 0;
-                border-radius: 0;
-            }
-            
-            .p-6 {
-                padding: 16px;
-            }
-            
-            .filter-controls {
-                flex-direction: column;
-                gap: 12px;
-                align-items: stretch;
-            }
-            
-            .filter-controls input,
-            .filter-controls select {
-                width: 100%;
-                max-width: none;
-            }
-            
-            .table-container {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            table {
-                min-width: 600px;
-                font-size: 12px;
-            }
-            
-            th, td {
-                padding: 8px 4px;
-                white-space: nowrap;
-            }
-            
-            .student-name-btn {
-                font-size: 12px;
-            }
-            
-            .unsubmit-btn,
-            .unsubmit-btn-disabled {
-                font-size: 11px;
-                padding: 4px 8px;
-            }
-            
-            /* Modal adjustments for mobile */
-            .modal-content {
-                margin: 16px;
-                max-height: 90vh;
-                overflow-y: auto;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .header-bar {
-                padding: 8px;
-            }
-            
-            .p-6 {
-                padding: 12px;
-            }
-            
-            h1 {
-                font-size: 20px;
-            }
-            
-            table {
-                font-size: 11px;
-            }
-            
-            th, td {
-                padding: 6px 2px;
-            }
         }
     </style>
 </head>
@@ -209,12 +87,9 @@
     <!-- Dashboard Page (Initially Hidden) -->
     <div id="dashboard-page" class="hidden">
         <header class="header-bar px-6 py-3 flex justify-between items-center">
-            <div>
-                <button id="report-issue-btn" class="btn-danger flex items-center space-x-2">
-                    <i class="fas fa-flag"></i>
-                    <span>Report an Issue</span>
-                </button>
-            </div>
+             <button id="file-incident-report-btn" class="text-sm font-medium text-red-600 hover:underline bg-red-100 px-3 py-2 rounded-md">
+                <i class="fas fa-flag mr-2"></i>File Incident Report
+            </button>
             <div class="flex items-center space-x-4">
                 <button id="tech-support-btn" class="text-sm font-medium text-blue-600 hover:underline">Technical Support</button>
             </div>
@@ -260,23 +135,24 @@
                                     <option value="Ready to Start">Ready to Start</option>
                                     <option value="In Progress">In Progress</option>
                                     <option value="Submitted">Submitted</option>
-                                    <option value="Blocked">Blocked</option>
+                                    <option value="Unsubmit Requested">Unsubmit Requested</option>
                                     <option value="Awaiting Ministerial Decision">Awaiting Ministerial Decision</option>
+                                    <option value="Disconnected">Disconnected</option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <div class="table-container">
-                    <table class="w-full text-sm text-left table-fixed">
+                    <div class="table-container overflow-x-auto">
+                    <table class="w-full text-sm text-left">
                         <thead class="border-b-2 border-gray-300">
                             <tr>
                                 <th class="py-2 px-3 w-24 font-medium text-gray-700">Watch</th>
                                 <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[15%]">PEN</th>
-                                <th scope="col" class="py-2 px-3 font-medium text-blue-700 w-[40%]">
+                                <th scope="col" class="py-2 px-3 font-medium text-blue-700 w-[30%]">
                                     <button id="sort-by-name-btn" class="w-full text-left">First Name / Last Name <span id="sort-indicator">◆</span></button>
                                 </th>
                                 <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[20%]">Component</th>
-                                <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[25%]">Status</th>
+                                <th scope="col" class="py-2 px-3 font-medium text-gray-700 w-[30%]">Status</th>
                             </tr>
                         </thead>
                         <tbody id="student-table-body">
@@ -290,38 +166,35 @@
     </div>
 
     <!-- Modals -->
-    <div id="unsubmit-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+    <div id="request-unsubmit-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Request to Unsubmit Assessment</h3>
-            <form id="unsubmit-request-form">
-                <p class="text-sm text-gray-600 mb-4">For: <strong id="student-name-modal"></strong></p>
-                
-                <div class="mb-4">
-                    <label for="invigilator-email" class="block text-sm font-medium text-gray-700">Your Email for Notification</label>
-                    <input type="email" id="invigilator-email" name="invigilator-email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" required>
-                </div>
-
-                <div class="mb-4">
+            <p class="text-sm text-gray-600 mb-4">For: <strong id="student-name-unsubmit-modal"></strong></p>
+            <div class="space-y-4">
+                <div>
                     <label for="unsubmit-reason" class="block text-sm font-medium text-gray-700">Reason for Request</label>
-                    <select id="unsubmit-reason" name="unsubmit-reason" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    <select id="unsubmit-reason" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         <option value="Accidental Submission">Accidental Submission</option>
-                        <option>Technical Issue</option>
-                        <option value="other">Other</option>
+                        <option value="Technical Issue">Technical Issue</option>
+                        <option value="Other">Other</option>
                     </select>
                 </div>
-
-                <div id="other-reason-container" class="mb-4 hidden">
+                <div id="other-reason-container" class="hidden">
                     <label for="other-reason-text" class="block text-sm font-medium text-gray-700">Please specify</label>
-                    <textarea id="other-reason-text" name="other-reason-text" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    <textarea id="other-reason-text" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
                 </div>
-                
-                <div class="flex justify-end space-x-4">
-                    <button id="cancel-unsubmit" type="button" class="btn-secondary">Cancel</button>
-                    <button id="submit-request-btn" type="submit" class="btn-primary">Submit Request</button>
+                 <div>
+                    <label for="invigilator-email" class="block text-sm font-medium text-gray-700">Your Email for Notification</label>
+                    <input type="email" id="invigilator-email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
-            </form>
+            </div>
+            <div class="flex justify-end space-x-4 mt-6">
+                <button id="cancel-unsubmit" type="button" class="btn-secondary">Cancel</button>
+                <button id="confirm-unsubmit" type-button" class="btn-primary">Submit Request</button>
+            </div>
         </div>
     </div>
+    
     <div id="tech-support-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="modal-content bg-white rounded-lg shadow-xl p-8 w-full max-w-lg mx-4">
             <h3 class="text-xl font-medium text-gray-900 mb-4">Information centre hours:</h3>
@@ -350,80 +223,75 @@
             </div>
         </div>
     </div>
+
     <div id="student-info-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
             <div class="p-4 border-b">
-                <h2 id="student-info-title" class="text-xl font-semibold text-gray-800">Student Info</h2>
+                <h2 id="student-info-modal-title" class="text-xl font-semibold text-gray-800">Student Info</h2>
             </div>
-            <div id="student-info-content" class="p-6">
-                <!-- Content will be dynamically generated here -->
+            <div id="student-info-modal-content" class="p-6">
+                <!-- Content generated by JS -->
             </div>
             <div class="p-4 bg-gray-50 text-right border-t">
                  <button id="ok-student-info-modal" class="btn-primary">OK</button>
             </div>
         </div>
     </div>
-
-    <!-- Report an Issue Modal -->
-    <div id="report-issue-form-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4">
-            <h3 class="text-xl font-bold text-gray-900 mb-4">Report an Issue</h3>
-            <p class="text-sm text-gray-500 mb-4">For time-sensitive issues requiring immediate support, please call <strong>1-888-887-3882</strong>.</p>
-            <form id="report-issue-form">
-                <div class="mb-4">
-                    <label for="issue-category" class="block text-sm font-medium text-gray-700">Reported Issue Category:*</label>
-                    <select id="issue-category" name="issue-category" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" required>
-                        <option value="" disabled selected>Select a category</option>
-                        <option>Technical Issue / Device Issue</option>
-                        <option>Problem with the Assessment</option>
-                        <option>Administration Anomaly or Academic Dishonesty</option>
-                    </select>
+    
+    <div id="report-issue-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4">
+            <div class="p-4 border-b">
+                <h2 class="text-xl font-semibold text-gray-800">Disqualification Incident Report</h2>
+            </div>
+            <div class="p-6">
+                 <div class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-md mb-6" role="alert">
+                    <p class="font-bold">Time-sensitive Issues Requiring Technical Support</p>
+                    <p class="text-sm">If the issue requires support to allow the student to start or continue the assessment, please call <strong class="font-semibold">1-888-887-3882</strong> for immediate assistance.</p>
                 </div>
-
-                <div class="mb-4">
-                    <label for="issue-assessment" class="block text-sm font-medium text-gray-700">Assessment(s):*</label>
-                    <select id="issue-assessment" name="issue-assessment" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" required>
-                        <option value="" disabled selected>Select an assessment</option>
-                        <option>NME 10</option>
-                        <option>LTE10</option>
-                        <option>LTF12 (ORAL)</option>
-                        <option>LTF12 (WRITTEN)</option>
-                        <option>LTP10 (ORAL)</option>
-                        <option>LTP10 (WRITTEN)</option>
-                        <option>LTP12 (ORAL)</option>
-                        <option>LTP12 (WRITTEN)</option>
-                    </select>
-                </div>
-
-                <div class="mb-4">
-                    <label for="issue-description" class="block text-sm font-medium text-gray-700">Report Issue:*</label>
-                    <textarea id="issue-description" name="issue-description" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" required></textarea>
-                </div>
-
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">Students:*</label>
-                    <div id="report-issue-student-list" class="mt-2 border rounded-md h-48 overflow-y-auto p-2">
-                        <!-- Student list will be populated here -->
+                <div class="space-y-4">
+                     <div>
+                        <label for="issue-category" class="block text-sm font-medium text-gray-700">Reported Issue Category:*</label>
+                        <select id="issue-category" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Select a category</option>
+                            <option value="Technical Issue / Device Issue">Technical Issue / Device Issue</option>
+                            <option value="Problem with the Assessment">Problem with the Assessment</option>
+                            <option value="Administration Anomaly or Academic Dishonesty">Administration Anomaly or Academic Dishonesty</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="issue-assessment" class="block text-sm font-medium text-gray-700">Assessment(s):*</label>
+                        <select id="issue-assessment" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                             <option value="">Select an assessment</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="issue-description" class="block text-sm font-medium text-gray-700">Report Issue:*</label>
+                        <textarea id="issue-description" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Students:*</label>
+                        <div id="issue-student-list" class="mt-1 border border-gray-300 rounded-md h-40 overflow-y-auto p-2">
+                           <!-- student list here -->
+                        </div>
                     </div>
                 </div>
-
-                <div class="flex justify-end space-x-4">
-                    <button id="cancel-report-issue-form" type="button" class="btn-secondary">Cancel</button>
-                    <button id="submit-issue-report-btn" type="submit" class="btn-primary" disabled>Report</button>
-                </div>
-            </form>
+            </div>
+            <div class="p-4 bg-gray-50 flex justify-end space-x-4 border-t">
+                 <button id="cancel-report-issue" class="btn-secondary">Cancel</button>
+                 <button id="submit-report-issue" class="btn-primary" disabled>Report</button>
+            </div>
         </div>
     </div>
-
-    <div id="unblock-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Unblock Student</h3>
-            <p class="text-sm text-gray-600 mb-2">For: <strong id="unblock-student-name"></strong></p>
-            <p class="text-sm text-gray-600 mb-4">Violation: <strong id="unblock-violation-reason"></strong></p>
-            <div class="flex justify-end space-x-4">
-                <button id="confirm-unblock" type="button" class="btn-secondary">Unblock</button>
-                <button id="cancel-unblock" type="button" class="btn-primary">Cancel</button>
+    
+    <div id="reentry-password-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4 text-center">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Student Re-entry Password</h3>
+            <p class="text-sm text-gray-600 mb-4">For: <strong id="student-name-reentry-modal"></strong></p>
+            <p class="text-sm text-gray-700">Provide the following password to the student to re-enter the assessment:</p>
+            <div class="my-4 p-3 bg-gray-100 rounded-md border border-gray-300">
+                <p id="reentry-password" class="text-2xl font-bold tracking-widest text-gray-800"></p>
             </div>
+            <button id="close-reentry-modal" class="btn-primary w-full">Close</button>
         </div>
     </div>
 
@@ -431,42 +299,20 @@
 <script>
     // --- MOCK DATA ---
     const initialStudents = [
-        { id: '1', pen: '123456789', firstName: 'Emma', lastName: 'Thompson', component: 'NME 10', watched: true, connectionStatus: 'online', status: 'In Progress', stage: 1, question: 3, time: 429566, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null, violationReason: null },
-        { id: '2', pen: '987654321', firstName: 'Michael', lastName: 'Chen', component: 'NME 10', watched: false, connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, time: 8946, lastSeen: new Date().getTime() - 300000, startTime: new Date().getTime() - (2 * 60 * 60 * 1000), loginTime: new Date().getTime() - (2 * 60 * 60 * 1000), submissionTime: new Date().getTime() - (1.5 * 60 * 60 * 1000), violationReason: null }, 
-        { id: '3', pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 394, lastSeen: null, startTime: new Date().getTime() - (4 * 60 * 60 * 1000), loginTime: new Date().getTime() - (4 * 60 * 60 * 1000), submissionTime: new Date().getTime() - (3 * 60 * 60 * 1000), violationReason: null }, 
-        { id: '4', pen: '789123456', firstName: 'David', lastName: 'Rodriguez', component: 'LTE10', watched: true, connectionStatus: 'Idle', status: 'In Progress', stage: 2, question: 5, time: 0, lastSeen: new Date().getTime() - 60000, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null, violationReason: null },
-        { id: '5', pen: '321654987', firstName: 'Jessica', lastName: 'Wu', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 0, lastSeen: null, startTime: new Date().getTime() - (1 * 60 * 60 * 1000), loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: new Date().getTime() - (30 * 60 * 1000), violationReason: null }, 
-        { id: '6', pen: '234567890', firstName: 'Amanda', lastName: 'Singh', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null, loginTime: null, submissionTime: null, violationReason: null },
-        { id: '7', pen: '345678901', firstName: 'James', lastName: 'Wilson', component: 'NME 10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 86400000, loginTime: null, submissionTime: null, violationReason: null },
-        { id: '8', pen: '567890123', firstName: 'Olivia', lastName: 'Martinez', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 3, question: 7, time: 1245, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null, violationReason: null },
-        { id: '9', pen: '678901234', firstName: 'Ethan', lastName: 'Brown', component: 'LTE10', watched: true, connectionStatus: 'Idle', status: 'In Progress', stage: 1, question: 2, time: 567, lastSeen: new Date().getTime() - 120000, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null, violationReason: null },
-        { id: '10', pen: '789012345', firstName: 'Sophia', lastName: 'Davis', component: 'NME 10', watched: false, connectionStatus: 'offline', status: 'Submitted', stage: null, question: null, time: 2134, lastSeen: new Date().getTime() - 1800000, startTime: new Date().getTime() - (30 * 60 * 1000), loginTime: new Date().getTime() - (30 * 60 * 1000), submissionTime: new Date().getTime() - (15 * 60 * 1000), violationReason: null }, 
-        { id: '11', pen: '890123456', firstName: 'Liam', lastName: 'Miller', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null, loginTime: null, submissionTime: null, violationReason: null },
-        { id: '12', pen: '901234567', firstName: 'Ava', lastName: 'Wilson', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 2, question: 4, time: 892, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null, violationReason: null },
-        { id: '13', pen: '012345678', firstName: 'Noah', lastName: 'Moore', component: 'LTE10', watched: false, connectionStatus: 'Idle', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 900000, loginTime: null, submissionTime: null, violationReason: null },
-        { id: '14', pen: '123450789', firstName: 'Isabella', lastName: 'Taylor', component: 'NME 10', watched: true, connectionStatus: 'online', status: 'Submitted', stage: null, question: null, time: 1567, lastSeen: null, startTime: new Date().getTime() - (5 * 60 * 60 * 1000), loginTime: new Date().getTime() - (5 * 60 * 60 * 1000), submissionTime: new Date().getTime() - (4 * 60 * 60 * 1000), violationReason: null }, 
-        { id: '15', pen: '234561890', firstName: 'Mason', lastName: 'Anderson', component: 'LTE10', watched: false, connectionStatus: 'offline', status: 'In Progress', stage: 1, question: 1, time: 234, lastSeen: new Date().getTime() - 600000, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null, violationReason: null },
-        { id: '16', pen: '345672901', firstName: 'Mia', lastName: 'Thomas', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null, loginTime: null, submissionTime: null, violationReason: null },
-        { id: '17', pen: '456783012', firstName: 'Lucas', lastName: 'Jackson', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 4, question: 9, time: 1789, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null, violationReason: null },
-        { id: '18', pen: '567894123', firstName: 'Charlotte', lastName: 'White', component: 'NME 10', watched: false, connectionStatus: 'Idle', status: 'Awaiting Ministerial Decision', stage: null, question: null, time: 1456, lastSeen: new Date().getTime() - 240000, startTime: new Date().getTime() - (90 * 60 * 1000), loginTime: new Date().getTime() - (90 * 60 * 1000), submissionTime: new Date().getTime() - (80 * 60 * 1000), violationReason: null }, 
-        { id: '19', pen: '678905234', firstName: 'Benjamin', lastName: 'Harris', component: 'LTE10', watched: true, connectionStatus: 'offline', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 3600000, loginTime: null, submissionTime: null, violationReason: null },
-        { id: '20', pen: '789016345', firstName: 'Amelia', lastName: 'Martin', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 2, question: 6, time: 678, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null, violationReason: null },
-        { id: '21', pen: '890127456', firstName: 'Alexander', lastName: 'Garcia', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Awaiting Ministerial Decision', stage: null, question: null, time: 2345, lastSeen: null, startTime: new Date().getTime() - (2 * 60 * 60 * 1000), loginTime: new Date().getTime() - (2 * 60 * 60 * 1000), submissionTime: new Date().getTime() - (1.5 * 60 * 60 * 1000), violationReason: null }, 
-        { id: '22', pen: '901238567', firstName: 'Harper', lastName: 'Rodriguez', component: 'NME 10', watched: false, connectionStatus: 'Idle', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 180000, loginTime: null, submissionTime: null, violationReason: null },
-        { id: '23', pen: '012349678', firstName: 'William', lastName: 'Lewis', component: 'LTE10', watched: false, connectionStatus: 'offline', status: 'In Progress', stage: 3, question: 8, time: 1123, lastSeen: new Date().getTime() - 420000, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null, violationReason: null },
-        { id: '24', pen: '123460789', firstName: 'Evelyn', lastName: 'Lee', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null, loginTime: null, submissionTime: null, violationReason: null },
-        { id: '25', pen: '234571890', firstName: 'Henry', lastName: 'Walker', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Awaiting Ministerial Decision', stage: null, question: null, time: 1890, lastSeen: null, startTime: new Date().getTime() - (6 * 60 * 60 * 1000), loginTime: new Date().getTime() - (6 * 60 * 60 * 1000), submissionTime: new Date().getTime() - (5 * 60 * 60 * 1000), violationReason: null }, 
-        { id: '26', pen: '345682901', firstName: 'Abigail', lastName: 'Hall', component: 'NME 10', watched: true, connectionStatus: 'Idle', status: 'In Progress', stage: 1, question: 4, time: 445, lastSeen: new Date().getTime() - 90000, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null, violationReason: null },
-        { id: '27', pen: '456793012', firstName: 'Sebastian', lastName: 'Allen', component: 'LTE10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 1200000, loginTime: null, submissionTime: null, violationReason: null },
-        { id: '28', pen: '567804123', firstName: 'Grace', lastName: 'Young', component: 'LTF12 (ORAL)', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 2, question: 5, time: 567, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null, violationReason: null },
-        { id: '29', pen: '678915234', firstName: 'Jack', lastName: 'King', component: 'LTP10 (ORAL)', watched: false, connectionStatus: 'Idle', status: 'Submitted', stage: null, question: null, time: 1234, lastSeen: new Date().getTime() - 180000, startTime: new Date().getTime() - (2 * 60 * 60 * 1000), loginTime: new Date().getTime() - (2 * 60 * 60 * 1000), submissionTime: new Date().getTime() - (1 * 60 * 60 * 1000), violationReason: null },
-        { id: '30', pen: '789026345', firstName: 'Lily', lastName: 'Wright', component: 'LTP12 (ORAL)', watched: false, connectionStatus: 'online', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: null, loginTime: null, submissionTime: null, violationReason: null },
-        { id: '33', pen: '135792468', firstName: 'Chloe', lastName: 'Scott', component: 'LTF12 (WRITTEN)', watched: false, connectionStatus: 'online', status: 'In Progress', stage: 1, question: 1, time: 150, lastSeen: null, loginTime: new Date().getTime() - (1 * 60 * 60 * 1000), submissionTime: null, violationReason: null },
-        { id: '34', pen: '246813579', firstName: 'Ryan', lastName: 'Green', component: 'LTP10 (WRITTEN)', watched: false, connectionStatus: 'online', status: 'Not Started', stage: null, question: null, time: 0, lastSeen: null, loginTime: null, submissionTime: null, violationReason: null },
-        { id: '35', pen: '975318642', firstName: 'Madison', lastName: 'Adams', component: 'LTP12 (WRITTEN)', watched: false, connectionStatus: 'offline', status: 'Ready to Start', stage: null, question: null, time: 0, lastSeen: new Date().getTime() - 7200000, loginTime: null, submissionTime: null, violationReason: null },
-        { id: '36', pen: '112233445', firstName: 'Daniel', lastName: 'Lee', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'Blocked', stage: 2, question: 8, time: 1500, lastSeen: null, loginTime: new Date().getTime() - (20 * 60 * 1000), submissionTime: null, violationReason: 'Student attempted to exit the assessment.' },
-        { id: '37', pen: '223344556', firstName: 'Sophie', lastName: 'Clark', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Blocked', stage: 1, question: 2, time: 800, lastSeen: null, loginTime: new Date().getTime() - (10 * 60 * 1000), submissionTime: null, violationReason: 'Student opened a new tab.' },
-        { id: '38', pen: '334455667', firstName: 'Logan', lastName: 'Hall', component: 'LTF12 (ORAL)', watched: false, connectionStatus: 'online', status: 'Blocked', stage: 3, question: 5, time: 2200, lastSeen: null, loginTime: new Date().getTime() - (35 * 60 * 1000), submissionTime: null, violationReason: 'Student attempted to use a forbidden application.' }
+        { id: '1', pen: '123456789', firstName: 'Emma', lastName: 'Thompson', component: 'NME 10', watched: true, connectionStatus: 'online', status: 'In Progress', time: 429566, lastSeen: null, submissionTime: null, assessments: [{ component: 'NME 10', status: 'In Progress', loginTime: '2025-07-28T08:00:00', submissionTime: null }] },
+        { id: '2', pen: '987654321', firstName: 'Michael', lastName: 'Chen', component: 'NME 10', watched: false, connectionStatus: 'offline', status: 'Submitted', time: 8946, lastSeen: new Date().getTime() - 300000, submissionTime: new Date().getTime() - 300000, assessments: [{ component: 'NME 10', status: 'Submitted', loginTime: '2025-07-28T08:15:00', submissionTime: new Date(new Date().getTime() - 300000).toISOString() }] },
+        { id: '3', pen: '456789123', firstName: 'Sarah', lastName: 'Johnson', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Submitted', time: 394, lastSeen: null, submissionTime: new Date().getTime() - (5 * 60 * 60 * 1000), assessments: [{ component: 'LTE10', status: 'Submitted', loginTime: '2025-07-28T09:00:00', submissionTime: new Date(new Date().getTime() - (5 * 60 * 60 * 1000)).toISOString() }] },
+        { id: '4', pen: '789123456', firstName: 'David', lastName: 'Rodriguez', component: 'LTE10', watched: true, connectionStatus: 'disconnected', status: 'Disconnected', time: 0, lastSeen: new Date().getTime() - 60000, submissionTime: null, assessments: [{ component: 'LTE10', status: 'In Progress', loginTime: '2025-07-28T08:05:00', submissionTime: null }] },
+        { id: '5', pen: '321654987', firstName: 'Jessica', lastName: 'Wu', component: 'NME 10', watched: false, connectionStatus: 'online', status: 'Submitted', time: 0, lastSeen: null, submissionTime: new Date().getTime() - (30 * 60 * 1000), assessments: [{ component: 'NME 10', status: 'Submitted', loginTime: '2025-07-28T09:30:00', submissionTime: new Date(new Date().getTime() - (30 * 60 * 1000)).toISOString() }] },
+        { id: '6', pen: '234567890', firstName: 'Amanda', lastName: 'Singh', component: 'LTE10', watched: false, connectionStatus: 'online', status: 'Not Started', time: 0, lastSeen: null, submissionTime: null, assessments: [{ component: 'LTE10', status: 'Not Started', loginTime: null, submissionTime: null }] },
+        { id: '7', pen: '345678901', firstName: 'James', lastName: 'Wilson', component: 'NME 10', watched: false, connectionStatus: 'offline', status: 'Ready to Start', time: 0, lastSeen: new Date().getTime() - 86400000, submissionTime: null, assessments: [{ component: 'NME 10', status: 'Ready to Start', loginTime: null, submissionTime: null }] },
+        { id: '10', pen: '789012345', firstName: 'Sophia', lastName: 'Davis', component: 'NME 10', watched: false, connectionStatus: 'offline', status: 'Awaiting Ministerial Decision', time: 2134, lastSeen: new Date().getTime() - 1800000, submissionTime: new Date().getTime() - 1800000, assessments: [{ component: 'NME 10', status: 'Submitted', loginTime: '2025-07-28T10:00:00', submissionTime: new Date(new Date().getTime() - 1800000).toISOString() }] },
+        { id: '26', pen: '345682901', firstName: 'Abigail', lastName: 'Hall', component: 'NME 10', watched: true, connectionStatus: 'disconnected', status: 'Disconnected', time: 445, lastSeen: new Date().getTime() - 90000, submissionTime: null, assessments: [{ component: 'NME 10', status: 'In Progress', loginTime: '2025-07-28T11:00:00', submissionTime: null }] },
+        { id: '29', pen: '678915234', firstName: 'Jack', lastName: 'King', component: 'LTP10 (ORAL)', watched: false, connectionStatus: 'disconnected', status: 'Disconnected', time: 1234, lastSeen: new Date().getTime() - 180000, submissionTime: null, assessments: [{ component: 'LTP10 (ORAL)', status: 'In Progress', loginTime: '2025-07-28T08:45:00', submissionTime: null }] },
+        { id: '36', pen: '112233445', firstName: 'Daniel', lastName: 'Lee', component: 'NME 10', watched: false, connectionStatus: 'disconnected', status: 'Disconnected', time: 800, lastSeen: new Date().getTime() - 500000, submissionTime: null, assessments: [{ component: 'NME 10', status: 'In Progress', loginTime: '2025-07-28T10:10:00', submissionTime: null }] },
+        { id: '37', pen: '223344556', firstName: 'Sophie', lastName: 'Clark', component: 'LTE10', watched: true, connectionStatus: 'disconnected', status: 'Disconnected', time: 950, lastSeen: new Date().getTime() - 700000, submissionTime: null, assessments: [{ component: 'LTE10', status: 'In Progress', loginTime: '2025-07-28T10:20:00', submissionTime: null }] },
+        { id: '38', pen: '334455667', firstName: 'Logan', lastName: 'Hall', component: 'LTF12 (ORAL)', watched: false, connectionStatus: 'online', status: 'In Progress', time: 1200, lastSeen: null, submissionTime: null, assessments: [{ component: 'LTF12 (ORAL)', status: 'In Progress', loginTime: '2025-07-28T11:30:00', submissionTime: null }] },
+        { id: '39', pen: '445566778', firstName: 'Zoe', lastName: 'Hill', component: 'Written', watched: false, connectionStatus: 'offline', status: 'Awaiting Ministerial Decision', time: 0, lastSeen: new Date().getTime() - 600000, submissionTime: new Date().getTime() - 600000, assessments: [{ component: 'Written', status: 'Submitted', loginTime: '2025-07-28T09:45:00', submissionTime: new Date(new Date().getTime() - 600000).toISOString() }] }
     ];
     
     let students = [...initialStudents];
@@ -485,45 +331,57 @@
     const componentFilter = document.getElementById('component-filter');
     const sortByNameBtn = document.getElementById('sort-by-name-btn');
     const sortIndicator = document.getElementById('sort-indicator');
-    const unsubmitModal = document.getElementById('unsubmit-modal');
-    const unsubmitRequestForm = document.getElementById('unsubmit-request-form');
-    const studentNameUnsubmitModal = document.getElementById('student-name-modal');
+    
+    const requestUnsubmitModal = document.getElementById('request-unsubmit-modal');
+    const studentNameUnsubmitModal = document.getElementById('student-name-unsubmit-modal');
+    const confirmUnsubmitBtn = document.getElementById('confirm-unsubmit');
     const cancelUnsubmitBtn = document.getElementById('cancel-unsubmit');
-    const submitRequestBtn = document.getElementById('submit-request-btn');
     const unsubmitReason = document.getElementById('unsubmit-reason');
     const otherReasonContainer = document.getElementById('other-reason-container');
     const otherReasonText = document.getElementById('other-reason-text');
     const invigilatorEmail = document.getElementById('invigilator-email');
-    
+
     const techSupportBtn = document.getElementById('tech-support-btn');
     const techSupportModal = document.getElementById('tech-support-modal');
     const dismissSupportModalBtn = document.getElementById('dismiss-support-modal');
     
     const studentInfoModal = document.getElementById('student-info-modal');
-    const studentInfoTitle = document.getElementById('student-info-title');
-    const studentInfoContent = document.getElementById('student-info-content');
+    const studentInfoModalTitle = document.getElementById('student-info-modal-title');
+    const studentInfoModalContent = document.getElementById('student-info-modal-content');
     const okStudentInfoBtn = document.getElementById('ok-student-info-modal');
-
-    const reportIssueBtn = document.getElementById('report-issue-btn');
-    const reportIssueFormModal = document.getElementById('report-issue-form-modal');
-    const reportIssueForm = document.getElementById('report-issue-form');
-    const cancelReportIssueFormBtn = document.getElementById('cancel-report-issue-form');
-    const submitIssueReportBtn = document.getElementById('submit-issue-report-btn');
-    const issueCategory = document.getElementById('issue-category');
-    const issueDescription = document.getElementById('issue-description');
-    const reportIssueStudentList = document.getElementById('report-issue-student-list');
-
-    const unblockModal = document.getElementById('unblock-modal');
-    const unblockStudentName = document.getElementById('unblock-student-name');
-    const unblockViolationReason = document.getElementById('unblock-violation-reason');
-    const cancelUnblockBtn = document.getElementById('cancel-unblock');
-    const confirmUnblockBtn = document.getElementById('confirm-unblock');
     
+    const fileIncidentReportBtn = document.getElementById('file-incident-report-btn');
+    const reportIssueModal = document.getElementById('report-issue-modal');
+    const cancelReportIssueBtn = document.getElementById('cancel-report-issue');
+    const submitReportIssueBtn = document.getElementById('submit-report-issue');
+    const issueCategory = document.getElementById('issue-category');
+    const issueAssessment = document.getElementById('issue-assessment');
+    const issueDescription = document.getElementById('issue-description');
+    const issueStudentList = document.getElementById('issue-student-list');
+
+    const reentryPasswordModal = document.getElementById('reentry-password-modal');
+    const studentNameReentryModal = document.getElementById('student-name-reentry-modal');
+    const reentryPassword = document.getElementById('reentry-password');
+    const closeReentryModalBtn = document.getElementById('close-reentry-modal');
+    
+    // --- TIMEZONE ---
+    const TIMEZONE = 'America/Vancouver';
+
     // --- FUNCTIONS ---
+    function formatTime(date) {
+        if (!date) return 'N/A';
+        return new Date(date).toLocaleTimeString('en-US', { timeZone: TIMEZONE, hour: '2-digit', minute: '2-digit' });
+    }
+
+    function isAfter4PM() {
+        const now = new Date(new Date().toLocaleString('en-US', { timeZone: TIMEZONE }));
+        return now.getHours() >= 16;
+    }
+
     function renderTable(studentData) {
         tableBody.innerHTML = '';
         totalStudentsCount.textContent = studentData.filter(s => s.connectionStatus === 'online').length;
-        lastUpdatedTimestamp.textContent = `Last updated: ${new Date().toLocaleTimeString('en-US', { timeZone: 'America/Vancouver' })}`;
+        lastUpdatedTimestamp.textContent = `Last updated: ${new Date().toLocaleTimeString('en-US', { timeZone: TIMEZONE })}`;
 
         if (studentData.length === 0) {
             tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-gray-500">No students found.</td></tr>`;
@@ -532,62 +390,65 @@
 
         studentData.forEach(student => {
             const row = document.createElement('tr');
-            row.className = 'border-b border-gray-200 hover:bg-gray-50';
+            row.className = 'border-b border-gray-200 hover:bg-gray-50 cursor-pointer';
+            row.dataset.studentId = student.id;
             
-            let connectionStatusClass = 'offline';
-            if (student.connectionStatus === 'online') connectionStatusClass = 'online';
-            if (student.connectionStatus === 'Idle') connectionStatusClass = 'disconnected';
+            let connectionStatusClass;
+            let connectionStatusText;
+
+            switch(student.connectionStatus) {
+                case 'online':
+                    connectionStatusClass = 'online';
+                    connectionStatusText = 'Writing';
+                    break;
+                case 'offline':
+                    connectionStatusClass = 'offline';
+                    connectionStatusText = 'Offline';
+                    break;
+                case 'disconnected':
+                    connectionStatusClass = 'disconnected';
+                    connectionStatusText = 'Disconnected';
+                    break;
+            }
             
             let statusContent = '';
             if (student.status === 'Submitted') {
-                const after4PM = isAfter4PM();
-                const timeLimitExceeded = !isUnsubmitAllowed(student.startTime) && !after4PM;
-                let buttonHtml;
-
-                if (!after4PM && !timeLimitExceeded) {
-                    buttonHtml = `<button class="unsubmit-btn btn-unsubmit-active ml-4" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">Unsubmit</button>`;
-                } else {
-                    let tooltipMessage = '';
-                    if (after4PM) {
-                        tooltipMessage = `Unsubmit is unavailable after 4 PM. Contact support:<br>Phone: 1-888-887-3882`;
-                    } else { // timeLimitExceeded
-                        tooltipMessage = `3-hour window expired. Contact support for unsubmission:<br>Email: bced-support@vretta.com<br>Phone: 1-888-887-3882`;
-                    }
-                    buttonHtml = `<div class="relative">
-                                    <button class="btn-unsubmit-disabled ml-4" disabled>Unsubmit</button>
-                                    <div class="unsubmit-tooltip hidden absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-md whitespace-nowrap z-10">
-                                        ${tooltipMessage}
-                                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                                    </div>
-                                  </div>`;
-                }
+                const isPast4PM = isAfter4PM();
+                const canUnsubmit = !isPast4PM;
                 
-                statusContent = `<div class="flex items-center">
-                                    <p class="font-medium text-gray-700">Submitted</p>
-                                    ${buttonHtml}
-                                 </div>`;
-            } else if (student.status === 'Blocked') {
-                 statusContent = `<div class="flex items-center">
-                                    <p class="font-medium text-red-600">Blocked</p>
-                                    <button class="unblock-btn btn-unsubmit-active ml-4" data-student-id="${student.id}">Unblock</button>
-                                 </div>`;
-            } else if (student.status === 'In Progress') {
-                statusContent = `<div>
-                                    <p class="font-medium">In Progress</p>
-                                    <p class="text-xs text-gray-500">${student.time} minute(s)</p>
-                                 </div>`;
-            } else {
-                statusContent = `<p class="font-medium text-gray-700">${student.status}</p>`;
-            }
+                statusContent = `
+                    <div class="flex items-center space-x-2">
+                         <p class="font-medium text-gray-700">${student.status}</p>
+                        <div class="relative">
+                            <button 
+                                class="unsubmit-btn text-sm font-medium ${canUnsubmit ? 'text-gray-600 bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-md' : 'text-gray-400 cursor-not-allowed bg-gray-100 px-3 py-1 rounded-md'}"
+                                data-student-id="${student.id}"
+                                data-student-name="${student.firstName} ${student.lastName}"
+                                ${!canUnsubmit ? 'disabled' : ''}
+                            >
+                                Unsubmit
+                            </button>
+                            <div class="unsubmit-tooltip hidden absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-md whitespace-nowrap z-50">
+                                ${isPast4PM 
+                                    ? `Unsubmit is unavailable after 4 PM. Contact support:<br>Phone: 1-888-887-3882`
+                                    : `1-hour window expired. Request will be sent for approval.`
+                                }
+                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                            </div>
+                        </div>
+                    </div>`;
 
+            } else if (student.status === 'In Progress' || student.status === 'Ready to Start' || student.status === 'Not Started' || student.status === 'Awaiting Ministerial Decision' || student.status === 'Unsubmit Requested' || student.status === 'Disconnected') {
+                statusContent = `<p class="font-medium text-gray-700">${student.status}</p>`;
+            } 
+            
             let statusBgClass = '';
             if (student.status === 'Ready to Start') statusBgClass = 'bg-[#fff3e0]';
             else if (student.status === 'Not Started') statusBgClass = 'bg-gray-100';
-            else if (student.status === 'Blocked') statusBgClass = 'status-blocked';
 
             let lastSeenHtml = '';
             if (student.connectionStatus !== 'online' && student.lastSeen) {
-                lastSeenHtml = `<span class="ml-1 text-gray-500">(Last seen: ${new Date(student.lastSeen).toLocaleTimeString('en-US', {timeZone: 'America/Vancouver'})})</span>`;
+                lastSeenHtml = `<span class="text-xs text-gray-500 ml-2">(Last seen: ${formatTime(student.lastSeen)})</span>`;
             }
 
             row.innerHTML = `
@@ -596,13 +457,11 @@
                 </td>
                 <td class="py-3 px-3 table-cell-border">${student.pen}</td>
                 <td class="py-3 px-3 table-cell-border">
-                    <div class="flex items-center space-x-2">
-                        <button class="student-name-btn text-blue-700 font-medium hover:underline truncate" data-student-id="${student.id}">${student.firstName} ${student.lastName}</button>
-                        <div class="text-xs text-gray-700 flex items-center flex-shrink-0">
-                            <span class="status-dot ${connectionStatusClass}"></span>
-                            <span>${student.connectionStatus === 'online' ? 'Writing' : student.connectionStatus.charAt(0).toUpperCase() + student.connectionStatus.slice(1)}</span>
-                            ${lastSeenHtml}
-                        </div>
+                    <div class="font-medium text-blue-700">${student.firstName} ${student.lastName}</div>
+                    <div class="text-xs text-gray-700 mt-1">
+                        <span class="status-dot ${connectionStatusClass}"></span>
+                        <span>${connectionStatusText}</span>
+                        ${lastSeenHtml}
                     </div>
                 </td>
                 <td class="py-3 px-3 table-cell-border">
@@ -617,7 +476,6 @@
     function updateView() {
         let displayedStudents = [...students];
 
-        // Apply filters
         const selectedStatus = statusFilter.value;
         const selectedComponent = componentFilter.value;
         if (selectedStatus !== 'all') {
@@ -635,185 +493,196 @@
             );
         }
 
-        // Apply sorting
+        const statusOrder = ["In Progress", "Ready to Start", "Disconnected", "Not Started", "Submitted", "Unsubmit Requested", "Awaiting Ministerial Decision"];
+        
         displayedStudents.sort((a, b) => {
-            // 0. Watched students first
             if (a.watched && !b.watched) return -1;
             if (!a.watched && b.watched) return 1;
 
-            // 1. Primary sort: Online students first
-            const isOnlineA = a.connectionStatus === 'online';
-            const isOnlineB = b.connectionStatus === 'online';
-            if (isOnlineA !== isOnlineB) {
-                return isOnlineA ? -1 : 1;
-            }
+            const aOnline = a.connectionStatus === 'online';
+            const bOnline = b.connectionStatus === 'online';
+            if (aOnline && !bOnline) return -1;
+            if (!aOnline && bOnline) return 1;
 
-            // 2. Secondary sort: Status (alphabetical)
-            const statusComparison = a.status.localeCompare(b.status);
-            if (statusComparison !== 0) {
-                return statusComparison;
-            }
+            const statusIndexA = statusOrder.indexOf(a.status);
+            const statusIndexB = statusOrder.indexOf(b.status);
+            if (statusIndexA !== statusIndexB) return statusIndexA - statusIndexB;
 
-            // 3. Tertiary sort: Name (alphabetical, respects sortDirection)
-            const nameA = `${a.firstName} ${a.lastName}`.toLowerCase();
-            const nameB = `${b.firstName} ${b.lastName}`.toLowerCase();
-            const nameComparison = nameA.localeCompare(nameB);
+            const nameA = `${a.lastName} ${a.firstName}`.toLowerCase();
+            const nameB = `${b.lastName} ${b.firstName}`.toLowerCase();
+            if (nameA < nameB) return sortDirection === 'asc' ? -1 : 1;
+            if (nameA > nameB) return sortDirection === 'asc' ? 1 : -1;
             
-            if (sortDirection !== 'none') {
-                 if (nameComparison !== 0) {
-                    return sortDirection === 'asc' ? nameComparison : -nameComparison;
-                 }
-            } else {
-                // Default alphabetical sort for name if no direction is set
-                if (nameComparison !== 0) {
-                    return nameComparison;
-                }
-            }
-
-            // 4. Quaternary sort: Component (alphabetical)
             return a.component.localeCompare(b.component);
         });
         
         renderTable(displayedStudents);
     }
-    
-    function isAfter4PM() {
-        const now = new Date();
-        const localTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Vancouver' }));
-        return localTime.getHours() >= 16;
-    }
 
-    function isUnsubmitAllowed(startTime) {
-        if (!startTime) return true; 
-        const threeHoursInMs = 3 * 60 * 60 * 1000;
-        const currentTime = new Date().getTime();
-        return (currentTime - startTime) < threeHoursInMs;
-    }
+    // --- MODAL & ACTION FUNCTIONS ---
     
-    function openUnsubmitModal(studentId, studentName) {
+    function openRequestUnsubmitModal(studentId, studentName) {
         const student = students.find(s => s.id === studentId);
         if (!student) return;
 
         studentNameUnsubmitModal.textContent = studentName;
-        unsubmitRequestForm.dataset.studentId = studentId;
+        confirmUnsubmitBtn.dataset.studentId = studentId;
 
-        const accidentalSubmissionOption = unsubmitReason.querySelector('option[value="Accidental Submission"]');
-        if (isAutoApprovalAllowed(student.submissionTime)) {
-            accidentalSubmissionOption.disabled = false;
-        } else {
-            accidentalSubmissionOption.disabled = true;
-        }
-
-        if (unsubmitRequestData[studentId]) {
-            invigilatorEmail.value = unsubmitRequestData[studentId].email;
-            unsubmitReason.value = unsubmitRequestData[studentId].reason;
-            otherReasonText.value = unsubmitRequestData[studentId].otherText;
-            if (unsubmitReason.value === 'other') {
-                otherReasonContainer.classList.remove('hidden');
-            }
-        }
-
-        unsubmitModal.classList.remove('hidden');
-        validateUnsubmitRequestForm();
-    }
-
-    function closeUnsubmitModal() {
-        const studentId = unsubmitRequestForm.dataset.studentId;
-        unsubmitRequestData[studentId] = {
-            email: invigilatorEmail.value,
-            reason: unsubmitReason.value,
-            otherText: otherReasonText.value
-        };
-        unsubmitModal.classList.add('hidden');
-    }
-
-    function isAutoApprovalAllowed(submissionTime) {
-        if (!submissionTime) return false;
         const oneHourInMs = 60 * 60 * 1000;
-        const currentTime = new Date().getTime();
-        return (currentTime - submissionTime) < oneHourInMs;
-    }
-
-    function handleUnsubmitRequest(e) {
-        e.preventDefault();
-        const studentId = unsubmitRequestForm.dataset.studentId;
-        const studentIndex = students.findIndex(s => s.id === studentId);
-        if (studentIndex > -1) {
-            const student = students[studentIndex];
-            if (isAutoApprovalAllowed(student.submissionTime)) {
-                student.status = 'In Progress';
-            } else {
-                student.status = 'Awaiting Ministerial Decision';
+        const timeSinceSubmission = new Date().getTime() - student.submissionTime;
+        const accidentalSubmissionOption = unsubmitReason.querySelector('option[value="Accidental Submission"]');
+        
+        if (timeSinceSubmission > oneHourInMs) {
+            accidentalSubmissionOption.disabled = true;
+            if(unsubmitReason.value === "Accidental Submission") {
+                unsubmitReason.value = "Technical Issue";
             }
+        } else {
+            accidentalSubmissionOption.disabled = false;
         }
-        delete unsubmitRequestData[studentId];
-        updateView();
-        closeUnsubmitModal();
-    }
-    
-    function openUnblockModal(studentId) {
-        const student = students.find(s => s.id === studentId);
-        if (student) {
-            unblockStudentName.textContent = `${student.firstName} ${student.lastName}`;
-            unblockViolationReason.textContent = student.violationReason;
-            confirmUnblockBtn.dataset.studentId = studentId;
-            unblockModal.classList.remove('hidden');
+
+        // Restore data if it exists
+        if (unsubmitRequestData[studentId]) {
+            invigilatorEmail.value = unsubmitRequestData[studentId].email || '';
+            unsubmitReason.value = unsubmitRequestData[studentId].reason || 'Accidental Submission';
+            otherReasonText.value = unsubmitRequestData[studentId].otherText || '';
+        } else {
+             invigilatorEmail.value = '';
+             unsubmitReason.value = accidentalSubmissionOption.disabled ? "Technical Issue" : "Accidental Submission";
+             otherReasonText.value = '';
         }
+        
+        unsubmitReason.dispatchEvent(new Event('change')); // Trigger change to show/hide other field
+        requestUnsubmitModal.classList.remove('hidden');
     }
 
-    function closeUnblockModal() {
-        unblockModal.classList.add('hidden');
+    function closeRequestUnsubmitModal() {
+        const studentId = confirmUnsubmitBtn.dataset.studentId;
+         if (studentId) {
+            unsubmitRequestData[studentId] = {
+                email: invigilatorEmail.value,
+                reason: unsubmitReason.value,
+                otherText: otherReasonText.value,
+            };
+        }
+        requestUnsubmitModal.classList.add('hidden');
+    }
+
+    function handleUnsubmitRequest() {
+        const studentId = confirmUnsubmitBtn.dataset.studentId;
+        const studentIndex = students.findIndex(s => s.id === studentId);
+        if (studentIndex === -1) return;
+
+        const student = students[studentIndex];
+        const oneHourInMs = 60 * 60 * 1000;
+        const timeSinceSubmission = new Date().getTime() - student.submissionTime;
+
+        if (timeSinceSubmission <= oneHourInMs && unsubmitReason.value === "Accidental Submission") {
+            // Auto-approve
+            students[studentIndex].status = 'In Progress';
+        } else {
+            // Send for ministerial approval
+            students[studentIndex].status = 'Awaiting Ministerial Decision';
+        }
+
+        delete unsubmitRequestData[studentId]; // Clear stored data
+        updateView();
+        requestUnsubmitModal.classList.add('hidden'); // Use direct close without saving
     }
     
-    function handleUnblock() {
-        const studentId = confirmUnblockBtn.dataset.studentId;
+     function openStudentInfoModal(studentId) {
+        const student = students.find(s => s.id === studentId);
+        if (!student) return;
+
+        studentInfoModalTitle.textContent = `Student Info: ${student.firstName} ${student.lastName}`;
+        
+        let assessmentsHtml = '<div class="space-y-4">';
+        student.assessments.forEach(asm => {
+            let actionButtonHtml = '';
+            if (asm.status === 'Submitted') {
+                 actionButtonHtml = `<button class="unsubmit-btn text-sm font-medium text-gray-600 bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-md ml-4" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">Unsubmit</button>`;
+            }
+
+            assessmentsHtml += `
+                <div class="border rounded-md p-3">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-semibold">${asm.component}</h4>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-2 text-sm">
+                        <p><strong>Status:</strong> ${asm.status} ${actionButtonHtml}</p>
+                        <p><strong>Login Date & Time:</strong> ${asm.loginTime ? new Date(asm.loginTime).toLocaleString('en-US', { timeZone: TIMEZONE }) : 'N/A'}</p>
+                        <p><strong>Submission Date & Time:</strong> ${asm.submissionTime ? new Date(asm.submissionTime).toLocaleString('en-US', { timeZone: TIMEZONE }) : 'N/A'}</p>
+                    </div>
+                </div>
+            `;
+        });
+        assessmentsHtml += '</div>';
+
+        studentInfoModalContent.innerHTML = assessmentsHtml;
+        studentInfoModal.classList.remove('hidden');
+    }
+    
+    function closeStudentInfoModal() {
+        studentInfoModal.classList.add('hidden');
+    }
+
+    function openReportIssueModal() {
+        // Populate student list
+        issueStudentList.innerHTML = '';
+        students.forEach(s => {
+            issueStudentList.innerHTML += `
+                <div class="flex items-center">
+                    <input type="checkbox" id="student-${s.id}" value="${s.id}" class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                    <label for="student-${s.id}" class="ml-3 block text-sm text-gray-700">${s.firstName} ${s.lastName}</label>
+                </div>
+            `;
+        });
+
+        // Populate assessment list
+        const uniqueAssessments = [...new Set(students.map(s => s.component))];
+        issueAssessment.innerHTML = '<option value="">Select an assessment</option>';
+        uniqueAssessments.forEach(a => {
+            issueAssessment.innerHTML += `<option value="${a}">${a}</option>`;
+        });
+
+        reportIssueModal.classList.remove('hidden');
+    }
+
+    function closeReportIssueModal() {
+        reportIssueModal.classList.add('hidden');
+    }
+
+    function validateReportForm() {
+        const category = issueCategory.value;
+        const assessment = issueAssessment.value;
+        const description = issueDescription.value.trim();
+        const selectedStudents = issueStudentList.querySelectorAll('input:checked').length;
+        
+        submitReportIssueBtn.disabled = !(category && assessment && description && selectedStudents > 0);
+    }
+
+    function openReentryPasswordModal(studentId) {
+        const student = students.find(s => s.id === studentId);
+        if(!student) return;
+
+        const password = Math.random().toString(36).substring(2, 8).toUpperCase();
+        studentNameReentryModal.textContent = `${student.firstName} ${student.lastName}`;
+        reentryPassword.textContent = password;
+        reentryPasswordModal.dataset.studentId = studentId;
+        reentryPasswordModal.classList.remove('hidden');
+    }
+
+    function closeReentryPasswordModal() {
+        const studentId = reentryPasswordModal.dataset.studentId;
         const studentIndex = students.findIndex(s => s.id === studentId);
         if (studentIndex > -1) {
             students[studentIndex].status = 'In Progress';
+            students[studentIndex].connectionStatus = 'online';
         }
+        reentryPasswordModal.classList.add('hidden');
         updateView();
-        closeUnblockModal();
-        closeStudentInfoModal();
-    }
-    
-    function validateUnsubmitRequestForm() {
-        const reason = unsubmitReason.value;
-        const otherText = otherReasonText.value.trim();
-        const email = invigilatorEmail.value.trim();
-        
-        let isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-        if (!email || !isEmailValid || (reason === 'other' && otherText === '')) {
-            submitRequestBtn.disabled = true;
-        } else {
-            submitRequestBtn.disabled = false;
-        }
     }
 
-    function populateReportIssueStudentList() {
-        reportIssueStudentList.innerHTML = '';
-        students.forEach(student => {
-            const studentDiv = document.createElement('div');
-            studentDiv.className = 'flex items-center p-1';
-            studentDiv.innerHTML = `
-                <input type="checkbox" id="student-${student.id}" name="students" value="${student.id}" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                <label for="student-${student.id}" class="ml-3 text-sm text-gray-700">${student.firstName} ${student.lastName}</label>
-            `;
-            reportIssueStudentList.appendChild(studentDiv);
-        });
-    }
-
-    function validateReportIssueForm() {
-        const category = issueCategory.value;
-        const description = issueDescription.value.trim();
-        const selectedStudents = reportIssueStudentList.querySelectorAll('input[type="checkbox"]:checked').length;
-        
-        if (category && description && selectedStudents > 0) {
-            submitIssueReportBtn.disabled = false;
-        } else {
-            submitIssueReportBtn.disabled = true;
-        }
-    }
 
     // --- EVENT LISTENERS ---
     loginForm.addEventListener('submit', (e) => {
@@ -823,7 +692,7 @@
         updateView();
     });
     
-    searchInput.addEventListener('keyup', updateView);
+    searchInput.addEventListener('input', updateView);
     statusFilter.addEventListener('change', updateView);
     componentFilter.addEventListener('change', updateView);
     sortByNameBtn.addEventListener('click', () => {
@@ -836,191 +705,85 @@
     
     tableBody.addEventListener('click', function(e) {
         const unsubmitButton = e.target.closest('.unsubmit-btn');
-        if (unsubmitButton && !unsubmitButton.disabled) {
-            openUnsubmitModal(unsubmitButton.dataset.studentId, unsubmitButton.dataset.studentName);
-        }
-
-        const unblockButton = e.target.closest('.unblock-btn');
-        if (unblockButton) {
-            openUnblockModal(unblockButton.dataset.studentId);
-        }
-
         const watchCheckbox = e.target.closest('.watch-checkbox');
-        if (watchCheckbox) {
+        const studentRow = e.target.closest('tr');
+
+        if (unsubmitButton && !unsubmitButton.disabled) {
+            e.stopPropagation();
+            openRequestUnsubmitModal(unsubmitButton.dataset.studentId, unsubmitButton.dataset.studentName);
+        } else if (watchCheckbox) {
+             e.stopPropagation();
             const studentId = watchCheckbox.dataset.studentId;
             const studentIndex = students.findIndex(s => s.id === studentId);
             if(studentIndex > -1) {
                 students[studentIndex].watched = watchCheckbox.checked;
             }
             updateView();
-        }
-
-        const studentNameButton = e.target.closest('.student-name-btn');
-        if (studentNameButton) {
-            openStudentInfoModal(studentNameButton.dataset.studentId);
-        }
-    });
-
-    tableBody.addEventListener('mouseover', function(e) {
-        const disabledButtonWrapper = e.target.closest('.relative');
-        if (disabledButtonWrapper) {
-            const tooltip = disabledButtonWrapper.querySelector('.unsubmit-tooltip');
-            if (tooltip) {
-                tooltip.classList.remove('hidden');
+        } else if (studentRow) {
+            const studentId = studentRow.dataset.studentId;
+            const student = students.find(s => s.id === studentId);
+            if (student && student.status === 'Disconnected') {
+                openReentryPasswordModal(studentId);
+            } else {
+                openStudentInfoModal(studentId);
             }
         }
     });
 
-    tableBody.addEventListener('mouseout', function(e) {
-        const disabledButtonWrapper = e.target.closest('.relative');
-        if (disabledButtonWrapper) {
-            const tooltip = disabledButtonWrapper.querySelector('.unsubmit-tooltip');
-            if (tooltip) {
-                tooltip.classList.add('hidden');
-            }
+    // Unsubmit button tooltip
+    tableBody.addEventListener('mouseover', e => {
+        const button = e.target.closest('.unsubmit-btn:disabled');
+        if (button) {
+            const tooltip = button.parentElement.querySelector('.unsubmit-tooltip');
+            if (tooltip) tooltip.classList.remove('hidden');
+        }
+    });
+    tableBody.addEventListener('mouseout', e => {
+        const button = e.target.closest('.unsubmit-btn:disabled');
+        if (button) {
+            const tooltip = button.parentElement.querySelector('.unsubmit-tooltip');
+            if (tooltip) tooltip.classList.add('hidden');
         }
     });
 
-    unsubmitRequestForm.addEventListener('submit', handleUnsubmitRequest);
-    cancelUnsubmitBtn.addEventListener('click', closeUnsubmitModal);
-    unsubmitModal.addEventListener('click', (e) => {
-        if (e.target === unsubmitModal) {
-            closeUnsubmitModal();
-        }
+    // Modals
+    confirmUnsubmitBtn.addEventListener('click', handleUnsubmitRequest);
+    cancelUnsubmitBtn.addEventListener('click', closeRequestUnsubmitModal);
+    unsubmitReason.addEventListener('change', () => {
+        otherReasonContainer.classList.toggle('hidden', unsubmitReason.value !== 'Other');
+        validateUnsubmitRequest();
     });
+    otherReasonText.addEventListener('input', validateUnsubmitRequest);
+    invigilatorEmail.addEventListener('input', validateUnsubmitRequest);
 
-    unsubmitReason.addEventListener('change', function() {
-        if (this.value === 'other') {
-            otherReasonContainer.classList.remove('hidden');
-        } else {
-            otherReasonContainer.classList.add('hidden');
-        }
-        validateUnsubmitRequestForm();
-    });
-    
-    otherReasonText.addEventListener('input', validateUnsubmitRequestForm);
-    invigilatorEmail.addEventListener('input', validateUnsubmitRequestForm);
+    function validateUnsubmitRequest() {
+        const isOther = unsubmitReason.value === 'Other';
+        const otherTextFilled = otherReasonText.value.trim() !== '';
+        const emailFilled = invigilatorEmail.value.trim() !== '';
 
-    techSupportBtn.addEventListener('click', () => {
-        techSupportModal.classList.remove('hidden');
-    });
-    dismissSupportModalBtn.addEventListener('click', () => {
-        techSupportModal.classList.add('hidden');
-    });
-    techSupportModal.addEventListener('click', (e) => {
-        if (e.target === techSupportModal) techSupportModal.classList.add('hidden');
-    });
-    
-    function openStudentInfoModal(studentId) {
-        const student = students.find(s => s.id === studentId);
-        if (!student) return;
-
-        studentInfoTitle.textContent = `Student Info: ${student.firstName} ${student.lastName}`;
-
-        const formatDate = (timestamp) => {
-            if (!timestamp) return 'N/A';
-            return new Date(timestamp).toLocaleString('en-US', { 
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric', 
-                hour: 'numeric', 
-                minute: '2-digit', 
-                timeZone: 'America/Vancouver',
-                timeZoneName: 'short' 
-            });
-        };
-
-        let actionsHtml = '';
-        if (student.status === 'Submitted') {
-            if (!isAfter4PM() && isUnsubmitAllowed(student.startTime)) {
-                actionsHtml = `<button class="unsubmit-btn-modal btn-unsubmit-active" data-student-id="${student.id}" data-student-name="${student.firstName} ${student.lastName}">Unsubmit</button>`;
-            }
-        } else if (student.status === 'Blocked') {
-            actionsHtml = `<button class="unblock-btn-modal btn-unsubmit-active" data-student-id="${student.id}">Unblock</button>`;
-        }
-
-        const content = `
-            <table class="w-full text-sm">
-                <tbody>
-                    <tr class="border-b">
-                        <td class="py-3 px-2 font-medium text-gray-600 w-1/3">Assessment Component</td>
-                        <td class="py-3 px-2">${student.component}</td>
-                    </tr>
-                    <tr class="border-b">
-                        <td class="py-3 px-2 font-medium text-gray-600">Assessment Status</td>
-                        <td class="py-3 px-2 flex items-center justify-between">
-                            <span>${student.status}</span>
-                            ${actionsHtml}
-                        </td>
-                    </tr>
-                    <tr class="border-b">
-                        <td class="py-3 px-2 font-medium text-gray-600">Login Date & Time</td>
-                        <td class="py-3 px-2">${formatDate(student.loginTime)}</td>
-                    </tr>
-                    <tr>
-                        <td class="py-3 px-2 font-medium text-gray-600">Submission Date & Time</td>
-                        <td class="py-3 px-2">${formatDate(student.submissionTime)}</td>
-                    </tr>
-                </tbody>
-            </table>
-        `;
-        studentInfoContent.innerHTML = content;
-        
-        studentInfoModal.classList.remove('hidden');
+        confirmUnsubmitBtn.disabled = !emailFilled || (isOther && !otherTextFilled);
     }
     
-    studentInfoContent.addEventListener('click', function(e) {
-        const unsubmitButton = e.target.closest('.unsubmit-btn-modal');
-        if (unsubmitButton) {
-            openUnsubmitModal(unsubmitButton.dataset.studentId, unsubmitButton.dataset.studentName);
-        }
-        const unblockButton = e.target.closest('.unblock-btn-modal');
-        if (unblockButton) {
-            openUnblockModal(unblockButton.dataset.studentId);
-        }
-    });
-
-    function closeStudentInfoModal() {
-        studentInfoModal.classList.add('hidden');
-    }
+    techSupportBtn.addEventListener('click', () => techSupportModal.classList.remove('hidden'));
+    dismissSupportModalBtn.addEventListener('click', () => techSupportModal.classList.add('hidden'));
     
     okStudentInfoBtn.addEventListener('click', closeStudentInfoModal);
     studentInfoModal.addEventListener('click', (e) => {
-        if (e.target === studentInfoModal) closeStudentInfoModal();
+        if (!e.target.closest('.modal-content')) closeStudentInfoModal();
     });
 
-    // Report an Issue Logic
-    reportIssueBtn.addEventListener('click', () => {
-        reportIssueFormModal.classList.remove('hidden');
-        populateReportIssueStudentList();
-        validateReportIssueForm();
-    });
+    fileIncidentReportBtn.addEventListener('click', openReportIssueModal);
+    cancelReportIssueBtn.addEventListener('click', closeReportIssueModal);
+    [issueCategory, issueAssessment, issueDescription].forEach(el => el.addEventListener('input', validateReportForm));
+    issueStudentList.addEventListener('change', validateReportForm);
 
-    cancelReportIssueFormBtn.addEventListener('click', () => {
-        reportIssueFormModal.classList.add('hidden');
-        reportIssueForm.reset();
-    });
+    closeReentryModalBtn.addEventListener('click', closeReentryPasswordModal);
 
-    reportIssueForm.addEventListener('input', validateReportIssueForm);
-
-    reportIssueForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        // In a real application, you would send this data to a server.
-        console.log('Issue Reported:', {
-            category: issueCategory.value,
-            description: issueDescription.value,
-            students: Array.from(reportIssueStudentList.querySelectorAll('input:checked')).map(cb => cb.value)
-        });
-        reportIssueFormModal.classList.add('hidden');
-        reportIssueForm.reset();
-    });
+    // Initial Load
+    updateView();
     
-    // Unblock Modal Logic
-    confirmUnblockBtn.addEventListener('click', handleUnblock);
-    cancelUnblockBtn.addEventListener('click', closeUnblockModal);
-    unblockModal.addEventListener('click', (e) => e.target === unblockModal && closeUnblockModal());
-
 </script>
 
 </body>
 </html>
+
